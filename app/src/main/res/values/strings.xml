@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Project</string>
+
+
+
+
+    <string name="email_description">Inserisci email:</string>
+    <string name="password_description">Inserisci password:</string>
+    <string name="email_id_text">Email</string>
+    <string name="password_id_text">Password</string>
+
+    <string name="loginCheckBox_text">Ricordami</string>
+    <string name="loginText_text">Non hai un account?</string>
+    <string name="loginRegistrationText_text">Registrati!</string>
+    <string name="loginButton_text">Accedi</string>
 </resources>
