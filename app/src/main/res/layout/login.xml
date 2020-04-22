@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-prova
-</androidx.constraintlayout.widget.ConstraintLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/LOGO"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="LOGO"
+        android:text="LOGO" />
+
+    <ImageView
+        android:id="@+id/logo_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="appLogo"
+        app:srcCompat="@drawable/museo-cacca-giappone-1556268867" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/email_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <EditText
+            android:id="@+id/email_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Email" />
+
+        <TextView
+            android:id="@+id/password_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <EditText
+            android:id="@+id/password_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Password" />
+    </LinearLayout>
+</LinearLayout>
+
+
+
