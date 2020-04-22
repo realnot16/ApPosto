@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/MainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/LOGO"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="LOGO"
-        android:text="LOGO" />
+    android:orientation="vertical"
+    android:weightSum="5">
 
     <ImageView
         android:id="@+id/logo_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="appLogo"
+        android:layout_weight="2"
+        android:contentDescription="@string/appLogo"
         app:srcCompat="@drawable/download" />
 
     <LinearLayout
+        android:id="@+id/dataScreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
@@ -58,35 +57,44 @@
             android:text="@string/password_id_text" />
     </LinearLayout>
 
-    <CheckBox
-        android:id="@+id/loginCheckbox_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/loginCheckBox_text" />
-
     <LinearLayout
+        android:id="@+id/buttonEtc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/loginText_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/loginText_text" />
-
-        <TextView
-            android:id="@+id/loginRegistrationText_id"
+        <CheckBox
+            android:id="@+id/loginCheckbox_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/loginRegistrationText_text" />
-    </LinearLayout>
+            android:text="@string/loginCheckBox_text" />
 
-    <Button
-        android:id="@+id/loginButton_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/loginButton_text" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/loginText_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loginText_text" />
+
+            <TextView
+                android:id="@+id/loginRegistrationText_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/loginRegistrationText_text" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/loginButton_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/loginButton_text" />
+    </LinearLayout>
 </LinearLayout>
 
 
