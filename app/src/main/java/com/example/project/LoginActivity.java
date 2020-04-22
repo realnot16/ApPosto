@@ -30,12 +30,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     //Metodo richiamato con il click su Login
-    private void login(View view){
-        Log.i("TAG", "Cliccato su login.");
+    public void login(View view){
+        Log.i("TAG", "Hai cliccato su Login!");
         String mailUtente = email.getText().toString();
         String passwordUtente = password.getText().toString();
 
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+
+    }
+
+    public void goToSignup(View view){
+        Log.i("TAG", "Hai cliccato su Registrati. Verrai reindirizzato alla pagina di registrazione.");
+
+        Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
         startActivity(intent);
     }
 
