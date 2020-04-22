@@ -3,7 +3,7 @@
 
 
 
-
+    <string name="appLogo">appLogo</string>
     <string name="email_description">Inserisci email:</string>
     <string name="password_description">Inserisci password:</string>
     <string name="email_id_text">Email</string>
