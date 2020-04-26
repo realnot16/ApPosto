@@ -34,8 +34,7 @@
             android:autofillHints="email"
             android:ems="10"
             android:hint="@string/email_id_text"
-            android:inputType="textEmailAddress"
-            android:text="@string/email_id_text" />
+            android:inputType="textEmailAddress" />
 
         <TextView
             android:id="@+id/password_description"
@@ -50,8 +49,7 @@
             android:autofillHints="password"
             android:ems="10"
             android:hint="@string/password_id_text"
-            android:inputType="textPassword"
-            android:text="@string/password_id_text" />
+            android:inputType="textPassword" />
 
         <TextView
             android:id="@+id/confpassword_description"
@@ -66,9 +64,7 @@
             android:autofillHints="password"
             android:ems="10"
             android:hint="@string/password_id_text"
-            android:inputType="textPassword"
-            android:password="true"
-            android:text="@string/password_id_text" />
+            android:inputType="textPassword" />
     </LinearLayout>
 
     <LinearLayout
