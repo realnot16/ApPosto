@@ -6,6 +6,7 @@
     <string name="appLogo">appLogo</string>
     <string name="email_description">Inserisci email:</string>
     <string name="password_description">Inserisci password:</string>
+    <string name="confpassword_description">Conferma password:</string>
     <string name="email_id_text">Email</string>
     <string name="password_id_text">Password</string>
 
@@ -13,4 +14,8 @@
     <string name="loginText_text">Non hai un account?</string>
     <string name="loginRegistrationText_text">Registrati!</string>
     <string name="loginButton_text">Accedi</string>
+    <string name="signupText_text">Sei già registrato?</string>
+    <string name="signinText_text">Accedi!</string>
+    <string name="signupButton_text">Registrati</string>
+
 </resources>
