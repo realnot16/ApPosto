@@ -79,6 +79,7 @@
             android:id="@+id/loginRegistrationText_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="goToSignup"
             android:text="@string/loginRegistrationText_text" />
     </LinearLayout>
 
