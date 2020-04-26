@@ -87,6 +87,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/loginText_id"
+        android:onClick="login"
         android:text="@string/loginButton_text" />
 
     <com.google.android.gms.common.SignInButton

@@ -3,6 +3,7 @@ package com.example.project;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,7 +21,10 @@ public class MainActivity extends AppCompatActivity {
         TextView label = (TextView) findViewById(R.id.testo);
 
         mAuth = FirebaseAuth.getInstance();
+        if(TextUtils.isEmpty(mAuth.getCurrentUser().getDisplayName()))
+            label.setText("Benvenuto "+mAuth.getCurrentUser().getEmail());
+        else
+            label.setText("Benvenuto "+mAuth.getCurrentUser().getDisplayName()+"!");
         mAuth.signOut();
-        label.setText("Benvenuto "+mAuth.getCurrentUser().getDisplayName()+"!");
     }
 }
