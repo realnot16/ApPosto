@@ -3,98 +3,113 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/backgroundtemp2"
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/logo_id"
+        android:id="@+id/LoginLogo_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:contentDescription="appLogo"
-        app:srcCompat="@drawable/download" />
-
-    <TextView
-        android:id="@+id/email_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/logo_id"
-        android:layout_centerHorizontal="false"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
-        android:text="@string/email_description" />
+        android:contentDescription="@string/appLogo"
+        app:srcCompat="@mipmap/logotempp2" />
 
     <EditText
         android:id="@+id/email_id"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/email_description"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
-        android:layout_toEndOf="@id/email_description"
+        android:layout_below="@id/LoginLogo_id"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:autofillHints="email"
+        android:background="@drawable/login_data_view"
+        android:drawableStart="@drawable/ic_person_black_24dp"
         android:ems="10"
         android:hint="@string/email_id_text"
-        android:inputType="textEmailAddress" />
-
-    <TextView
-        android:id="@+id/password_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/email_description"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
-        android:text="@string/password_description" />
+        android:inputType="textEmailAddress"
+        android:padding="10dp" />
 
     <EditText
         android:id="@+id/password_id"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/password_description"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
-        android:layout_toEndOf="@id/password_description"
+        android:layout_below="@id/email_id"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
         android:autofillHints="password"
+        android:background="@drawable/login_data_view"
+        android:drawableStart="@drawable/ic_lock_black_24dp"
         android:ems="10"
         android:hint="@string/password_id_text"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:textColor="@color/neroPiscacchia" />
 
     <CheckBox
         android:id="@+id/loginCheckbox_id"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/password_description"
-        android:text="@string/loginCheckBox_text" />
+        android:layout_below="@id/password_id"
+        android:layout_alignStart="@id/email_id"
+        android:layout_centerInParent="true"
+        android:text="@string/loginCheckBox_text"
+        android:textColor="@color/neroPiscacchia" />
 
     <TextView
-        android:id="@+id/loginText_id"
+        android:id="@+id/forgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password_id"
+        android:layout_alignBaseline="@id/loginCheckbox_id"
+        android:layout_alignEnd="@id/password_id"
+        android:drawableStart="@drawable/ic_lock_open_black_24dp"
+        android:text="@string/forgotPassowrd"
+        android:textColor="@color/neroPiscacchia" />
+
+    <TextView
+        android:id="@+id/noAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/loginCheckbox_id"
-        android:text="@string/loginText_text" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="@string/noAccount_text"
+        android:textColor="@color/neroPiscacchia" />
 
     <TextView
-        android:id="@+id/loginRegistrationText_id"
+        android:id="@+id/toSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/loginText_id"
-        android:layout_toEndOf="@id/loginText_id"
+        android:layout_alignBaseline="@id/noAccount"
+        android:layout_toEndOf="@id/noAccount"
         android:onClick="goToSignup"
-        android:text="@string/loginRegistrationText_text" />
+        android:text="@string/loginRegistrationText_text"
+        android:textColor="@color/gialloPiscacchia" />
 
     <Button
         android:id="@+id/loginButton_id"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/loginText_id"
-        android:text="@string/loginButton_text" />
+        android:layout_below="@id/noAccount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/login_button"
+        android:padding="15dp"
+        android:text="@string/loginButton_text"
+        android:textColor="@color/bluPiscacchia" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/loginText_id"
-        android:layout_toEndOf="@id/loginButton_id" />
+        android:layout_below="@id/loginButton_id"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
 

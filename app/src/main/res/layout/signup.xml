@@ -1,99 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal|center_vertical"
-    android:orientation="vertical"
-    android:weightSum="6">
+    android:background="@mipmap/backgroundtemp2"
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/logo_id"
+    <RelativeLayout
+        android:id="@+id/userData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:contentDescription="appLogo"
-        app:srcCompat="@drawable/download" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:orientation="vertical">
+        android:layout_below="@id/registrationLogo_id"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginBottom="20dp">
 
         <TextView
-            android:id="@+id/email_description"
+            android:id="@+id/emailRegistration_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/email_description" />
+            android:layout_alignStart="@id/registrationEmail_id"
+            android:text="@string/email_description"
+            android:textColor="@color/neroPiscacchia" />
 
         <EditText
-            android:id="@+id/email_id"
+            android:id="@+id/registrationEmail_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="email"
+            android:layout_below="@id/emailRegistration_description"
+            android:layout_marginTop="8dp"
+            android:autofillHints="@string/email_id_text"
+            android:background="@drawable/login_data_view"
             android:ems="10"
             android:hint="@string/email_id_text"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:padding="10dp" />
 
         <TextView
-            android:id="@+id/password_description"
+            android:id="@+id/passwordRegistration_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/password_description" />
+            android:layout_below="@id/registrationEmail_id"
+            android:layout_alignStart="@id/registrationEmail_id"
+            android:layout_centerHorizontal="false"
+            android:layout_marginTop="15dp"
+            android:text="@string/password_description"
+            android:textColor="@color/neroPiscacchia" />
+
 
         <EditText
-            android:id="@+id/password_id"
+            android:id="@+id/registrationPassword_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="password"
+            android:layout_below="@id/passwordRegistration_description"
+            android:layout_marginTop="8dp"
+            android:autofillHints="@string/password_id_text"
+            android:background="@drawable/login_data_view"
             android:ems="10"
             android:hint="@string/password_id_text"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:padding="10dp" />
 
         <TextView
-            android:id="@+id/confpassword_description"
+            android:id="@+id/confpasswordRegistration_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/confpassword_description" />
+            android:layout_below="@id/registrationPassword_id"
+            android:layout_alignStart="@id/registrationEmail_id"
+            android:layout_marginTop="15dp"
+            android:text="@string/confpassword_description"
+            android:textColor="@color/neroPiscacchia" />
 
         <EditText
-            android:id="@+id/confpassword_id"
+            android:id="@+id/registrationConfpassword_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="password"
+            android:layout_below="@id/confpasswordRegistration_description"
+            android:layout_marginTop="8dp"
+            android:autofillHints="@string/password_id_text"
+            android:background="@drawable/login_data_view"
             android:ems="10"
             android:hint="@string/password_id_text"
-            android:inputType="textPassword" />
-    </LinearLayout>
+            android:inputType="textPassword"
+            android:padding="10dp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:orientation="horizontal">
+    </RelativeLayout>
 
-        <TextView
-            android:id="@+id/loginText_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/signupText_text" />
-
-        <TextView
-            android:id="@+id/loginRegistrationText_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="goToLogin"
-            android:text="@string/signinText_text" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/loginButton_id"
+    <ImageView
+        android:id="@+id/registrationLogo_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/round_button"
-        android:onClick="signup"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/appLogo"
+        app:srcCompat="@mipmap/logotempp2" />
+
+    <TextView
+        android:id="@+id/yesAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userData"
+        android:layout_centerHorizontal="true"
+        android:layout_toStartOf="@id/toLogin"
+        android:text="@string/alreadyRegistered_text"
+        android:textColor="@color/neroPiscacchia" />
+
+    <TextView
+        android:id="@+id/toLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/yesAccount"
+        android:layout_alignEnd="@id/userData"
+        android:text="@string/signin_text"
+        android:textColor="@color/gialloPiscacchia" />
+
+    <Button
+        android:id="@+id/registrationButton_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/yesAccount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/login_button"
+        android:padding="15dp"
         android:text="@string/signupButton_text" />
-</LinearLayout>
+
+</RelativeLayout>
 

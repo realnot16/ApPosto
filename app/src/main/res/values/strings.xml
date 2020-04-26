@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Project</string>
+    <string name="app_name">ProjectX</string>
 
 
     <string name="appLogo">appLogo</string>
@@ -10,11 +10,12 @@
     <string name="password_id_text">Password</string>
 
     <string name="loginCheckBox_text">Ricordami</string>
-    <string name="loginText_text">Non hai un account?</string>
+    <string name="forgotPassowrd">Password dimenticata?</string>
+    <string name="noAccount_text">Non hai un account?</string>
     <string name="loginRegistrationText_text">Registrati!</string>
     <string name="loginButton_text">Accedi</string>
-    <string name="signupText_text">Sei già registrato?</string>
-    <string name="signinText_text">Accedi!</string>
+    <string name="alreadyRegistered_text">Sei già registrato?</string>
+    <string name="signin_text">Accedi!</string>
     <string name="signupButton_text">Registrati</string>
     <string name="title_activity_maps">Map</string>
 
@@ -22,6 +23,7 @@
     <string name="barText">SCEGLI IL TUO POSTO!!</string>
     <string name="QrCode">QRbutton</string>
     <string name="direction">DirButton</string>
+
 
 
 </resources>

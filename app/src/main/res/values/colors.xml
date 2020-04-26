@@ -3,4 +3,9 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="gialloPiscacchia">#FFD66D</color>
+    <color name="bluPiscacchia">#0B1F3A</color>
+    <color name="neroPiscacchia">#000000</color>
+    <color name="biancoPiscacchia">#FFFFFF</color>
+    <color name="toFillColor">#D5D5D1</color>
 </resources>

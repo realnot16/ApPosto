@@ -50,7 +50,7 @@ public class SignupActivity extends AppCompatActivity {
     private void initUI() {
         mail = findViewById(R.id.email_id);
         password = findViewById(R.id.password_id);
-        confpassword = findViewById(R.id.confpassword_id);
+        confpassword = findViewById(R.id.registrationConfpassword_id);
 
         mAuth = FirebaseAuth.getInstance();
     }
