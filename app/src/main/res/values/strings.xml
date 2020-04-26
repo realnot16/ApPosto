@@ -2,7 +2,6 @@
     <string name="app_name">Project</string>
 
 
-
     <string name="appLogo">appLogo</string>
     <string name="email_description">Inserisci email:</string>
     <string name="password_description">Inserisci password:</string>
@@ -17,5 +16,12 @@
     <string name="signupText_text">Sei già registrato?</string>
     <string name="signinText_text">Accedi!</string>
     <string name="signupButton_text">Registrati</string>
+    <string name="title_activity_maps">Map</string>
+
+
+    <string name="barText">SCEGLI IL TUO POSTO!!</string>
+    <string name="QrCode">QRbutton</string>
+    <string name="direction">DirButton</string>
+
 
 </resources>
