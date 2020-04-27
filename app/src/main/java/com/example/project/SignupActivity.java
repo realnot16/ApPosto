@@ -48,8 +48,8 @@ public class SignupActivity extends AppCompatActivity {
 
     //Metodo di inizializzazione
     private void initUI() {
-        mail = findViewById(R.id.email_id);
-        password = findViewById(R.id.password_id);
+        mail = findViewById(R.id.registrationEmail_id);
+        password = findViewById(R.id.registrationPassword_id);
         confpassword = findViewById(R.id.registrationConfpassword_id);
 
         mAuth = FirebaseAuth.getInstance();
