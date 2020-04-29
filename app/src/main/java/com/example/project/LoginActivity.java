@@ -66,10 +66,10 @@ public class LoginActivity extends AppCompatActivity {
 
     //Metodo di inizializzazione
     private void initUI() {
-        email = (EditText) findViewById(R.id.email_id);
-        password = (EditText) findViewById(R.id.password_id);
-        ricordami = (CheckBox) findViewById(R.id.loginCheckbox_id);
-        button = findViewById(R.id.sign_in_button);
+        email = (EditText) findViewById(R.id.login_emailField_id);
+        password = (EditText) findViewById(R.id.login_passwordField_id);
+        ricordami = (CheckBox) findViewById(R.id.login_ricordami_id);
+        button = findViewById(R.id.login_accedi_google_id);
 
         getMyPreferences();
 

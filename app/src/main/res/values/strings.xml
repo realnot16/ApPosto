@@ -1,29 +1,33 @@
 <resources>
     <string name="app_name">ProjectX</string>
-
-
     <string name="appLogo">appLogo</string>
-    <string name="email_description">Inserisci email:</string>
-    <string name="password_description">Inserisci password:</string>
-    <string name="confpassword_description">Conferma password:</string>
-    <string name="email_id_text">Email</string>
-    <string name="password_id_text">Password</string>
 
-    <string name="loginCheckBox_text">Ricordami</string>
-    <string name="forgotPassowrd">Password dimenticata?</string>
-    <string name="noAccount_text">Non hai un account?</string>
-    <string name="loginRegistrationText_text">Registrati!</string>
-    <string name="loginButton_text">Accedi</string>
-    <string name="alreadyRegistered_text">Sei già registrato?</string>
-    <string name="signin_text">Accedi!</string>
-    <string name="signupButton_text">Registrati</string>
+    <!--   String signUpLayout -->
+    <string name="signUp_email_description_text">Inserisci email:</string>
+    <string name="signUp_password_description_text">Inserisci password:</string>
+    <string name="signUp_Cpassword_description_text">Conferma password:</string>
+    <string name="signUp_emailField_text">Email</string>
+    <string name="signUp_passwordField_text">Password</string>
+    <string name="signUp_CpasswordField_text">Conferma Password</string>
+    <string name="signUp_yesAccount_description_text">Sei già registrato?</string>
+    <string name="signUp_accedi_description_text">Accedi!</string>
+    <string name="signUp_registrati_button_description_text">Registrati</string>
+
+    <!--   String loginLayout -->
+    <string name="login_emailField_text">Email</string>
+    <string name="login_passwordField_text">Password</string>
+    <string name="login_ricordami_description_text">Ricordami</string>
+    <string name="login_passwordDimenticata_description_text">Password dimenticata?</string>
+    <string name="login_noAccount_description_text">Non hai un account?</string>
+    <string name="login_registrati_description_text">Registrati!</string>
+    <string name="login_accedi_button_description_text">Accedi</string>
+
+
+    <!--   String MapLayout -->
     <string name="title_activity_maps">Map</string>
-
-
     <string name="barText">SCEGLI IL TUO POSTO!!</string>
     <string name="QrCode">QRbutton</string>
     <string name="direction">DirButton</string>
-
 
 
 </resources>
