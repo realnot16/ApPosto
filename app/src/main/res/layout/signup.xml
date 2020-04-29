@@ -92,6 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/appLogo"
+        android:scaleType="centerInside"
         app:srcCompat="@drawable/ic_logo_parking" />
 
     <TextView
