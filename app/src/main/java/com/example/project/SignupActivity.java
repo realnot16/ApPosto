@@ -56,7 +56,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser currentUser) {
-        Intent intent = new Intent(SignupActivity.this, MapsActivity.class);
+        Intent intent = new Intent(SignupActivity.this, MainActivity.class);
         startActivity(intent);
     }
 
@@ -117,8 +117,10 @@ public class SignupActivity extends AppCompatActivity {
                     .compile("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}");
             Matcher emailMatcher = emailPattern.matcher(mailUser);
             Matcher passMatcher = passwordPattern.matcher(passwordUser);
-            if(!emailMatcher.matches() || !passMatcher.matches())
+            if(!emailMatcher.matches() || !passMatcher.matches()) {
                 valid = false;
+                Toast.makeText(this, "La password deve contenere almeno 1 maiuscola, 1 minuscola e un numero, e deve essere di almeno 8 caratteri.", Toast.LENGTH_LONG).show();
+            }
         }
 
             return valid;

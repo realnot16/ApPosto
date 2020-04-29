@@ -67,6 +67,7 @@
         android:layout_alignBaseline="@id/loginCheckbox_id"
         android:layout_alignEnd="@id/password_id"
         android:drawableStart="@drawable/ic_lock_open_black_24dp"
+        android:onClick="resetPasswordEmail"
         android:text="@string/forgotPassowrd"
         android:textColor="@color/neroPiscacchia" />
 

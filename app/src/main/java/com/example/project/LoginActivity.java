@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser currentUser) {
         if(currentUser!=null) {
-            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         }
     }
@@ -175,4 +175,23 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    //Richiamato con click su Password dimenticata
+    public void resetPasswordEmail(View view) {
+        String emailAddress = email.getText().toString();
+
+        if(!emailAddress.isEmpty()) {
+            mAuth.sendPasswordResetEmail(emailAddress)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.i(TAG, "Email sent.");
+                                Toast.makeText(LoginActivity.this, "Una mail è stata inviata al tuo indirizzo di posta.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }else
+            Toast.makeText(this, "Compila il campo mail per poter ripristinare la password.", Toast.LENGTH_SHORT).show();
+
+    }
 }
