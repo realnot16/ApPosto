@@ -3,10 +3,14 @@ package com.example.project;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -28,8 +32,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 1;
+    private static final String MY_SHARED_PREF = "login_prefs";
+    private static final String CBOX_DATA_KEY = "remember_checkbox";
+    private static final String EMAIL_DATA_KEY = "remember_mail";
+    private static final String PASSWORD_DATA_KEY = "remember_password";
     private EditText email;
     private EditText password;
+    private CheckBox ricordami;
 
     private FirebaseAuth mAuth;
 
@@ -59,7 +68,10 @@ public class LoginActivity extends AppCompatActivity {
     private void initUI() {
         email = (EditText) findViewById(R.id.email_id);
         password = (EditText) findViewById(R.id.password_id);
+        ricordami = (CheckBox) findViewById(R.id.loginCheckbox_id);
         button = findViewById(R.id.sign_in_button);
+
+        getMyPreferences();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -77,6 +89,15 @@ public class LoginActivity extends AppCompatActivity {
                                       }
                                   });
 
+    }
+
+    private void getMyPreferences() {
+        SharedPreferences prefs = getSharedPreferences(MY_SHARED_PREF, Context.MODE_PRIVATE);
+        if(prefs.getBoolean(CBOX_DATA_KEY, false)){
+            email.setText(prefs.getString(EMAIL_DATA_KEY, ""));
+            password.setText(prefs.getString(PASSWORD_DATA_KEY, ""));
+            ricordami.setEnabled(prefs.getBoolean(CBOX_DATA_KEY, false));
+        }
     }
 
     private void signInWithGoogle() {
@@ -139,8 +160,9 @@ public class LoginActivity extends AppCompatActivity {
     //Metodo richiamato con il click su Login
     public void login(View view){
         Log.i(TAG, "Hai cliccato su Login!");
-        String mailUtente = email.getText().toString();
-        String passwordUtente = password.getText().toString();
+        final String mailUtente = email.getText().toString();
+        final String passwordUtente = password.getText().toString();
+        final boolean checkRicordami = ricordami.isEnabled();
 
         if(!mailUtente.isEmpty() && !mailUtente.isEmpty()) {
             mAuth.signInWithEmailAndPassword(mailUtente, passwordUtente)
@@ -152,6 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 updateUI(user);
+                                savePreference(checkRicordami, mailUtente, passwordUtente);
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -167,6 +190,21 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void savePreference(boolean checkRicordami, String mailUtente, String passwordUtente) {
+        SharedPreferences prefs = this.getSharedPreferences(MY_SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor= prefs.edit();;
+        if(checkRicordami) {
+            prefsEditor.putBoolean(CBOX_DATA_KEY, checkRicordami);
+            prefsEditor.putString(EMAIL_DATA_KEY, mailUtente);
+            prefsEditor.putString(PASSWORD_DATA_KEY, passwordUtente);
+            prefsEditor.commit();
+        } else{
+            prefsEditor.clear();
+            prefsEditor.commit();
+        }
+    }
+
+    //Richiamato con click su Registrati
     public void goToSignup(View view){
         Log.i(TAG, "Hai cliccato su Registrati. Verrai reindirizzato alla pagina di registrazione.");
 
