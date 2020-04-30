@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         if(prefs.getBoolean(CBOX_DATA_KEY, false)){
             email.setText(prefs.getString(EMAIL_DATA_KEY, ""));
             password.setText(prefs.getString(PASSWORD_DATA_KEY, ""));
-            ricordami.setEnabled(prefs.getBoolean(CBOX_DATA_KEY, false));
+            ricordami.setChecked(prefs.getBoolean(CBOX_DATA_KEY, false));
         }
     }
 
@@ -162,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.i(TAG, "Hai cliccato su Login!");
         final String mailUtente = email.getText().toString();
         final String passwordUtente = password.getText().toString();
-        final boolean checkRicordami = ricordami.isEnabled();
+        final boolean checkRicordami = ricordami.isChecked();
 
         if(!mailUtente.isEmpty() && !mailUtente.isEmpty()) {
             mAuth.signInWithEmailAndPassword(mailUtente, passwordUtente)
