@@ -29,5 +29,8 @@
     <string name="QrCode">QRbutton</string>
     <string name="direction">DirButton</string>
 
+    <!--   String MapLayout -->
+    <string name="toast_no_parking">Spiacenti nessun posto libero in questa area!</string>
+
 
 </resources>
