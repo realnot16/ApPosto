@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,7 +46,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //e che risponde all'evento QueryTextSubmit sparando il metodo DbRequest che comunica con api google
         // per la ricerca delle coordinate relative alla ricerca e contatta il nostro DB in cloud per farsi ritornare
         //un json di parcheggi idonei
-        searchView=(SearchView) findViewById(R.id.searchview_id);
+        FloatingSearchView fSearchView =(FloatingSearchView) findViewById(R.id.floating_search_view);
+
+        fSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            @Override
+            public void onSearchTextChanged(String oldQuery, final String newQuery) {
+
+                //get suggestions based on newQuery
+
+                //pass them on to the search view
+                //fSearchView.swapSuggestions(newSuggestions);
+            }
+            public boolean onQueryTextSubmit(String query) {
+                //Aggiungere API google per ricavare coordinate della destinazione con la query
+                double lat_dest = 45.070841;//fittizie: dovrebbero essere ritornate da google api
+                double long_dest = 7.668552;//fittizie
+                String city = "Torino";//fittizia
+                ParametersAsync parametersAsync = new ParametersAsync(lat_dest, long_dest, city);
+                new DbAsyncRequest().execute(parametersAsync);
+                return false;
+            }
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        /*
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -63,6 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         });
+        */
     }
 
 
