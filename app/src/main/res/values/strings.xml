@@ -32,5 +32,8 @@
     <!--   String MapLayout -->
     <string name="toast_no_parking">Spiacenti nessun posto libero in questa area!</string>
 
+    <!-- Place autoComplete API, hardcode, take care -->
+    <string name="placeAutocomplete">AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE</string>
+
 
 </resources>
