@@ -22,6 +22,12 @@
     <string name="login_registrati_description_text">Registrati!</string>
     <string name="login_accedi_button_description_text">Accedi</string>
 
+    <!--   String reservation_row_layout -->
+    <string name="reservation_id_text">Codice prenotazione: </string>
+    <string name="reservation_date_text">Data: </string>
+    <string name="reservation_address_text">Indirizzo del posteggio: </string>
+    <string name="reservation_amount_text">Costo totale: </string>
+
 
     <!--   String MapLayout -->
     <string name="title_activity_maps">Map</string>
