@@ -2,9 +2,12 @@ package com.example.project;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -18,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,6 +41,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SearchView searchView;
     private String placeAutocompleteAPIkey;
     private Integer filter_destination_meter=1200;
+    private final static int  REQUESTCODEFROMSCANNER=2;
+    FloatingActionButton qrButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        qrButton=(FloatingActionButton) findViewById(R.id.floatingQrButton);
+        qrButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
+                startActivityForResult(intent,REQUESTCODEFROMSCANNER);
+            }
+        });
 
         //AUTOCOMPLETAMENTO SEARCH BAR
         placeAutocompleteAPIkey=getString(R.string.placeAutocomplete); //Initialize Places. For simplicity, the API key is hard-coded.
@@ -69,7 +83,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+
     }
+
+
 
     private GoogleMap setMap(GoogleMap map) {
         map.getUiSettings().setZoomControlsEnabled(true);
@@ -85,6 +102,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return mMap;
     }
+
+
 
 
     /**
@@ -309,6 +328,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode==REQUESTCODEFROMSCANNER && resultCode==Activity.RESULT_OK){
+                String result=data.getStringExtra("parking_code");
+                Log.i("ActivityResult",result);
+
+
+        }
+    }
+
+
 
 }
 

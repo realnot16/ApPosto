@@ -8,6 +8,11 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-feature android:name="android.hardware.camera2" />
+    <uses-feature android:name="android.hardware.camera2.autofocus" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_park_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ScannerActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -26,9 +32,8 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key"
-            android:networkSecurityConfig="@xml/network_security_config"/><!-- connessione sicura di rete -->
-
+            android:networkSecurityConfig="@xml/network_security_config"
+            android:value="@string/google_maps_key" /> <!-- connessione sicura di rete -->
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps">
@@ -38,10 +43,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".ReservationsActivity"></activity>
+        <activity android:name=".ReservationsActivity" />
     </application>
 
 </manifest>

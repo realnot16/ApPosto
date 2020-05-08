@@ -1,36 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F68181">
+    android:background="#F68181"
+    android:orientation="vertical">
 
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapsActivity" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
-    <com.arlib.floatingsearchview.FloatingSearchView
-        android:id="@+id/floating_search_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:imeOptions="actionSearch"
-        app:floatingSearch_close_search_on_keyboard_dismiss="true"
-        app:floatingSearch_leftActionMode="showHamburger"
-        app:floatingSearch_searchBarMarginLeft="10dp"
-        app:floatingSearch_searchBarMarginRight="10dp"
-        app:floatingSearch_searchBarMarginTop="10dp"
-        app:floatingSearch_searchHint="Search..."
-        app:floatingSearch_showSearchKey="false"
-        app:floatingSearch_suggestionsListAnimDuration="250">
-    </com.arlib.floatingsearchview.FloatingSearchView>
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <com.arlib.floatingsearchview.FloatingSearchView
+            android:id="@+id/floating_search_view"
+            android:layout_width="241dp"
+            android:layout_height="match_parent"
+            app:floatingSearch_close_search_on_keyboard_dismiss="true"
+            app:floatingSearch_leftActionMode="showHamburger"
+            app:floatingSearch_searchBarMarginLeft="10dp"
+            app:floatingSearch_searchBarMarginRight="10dp"
+            app:floatingSearch_searchBarMarginTop="10dp"
+            app:floatingSearch_searchHint="Search..."
+            app:floatingSearch_showSearchKey="false"
+            app:floatingSearch_suggestionsListAnimDuration="250">
 
+        </com.arlib.floatingsearchview.FloatingSearchView>
+
+        <SearchView
+            android:id="@+id/searchview_id"
+            android:layout_width="121dp"
+            android:layout_height="60dp"
+            android:elevation="14.5sp"
+            android:imeOptions="actionSearch">
+
+        </SearchView>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingQrButton"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="30dp"
+        android:clickable="true"
+        android:focusable="auto"
+        android:onClick="onQrButtonClick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        map:backgroundTint="#3F51B5"
+        map:rippleColor="#FFFFFF"
+        map:srcCompat="?attr/actionModeSelectAllDrawable" />
 
 
     <!--
@@ -60,12 +94,5 @@
 
 
     </RelativeLayout> -->
-    <SearchView
-        android:id="@+id/searchview_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="14.5sp"
-        android:imeOptions="actionSearch"
-        />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

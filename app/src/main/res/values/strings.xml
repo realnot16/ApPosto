@@ -28,10 +28,10 @@
     <string name="barText">SCEGLI IL TUO POSTO!!</string>
     <string name="QrCode">QRbutton</string>
     <string name="direction">DirButton</string>
-
-    <!--   String MapLayout -->
     <string name="toast_no_parking">Spiacenti nessun posto libero in questa area!</string>
 
+    <!--   String ScannerActivity -->
+    <string name="scanner_info">Scan the Qr code over your parking column</string>
     <!-- Place autoComplete API, hardcode, take care -->
     <string name="placeAutocomplete">AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE</string>
 
