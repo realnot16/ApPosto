@@ -1,5 +1,6 @@
 package com.example.project;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import android.app.Activity;
@@ -7,7 +8,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -35,7 +40,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private SearchView searchView;
@@ -46,8 +51,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getSupportActionBar().setTitle("Cerca Un Parcheggio"); // for set actionbar title
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        getSupportActionBar().setHomeButtonEnabled(true);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -61,6 +70,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+
+
+/*
         //AUTOCOMPLETAMENTO SEARCH BAR
         placeAutocompleteAPIkey=getString(R.string.placeAutocomplete); //Initialize Places. For simplicity, the API key is hard-coded.
         if (!Places.isInitialized()) {
@@ -82,8 +94,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //impostare suggerimenti effettuando una richiesta a google per avere tutte le vie etc.
             }
         });
+*/
 
+    }
+/*
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() ==android.R.id.home){
+            Log.i("ActivityResult","CI SIAMO");
+            showPopup(findViewById(R.id.searchview_id));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
+    public void showPopup(View v) {
+        Log.i("ActivityResult","CI SIAMO2");
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        Log.i("ActivityResult","CI SIAMO3");
+        inflater.inflate(R.menu.profile_menu, popup.getMenu());
+        Log.i("ActivityResult","CI SIAMO4");
+        popup.show();
+        Log.i("ActivityResult","CI SIAMO5");
+    }*/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.FIRST, Menu.FIRST, Menu.FIRST, "CICCIO");
+        return true;
     }
 
 
