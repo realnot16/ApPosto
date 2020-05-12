@@ -1,9 +1,12 @@
 package com.example.project;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +37,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import static com.example.project.R.string.permcameradenied;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -42,6 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String placeAutocompleteAPIkey;
     private Integer filter_destination_meter=1200;
     private final static int  REQUESTCODEFROMSCANNER=2;
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
     FloatingActionButton qrButton;
 
     @Override
@@ -56,8 +62,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         qrButton=(FloatingActionButton) findViewById(R.id.floatingQrButton);
         qrButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
-                startActivityForResult(intent,REQUESTCODEFROMSCANNER);
+                if (ActivityCompat.checkSelfPermission(MapsActivity.this,   //controlla che il permesso sia garantito
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(MapsActivity.this,   //richiesta di permesso all'utente
+                                new String[]{Manifest.permission.CAMERA},
+                                MY_CAMERA_REQUEST_CODE);
+                }
+                else{
+                    Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
+                    startActivityForResult(intent,REQUESTCODEFROMSCANNER);
+
+                }
+
             }
         });
 
@@ -329,14 +346,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_CAMERA_REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
+                    startActivityForResult(intent,REQUESTCODEFROMSCANNER);
+
+                } else {
+                    Toast.makeText(MapsActivity.this, permcameradenied,Toast.LENGTH_SHORT).show();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode==REQUESTCODEFROMSCANNER && resultCode==Activity.RESULT_OK){
                 String result=data.getStringExtra("parking_code");
-                Log.i("ActivityResult",result);
-
+            Toast.makeText(MapsActivity.this,result,Toast.LENGTH_SHORT).show();
 
         }
     }

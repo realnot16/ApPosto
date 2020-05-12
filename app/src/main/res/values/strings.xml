@@ -34,6 +34,7 @@
     <string name="scanner_info">Scan the Qr code over your parking column</string>
     <!-- Place autoComplete API, hardcode, take care -->
     <string name="placeAutocomplete">AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE</string>
+    <string name="permcameradenied">Error: Camera Permission is not granted, you cannot use the Scanner!</string>
 
 
 </resources>
