@@ -22,6 +22,12 @@
     <string name="login_registrati_description_text">Registrati!</string>
     <string name="login_accedi_button_description_text">Accedi</string>
 
+    <!--   String reservation_row_layout -->
+    <string name="reservation_id_text">Codice prenotazione: </string>
+    <string name="reservation_date_text">Data: </string>
+    <string name="reservation_address_text">Indirizzo del posteggio: </string>
+    <string name="reservation_amount_text">Costo totale: </string>
+
 
     <!--   String MapLayout -->
     <string name="title_activity_maps">Map</string>
@@ -34,7 +40,19 @@
     <string name="scanner_info">Scan the Qr code over your parking column</string>
     <!-- Place autoComplete API, hardcode, take care -->
     <string name="placeAutocomplete">AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE</string>
-    <string name="permcameradenied">Error: Camera Permission is not granted, you cannot use the Scanner!</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+
+    <string name="home_second">Home Second</string>
 
 
 </resources>

@@ -1,16 +1,18 @@
 package com.example.project;
 
-import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -37,23 +39,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import static com.example.project.R.string.permcameradenied;
 
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private SearchView searchView;
     private String placeAutocompleteAPIkey;
     private Integer filter_destination_meter=1200;
     private final static int  REQUESTCODEFROMSCANNER=2;
-    private static final int MY_CAMERA_REQUEST_CODE = 100;
     FloatingActionButton qrButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getSupportActionBar().setTitle("Cerca Un Parcheggio"); // for set actionbar title
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        getSupportActionBar().setHomeButtonEnabled(true);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -62,22 +65,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         qrButton=(FloatingActionButton) findViewById(R.id.floatingQrButton);
         qrButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(MapsActivity.this,   //controlla che il permesso sia garantito
-                        Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(MapsActivity.this,   //richiesta di permesso all'utente
-                                new String[]{Manifest.permission.CAMERA},
-                                MY_CAMERA_REQUEST_CODE);
-                }
-                else{
-                    Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
-                    startActivityForResult(intent,REQUESTCODEFROMSCANNER);
-
-                }
-
+                Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
+                startActivityForResult(intent,REQUESTCODEFROMSCANNER);
             }
         });
 
+
+
+/*
         //AUTOCOMPLETAMENTO SEARCH BAR
         placeAutocompleteAPIkey=getString(R.string.placeAutocomplete); //Initialize Places. For simplicity, the API key is hard-coded.
         if (!Places.isInitialized()) {
@@ -99,8 +94,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //impostare suggerimenti effettuando una richiesta a google per avere tutte le vie etc.
             }
         });
+*/
 
+    }
+/*
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() ==android.R.id.home){
+            Log.i("ActivityResult","CI SIAMO");
+            showPopup(findViewById(R.id.searchview_id));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
+    public void showPopup(View v) {
+        Log.i("ActivityResult","CI SIAMO2");
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        Log.i("ActivityResult","CI SIAMO3");
+        inflater.inflate(R.menu.profile_menu, popup.getMenu());
+        Log.i("ActivityResult","CI SIAMO4");
+        popup.show();
+        Log.i("ActivityResult","CI SIAMO5");
+    }*/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.FIRST, Menu.FIRST, Menu.FIRST, "CICCIO");
+        return true;
     }
 
 
@@ -346,36 +368,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case MY_CAMERA_REQUEST_CODE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
-                    startActivityForResult(intent,REQUESTCODEFROMSCANNER);
-
-                } else {
-                    Toast.makeText(MapsActivity.this, permcameradenied,Toast.LENGTH_SHORT).show();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode==REQUESTCODEFROMSCANNER && resultCode==Activity.RESULT_OK){
                 String result=data.getStringExtra("parking_code");
-            Toast.makeText(MapsActivity.this,result,Toast.LENGTH_SHORT).show();
+                Log.i("ActivityResult",result);
+
 
         }
     }

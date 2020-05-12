@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/signUp_scrollView_id"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/backround_main"
     android:fillViewport="true">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/signUp_relativeLayout_id"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/signUp_userData_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/signUp_logo_id"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="100dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/signUp_registrati_button_id"
+            app:layout_constraintTop_toBottomOf="@+id/signUp_logo_id">
 
             <TextView
                 android:id="@+id/signUp_descrizioneEmail_id"
@@ -95,10 +94,16 @@
 
         <ImageView
             android:id="@+id/signUp_logo_id"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="64dp"
             android:contentDescription="@string/appLogo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_logo_parking" />
 
         <TextView
@@ -109,7 +114,10 @@
             android:layout_centerHorizontal="true"
             android:layout_toStartOf="@id/signUp_accedi_id"
             android:text="@string/signUp_yesAccount_description_text"
-            android:textColor="@color/neroPiscacchia" />
+            android:textColor="@color/neroPiscacchia"
+            app:layout_constraintBottom_toTopOf="@+id/signUp_registrati_button_id"
+            app:layout_constraintEnd_toStartOf="@+id/signUp_accedi_id"
+            app:layout_constraintTop_toBottomOf="@+id/signUp_userData_id" />
 
         <TextView
             android:id="@+id/signUp_accedi_id"
@@ -119,20 +127,22 @@
             android:layout_alignEnd="@id/signUp_userData_id"
             android:onClick="goToLogin"
             android:text="@string/signUp_accedi_description_text"
-            android:textColor="@color/gialloPiscacchia" />
+            android:textColor="@color/gialloPiscacchia"
+            app:layout_constraintBottom_toTopOf="@+id/signUp_registrati_button_id"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/signUp_userData_id" />
 
         <Button
             android:id="@+id/signUp_registrati_button_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/signUp_yesAccount_id"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="15dp"
             android:background="@drawable/button_login_register"
             android:onClick="signup"
             android:padding="15dp"
-            android:text="@string/signUp_registrati_button_description_text" />
+            android:text="@string/signUp_registrati_button_description_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
