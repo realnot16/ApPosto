@@ -13,30 +13,68 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/label_mail_id"
+            android:id="@+id/label_mail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mail:"
-            android:textSize="24sp"
+            android:hint="mail"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.188"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.499" />
+            app:layout_constraintVertical_bias="0.397" />
 
         <TextView
-            android:id="@+id/label_password_id"
+            android:id="@+id/label_birthdate_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Password:"
-            android:textSize="24sp"
+            android:text="Data di nascita:"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.053"
+            app:layout_constraintHorizontal_bias="0.124"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.61" />
+            app:layout_constraintVertical_bias="0.568" />
+
+        <TextView
+            android:id="@+id/label_city_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CIttà:"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.314"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.66" />
+
+        <TextView
+            android:id="@+id/label_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="..."
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.535"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.662" />
+
+        <TextView
+            android:id="@+id/label_birthdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="..."
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.535"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.571" />
 
         <ImageButton
             android:id="@+id/edit_button_id"
@@ -52,22 +90,10 @@
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <TextView
-            android:id="@+id/label_location_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Location"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.396" />
-
-        <TextView
             android:id="@+id/label_name_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Firstname Lastname"
+            android:hint="Nome Cognome"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -87,33 +113,57 @@
             app:layout_constraintVertical_bias="0.16"
             app:srcCompat="@drawable/login_ic_person_black_24dp" />
 
-        <EditText
-            android:id="@+id/show_mail_id"
+        <TextView
+            android:id="@+id/label_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:editable="false"
-            android:ems="10"
-            android:inputType="none"
+            android:hint="phone"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.833"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.508" />
+            app:layout_constraintVertical_bias="0.457" />
 
-        <EditText
-            android:id="@+id/show_password_id"
+        <Button
+            android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:editable="false"
-            android:ems="10"
-            android:inputType="none"
+            android:text="Ricarica"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.833"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.622" />
+            app:layout_constraintVertical_bias="0.941" />
+
+        <TextView
+            android:id="@+id/label_wallet_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Wallet"
+            android:textColor="@color/biancoPiscacchia"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.216"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.821" />
+
+        <TextView
+            android:id="@+id/label_wallet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="..."
+            android:textColor="@color/biancoPiscacchia"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.544"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.821" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

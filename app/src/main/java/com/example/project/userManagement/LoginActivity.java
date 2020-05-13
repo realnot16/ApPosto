@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.project.R;
+import com.example.project.map.MapsActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -155,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser currentUser) {
         if(currentUser!=null) {
-            Intent intent = new Intent(LoginActivity.this, EditProfile.class);
+            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
             startActivity(intent);
         }
     }
