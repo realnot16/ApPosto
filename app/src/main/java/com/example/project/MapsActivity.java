@@ -1,18 +1,25 @@
 package com.example.project;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -27,6 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,6 +52,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     private SearchView searchView;
+    private PopupWindow popUp;
+    private DrawerLayout drawerLayout;
     private String placeAutocompleteAPIkey;
     private Integer filter_destination_meter=1200;
     private final static int  REQUESTCODEFROMSCANNER=2;
@@ -51,14 +61,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /*
         getSupportActionBar().setTitle("Cerca Un Parcheggio"); // for set actionbar title
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);*/
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.maps);
+        setContentView(R.layout.prova_navigation);
+        // IMPOSTO LA TOOLBAR E LA COLLEGO AL NAVIGATION DRAWER
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        SearchView searchView = (SearchView) findViewById(R.id.searchview_id);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle("");
+        setNavigationDrawer(toolbar);
+        Drawable filterIcon = getDrawable(R.drawable.ic_filter_list_black_24dp);
+        toolbar.setOverflowIcon(filterIcon);
+        //searchView.setLayoutParams(new ActionBar.LayoutParams(Gravity.RIGHT));
+
+
+
+
+
+
+
+
+
+
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -72,6 +107,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
+
+
 /*
         //AUTOCOMPLETAMENTO SEARCH BAR
         placeAutocompleteAPIkey=getString(R.string.placeAutocomplete); //Initialize Places. For simplicity, the API key is hard-coded.
@@ -79,10 +116,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Places.initialize(getApplicationContext(), placeAutocompleteAPIkey);
         }
         PlacesClient placesClient = Places.createClient(this); // Create a new Places client instance.
-
+*/
+/*
         //SEARCH  BAR, da implementare
         // da impostare aggiungendo le destinazioni possibili
         FloatingSearchView fSearchView =(FloatingSearchView) findViewById(R.id.floating_search_view);
+        popUp = new PopupWindow(this);
+
         fSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, final String newQuery) {
@@ -94,20 +134,82 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //impostare suggerimenti effettuando una richiesta a google per avere tutte le vie etc.
             }
         });
-*/
 
+        fSearchView.setOnLeftMenuClickListener(new FloatingSearchView.OnLeftMenuClickListener() {
+            @Override
+            public void onMenuOpened() {
+                View layout = mapFragment.getView();
+                popUp.showAtLocation(layout, Gravity.BOTTOM,10,10);
+                popUp.setContentView(findViewById(R.id.provaMenu));
+            }
+
+            @Override
+            public void onMenuClosed() {
+                popUp.dismiss();
+
+            }
+        });
+
+*/
+    }
+
+    //COLLEGO IL NAVIGATION LAyoUT ALLA TOOLBAR
+    private void setNavigationDrawer(Toolbar toolbar){
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.map_navigationDrawer_id);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                if (menuItem.isChecked()) menuItem.setChecked(false);
+                else menuItem.setChecked(true);
+                drawerLayout.closeDrawers();
+                switch (menuItem.getItemId()) {
+                    case R.id.home:
+                        drawerLayout.closeDrawers();
+                        return true;
+                    default:
+                        return true;
+                }
+            }
+        });
+        ActionBarDrawerToggle actionBarDrawerToggle =
+                new ActionBarDrawerToggle(this, drawerLayout, toolbar,R.string.open ,R.string.close ) {
+                    @Override
+                    public void onDrawerClosed(View drawerView) {
+                        super.onDrawerClosed(drawerView);
+                    }
+                    @Override
+                    public void onDrawerOpened(View drawerView) {
+                        super.onDrawerOpened(drawerView);
+                    }
+                };
+
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.map_toolbar_items_menu, menu);
+        return true;
     }
 /*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() ==android.R.id.home){
             Log.i("ActivityResult","CI SIAMO");
-            showPopup(findViewById(R.id.searchview_id));
+            LayoutInflater inflater = MapsActivity.this.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            View popView =
+            PopupWindow popW = new PopupWindow();
+           // showPopup(findViewById(R.id.searchview_id));
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /*
     public void showPopup(View v) {
         Log.i("ActivityResult","CI SIAMO2");
         PopupMenu popup = new PopupMenu(this, v);
@@ -118,12 +220,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         popup.show();
         Log.i("ActivityResult","CI SIAMO5");
     }*/
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.FIRST, Menu.FIRST, Menu.FIRST, "CICCIO");
-        return true;
-    }
 
 
 
