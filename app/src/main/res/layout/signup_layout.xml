@@ -4,7 +4,7 @@
     android:id="@+id/signUp_scrollView_id"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/backround_main"
+    android:background="@drawable/main_background"
     android:fillViewport="true">
 
     <RelativeLayout
@@ -37,7 +37,7 @@
                 android:layout_below="@id/signUp_descrizioneEmail_id"
                 android:layout_marginTop="8dp"
                 android:autofillHints="@string/signUp_emailField_text"
-                android:background="@drawable/textview_insert_data"
+                android:background="@drawable/login_edit_text_shape"
                 android:ems="10"
                 android:hint="@string/signUp_emailField_text"
                 android:inputType="textEmailAddress"
@@ -62,7 +62,7 @@
                 android:layout_below="@id/signUp_descrizionePassword_id"
                 android:layout_marginTop="8dp"
                 android:autofillHints="@string/signUp_passwordField_text"
-                android:background="@drawable/textview_insert_data"
+                android:background="@drawable/login_edit_text_shape"
                 android:ems="10"
                 android:hint="@string/signUp_passwordField_text"
                 android:inputType="textPassword"
@@ -85,7 +85,7 @@
                 android:layout_below="@id/signUp_descrizioneCpassword_id"
                 android:layout_marginTop="8dp"
                 android:autofillHints="@string/signUp_CpasswordField_text"
-                android:background="@drawable/textview_insert_data"
+                android:background="@drawable/login_edit_text_shape"
                 android:ems="10"
                 android:hint="@string/signUp_CpasswordField_text"
                 android:inputType="textPassword"
@@ -129,7 +129,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginStart="100dp"
             android:layout_marginTop="15dp"
-            android:background="@drawable/button_login_register"
+            android:background="@drawable/confirm_button"
             android:onClick="signup"
             android:padding="15dp"
             android:text="@string/signUp_registrati_button_description_text" />

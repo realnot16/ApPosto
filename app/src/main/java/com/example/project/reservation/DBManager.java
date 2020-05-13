@@ -1,4 +1,4 @@
-package com.example.project;
+package com.example.project.reservation;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+
+import com.example.project.R;
 
 class DBManager {
 

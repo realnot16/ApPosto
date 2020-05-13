@@ -1,4 +1,4 @@
-package com.example.project;
+package com.example.project.map;
 
 public class ParametersAsync {
     double latitude;

@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backround_main"
-    tools:context=".ReservationsActivity">
+    android:background="@drawable/main_background"
+    tools:context=".reservation.ReservationsActivity">
 
     <ListView
         android:id="@+id/android_list"

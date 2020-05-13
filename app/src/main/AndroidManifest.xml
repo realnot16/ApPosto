@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_park_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ScannerActivity"></activity>
+        <activity android:name=".map.ScannerActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -35,17 +35,17 @@
             android:networkSecurityConfig="@xml/network_security_config"
             android:value="@string/google_maps_key" /> <!-- connessione sicura di rete -->
         <activity
-            android:name=".MapsActivity">
+            android:name=".map.MapsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".SignupActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".ReservationsActivity" />
+        <activity android:name=".userManagement.LoginActivity" />
+        <activity android:name=".userManagement.SignupActivity" />
+        <activity android:name=".userManagement.MainActivity" />
+        <activity android:name=".reservation.ReservationsActivity" />
     </application>
 
 </manifest>

@@ -5,7 +5,7 @@
     android:id="@+id/profile_scrollView_id"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/backround_main"
+    android:background="@drawable/main_background"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -76,7 +76,7 @@
             app:layout_constraintVertical_bias="0.328" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/login_logo_id"
             android:layout_width="122dp"
             android:layout_height="103dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -85,7 +85,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.16"
-            app:srcCompat="@drawable/ic_person_black_24dp" />
+            app:srcCompat="@drawable/login_ic_person_black_24dp" />
 
         <EditText
             android:id="@+id/show_mail_id"

@@ -40,7 +40,7 @@
         app:layout_constraintStart_toStartOf="@+id/camera_view"
         app:layout_constraintTop_toTopOf="@+id/camera_view"
         app:layout_constraintVertical_bias="0.585"
-        app:srcCompat="@drawable/scannersquare" />
+        app:srcCompat="@drawable/map_scanner_square" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -51,6 +51,6 @@
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtContent"
-        app:srcCompat="@drawable/columnimg" />
+        app:srcCompat="@drawable/map_scanner_column" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

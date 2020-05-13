@@ -1,10 +1,9 @@
-package com.example.project;
+package com.example.project.map;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
@@ -15,27 +14,20 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.arlib.floatingsearchview.FloatingSearchView;
+import com.example.project.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -49,6 +41,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -68,20 +61,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         /*
         getSupportActionBar().setTitle("Cerca Un Parcheggio"); // for set actionbar title
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.map_ic_menu_black_24dp);
         getSupportActionBar().setHomeButtonEnabled(true);*/
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.prova_navigation);
+        setContentView(R.layout.map_layout_main);
         // IMPOSTO LA TOOLBAR E LA COLLEGO AL NAVIGATION DRAWER
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        SearchView searchView = (SearchView) findViewById(R.id.searchview_id);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        SearchView searchView = findViewById(R.id.searchview_id);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        try {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.map_ic_menu_black_24dp);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle("");
         setNavigationDrawer(toolbar);
-        Drawable filterIcon = getDrawable(R.drawable.ic_filter_list_black_24dp);
+        Drawable filterIcon = getDrawable(R.drawable.map_ic_filter_list_black_24dp);
         toolbar.setOverflowIcon(filterIcon);
         //searchView.setLayoutParams(new ActionBar.LayoutParams(Gravity.RIGHT));
 
@@ -99,9 +96,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        try {
+            mapFragment.getMapAsync(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        qrButton=(FloatingActionButton) findViewById(R.id.floatingQrButton);
+        qrButton= findViewById(R.id.floatingQrButton);
         qrButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(MapsActivity.this,   //controlla che il permesso sia garantito
@@ -112,7 +113,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             MY_CAMERA_REQUEST_CODE);
                 }
                 else{
-                    Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
+                    Intent intent=new Intent(MapsActivity.this, ScannerActivity.class);
                     startActivityForResult(intent,REQUESTCODEFROMSCANNER);
 
                 }
@@ -171,14 +172,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //COLLEGO IL NAVIGATION LAyoUT ALLA TOOLBAR
     private void setNavigationDrawer(Toolbar toolbar){
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.map_navigationDrawer_id);
+        drawerLayout =  findViewById(R.id.drawer_layout);
+        NavigationView navigationView =  findViewById(R.id.map_navigationDrawer_id);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 if (menuItem.isChecked()) menuItem.setChecked(false);
                 else menuItem.setChecked(true);
-                drawerLayout.closeDrawers();
                 switch (menuItem.getItemId()) {
                     case R.id.home:
                         drawerLayout.closeDrawers();
@@ -208,7 +208,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.map_toolbar_items_menu, menu);
+        getMenuInflater().inflate(R.menu.map_filters_menu, menu);
         return true;
     }
 /*
@@ -231,7 +231,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
         Log.i("ActivityResult","CI SIAMO3");
-        inflater.inflate(R.menu.profile_menu, popup.getMenu());
+        inflater.inflate(R.menu.map_navigation_menu, popup.getMenu());
         Log.i("ActivityResult","CI SIAMO4");
         popup.show();
         Log.i("ActivityResult","CI SIAMO5");
@@ -357,9 +357,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 urlConnection.connect(); //connessione
                 InputStream is = urlConnection.getInputStream();
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.ISO_8859_1), 8);
                 StringBuilder sb = new StringBuilder();
-                String line = null;
+                String line;
                 while ((line = reader.readLine()) != null) {
                     sb.append(line + "\n");
                 }

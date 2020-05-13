@@ -1,11 +1,12 @@
-package com.example.project;
+package com.example.project.reservation;
 
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.CursorAdapter;
+
+import com.example.project.R;
 
 public class ReservationsActivity extends ListActivity {
 

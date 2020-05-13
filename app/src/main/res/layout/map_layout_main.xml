@@ -15,14 +15,15 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F68181"
+        android:background="@drawable/main_background"
         android:orientation="vertical">
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            tools:layout="@layout/process_layout"
             tools:layout_editor_absoluteX="70dp"
             tools:layout_editor_absoluteY="16dp" />
 
@@ -33,7 +34,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/searchview_map"
+            android:background="@drawable/map_searchview_shape"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,11 +58,12 @@
             android:layout_marginStart="30dp"
             android:layout_marginBottom="30dp"
             android:clickable="true"
-            android:focusable="auto"
+            android:focusable="true"
+            android:focusableInTouchMode="false"
             android:onClick="onQrButtonClick"
+            app:backgroundTint="#3F51B5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:backgroundTint="#3F51B5"
             app:rippleColor="#FFFFFF"
             app:srcCompat="?attr/actionModeSelectAllDrawable" />
 
@@ -74,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/profile_menu" />
+        app:menu="@menu/map_navigation_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
 
