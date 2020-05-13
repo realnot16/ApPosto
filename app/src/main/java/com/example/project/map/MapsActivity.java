@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.project.R;
+import com.example.project.userManagement.ShowProfile;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -106,6 +107,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     case R.id.home:
                         drawerLayout.closeDrawers();
                         return true;
+                    case R.id.show_profile_id:
+                        Intent i = new Intent(MapsActivity.this, ShowProfile.class);
+                        startActivity(i);
                     default:
                         return true;
                 }

@@ -37,12 +37,14 @@ public class ShowProfile extends AppCompatActivity {
         email = (TextView) findViewById(R.id.label_mail);
         phone = (TextView) findViewById(R.id.label_phone);
 
-
+        /*
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (!user.getEmail().isEmpty()) {
             email.setText(user.getEmail());
         }
+
+         */
 
 
     }
