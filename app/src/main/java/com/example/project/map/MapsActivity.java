@@ -17,8 +17,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupWindow;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.project.R;
@@ -42,15 +40,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private SearchView searchView;
-    private PopupWindow popUp;
     private DrawerLayout drawerLayout;
-    private String placeAutocompleteAPIkey;
     private Integer filter_destination_meter=1200;
     private final static int  REQUESTCODEFROMSCANNER=2;
     private final static int MY_CAMERA_REQUEST_CODE=100;
@@ -58,119 +54,46 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /*
-        getSupportActionBar().setTitle("Cerca Un Parcheggio"); // for set actionbar title
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.map_ic_menu_black_24dp);
-        getSupportActionBar().setHomeButtonEnabled(true);*/
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout_main);
         // IMPOSTO LA TOOLBAR E LA COLLEGO AL NAVIGATION DRAWER
         Toolbar toolbar = findViewById(R.id.toolbar);
-        SearchView searchView = findViewById(R.id.searchview_id);
         setSupportActionBar(toolbar);
-        try {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true); // for add back arrow in action bar
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.map_ic_menu_black_24dp);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle("");
         setNavigationDrawer(toolbar);
         Drawable filterIcon = getDrawable(R.drawable.map_ic_filter_list_black_24dp);
         toolbar.setOverflowIcon(filterIcon);
-        //searchView.setLayoutParams(new ActionBar.LayoutParams(Gravity.RIGHT));
-
-
-
-
-
-
-
-
-
-
-
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        try {
-            mapFragment.getMapAsync(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        assert mapFragment != null;
+        mapFragment.getMapAsync(this);
+
+        //IMPLEMENTO BOTTONE PER QR CODE ACTIIVTY
 
         qrButton= findViewById(R.id.floatingQrButton);
         qrButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(MapsActivity.this,   //controlla che il permesso sia garantito
-                        Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
+                        Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
                     ActivityCompat.requestPermissions(MapsActivity.this,   //richiesta di permesso all'utente
-                            new String[]{Manifest.permission.CAMERA},
-                            MY_CAMERA_REQUEST_CODE);
+                            new String[]{Manifest.permission.CAMERA},MY_CAMERA_REQUEST_CODE);
                 }
                 else{
                     Intent intent=new Intent(MapsActivity.this, ScannerActivity.class);
                     startActivityForResult(intent,REQUESTCODEFROMSCANNER);
 
                 }
-
             }
         });
-
-
-
-
-
-
-/*
-        //AUTOCOMPLETAMENTO SEARCH BAR
-        placeAutocompleteAPIkey=getString(R.string.placeAutocomplete); //Initialize Places. For simplicity, the API key is hard-coded.
-        if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), placeAutocompleteAPIkey);
-        }
-        PlacesClient placesClient = Places.createClient(this); // Create a new Places client instance.
-*/
-/*
-        //SEARCH  BAR, da implementare
-        // da impostare aggiungendo le destinazioni possibili
-        FloatingSearchView fSearchView =(FloatingSearchView) findViewById(R.id.floating_search_view);
-        popUp = new PopupWindow(this);
-
-        fSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
-            @Override
-            public void onSearchTextChanged(String oldQuery, final String newQuery) {
-
-                //get suggestions based on newQuery
-                //pass them on to the search view
-                //fSearchView.swapSuggestions(newSuggestions);
-
-                //impostare suggerimenti effettuando una richiesta a google per avere tutte le vie etc.
-            }
-        });
-
-        fSearchView.setOnLeftMenuClickListener(new FloatingSearchView.OnLeftMenuClickListener() {
-            @Override
-            public void onMenuOpened() {
-                View layout = mapFragment.getView();
-                popUp.showAtLocation(layout, Gravity.BOTTOM,10,10);
-                popUp.setContentView(findViewById(R.id.provaMenu));
-            }
-
-            @Override
-            public void onMenuClosed() {
-                popUp.dismiss();
-
-            }
-        });
-
-*/
     }
 
-    //COLLEGO IL NAVIGATION LAyoUT ALLA TOOLBAR
+    //COLLEGO IL NAVIGATION LAYOUT ALLA TOOLBAR
     private void setNavigationDrawer(Toolbar toolbar){
         drawerLayout =  findViewById(R.id.drawer_layout);
         NavigationView navigationView =  findViewById(R.id.map_navigationDrawer_id);
@@ -205,40 +128,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    //IMPLEMENTO I FILTRI
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.map_filters_menu, menu);
         return true;
     }
-/*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() ==android.R.id.home){
-            Log.i("ActivityResult","CI SIAMO");
-            LayoutInflater inflater = MapsActivity.this.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-            View popView =
-            PopupWindow popW = new PopupWindow();
-           // showPopup(findViewById(R.id.searchview_id));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
-    /*
-    public void showPopup(View v) {
-        Log.i("ActivityResult","CI SIAMO2");
-        PopupMenu popup = new PopupMenu(this, v);
-        MenuInflater inflater = popup.getMenuInflater();
-        Log.i("ActivityResult","CI SIAMO3");
-        inflater.inflate(R.menu.map_navigation_menu, popup.getMenu());
-        Log.i("ActivityResult","CI SIAMO4");
-        popup.show();
-        Log.i("ActivityResult","CI SIAMO5");
-    }*/
-
-
-
+    //IMPOSTO LA MAPPA
     private GoogleMap setMap(GoogleMap map) {
         map.getUiSettings().setZoomControlsEnabled(true);
         map.getUiSettings().setCompassEnabled(true);
@@ -253,8 +151,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         return mMap;
     }
-
-
 
 
     /**
@@ -277,50 +173,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    //STATION, da implementare
-    //classe contente i dettagli di tutte le stazioni
-    //mancano alcuni dettagli, da recuperare dal db
-    private class Station {
-        String latitude;
-        String longitude;
-        String city;
-        String name;
 
-        public Station() {
-        }
-
-        public String getLatitude() {
-            return latitude;
-        }
-
-        public void setLatitude(String latitude) {
-            this.latitude = latitude;
-        }
-
-        public String getLongitude() {
-            return longitude;
-        }
-
-        public void setLongitude(String longitude) {
-            this.longitude = longitude;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
 
     //LOAD STATION, da implementare
     //permette di acquisire tutte le stazioni nell'area visualizzata durante il primo accesso alla mappa
@@ -457,7 +310,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 else {
                     JSONArray jArray = new JSONArray(result);
 
-                    String outputString = "";
                     for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
                         JSONObject json_data = jArray.getJSONObject(i);
                         String latitudine=json_data.getString("latitude");
@@ -481,6 +333,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    //GESTIONE EVENTI SCANNER
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
@@ -506,7 +359,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
-                return;
             }
 
             // other 'case' lines to check for other
@@ -517,29 +369,3 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 }
-
-
-//Search bar che fa partire la ricerca dalla tastiera (settando imeOption=activitysearch su xml)
-//e che risponde all'evento QueryTextSubmit sparando il metodo DbRequest che comunica con api google
-// per la ricerca delle coordinate relative alla ricerca e contatta il nostro DB in cloud per farsi ritornare
-//un json di parcheggi idonei
-
-        /*
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //Aggiungere API google per ricavare coordinate della destinazione con la query
-                double lat_dest= 45.070841;//fittizie: dovrebbero essere ritornate da google api
-                double long_dest=7.668552;//fittizie
-                String city="Torino";//fittizia
-                ParametersAsync parametersAsync=new ParametersAsync(lat_dest,long_dest,city);
-                new DbAsyncRequest().execute(parametersAsync);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        */
