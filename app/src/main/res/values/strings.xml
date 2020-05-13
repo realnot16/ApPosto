@@ -35,9 +35,10 @@
     <string name="QrCode">QRbutton</string>
     <string name="direction">DirButton</string>
     <string name="toast_no_parking">Spiacenti nessun posto libero in questa area!</string>
+    <string name="permcameradenied">Error: You cannot use the Scanner, shame on you!</string>
 
     <!--   String ScannerActivity -->
-    <string name="scanner_info">Scan the Qr code over your parking column</string>
+    <string name="scanner_info">Scan the Qr code on your parking column</string>
     <!-- Place autoComplete API, hardcode, take care -->
     <string name="placeAutocomplete">AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE</string>
     <string name="title_activity_navigation">NavigationActivity</string>

@@ -3,12 +3,15 @@ package com.example.project;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -57,6 +60,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String placeAutocompleteAPIkey;
     private Integer filter_destination_meter=1200;
     private final static int  REQUESTCODEFROMSCANNER=2;
+    private final static int MY_CAMERA_REQUEST_CODE=100;
     FloatingActionButton qrButton;
 
     @Override
@@ -100,10 +104,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         qrButton=(FloatingActionButton) findViewById(R.id.floatingQrButton);
         qrButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
-                startActivityForResult(intent,REQUESTCODEFROMSCANNER);
+                if (ActivityCompat.checkSelfPermission(MapsActivity.this,   //controlla che il permesso sia garantito
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MapsActivity.this,   //richiesta di permesso all'utente
+                            new String[]{Manifest.permission.CAMERA},
+                            MY_CAMERA_REQUEST_CODE);
+                }
+                else{
+                    Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
+                    startActivityForResult(intent,REQUESTCODEFROMSCANNER);
+
+                }
+
             }
         });
+
 
 
 
@@ -470,9 +486,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode==REQUESTCODEFROMSCANNER && resultCode==Activity.RESULT_OK){
                 String result=data.getStringExtra("parking_code");
-                Log.i("ActivityResult",result);
+            Toast.makeText(MapsActivity.this, result,Toast.LENGTH_SHORT).show();
 
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_CAMERA_REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
+                    startActivityForResult(intent,REQUESTCODEFROMSCANNER);
 
+                } else {
+                    Toast.makeText(MapsActivity.this, R.string.permcameradenied,Toast.LENGTH_SHORT).show();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
         }
     }
 

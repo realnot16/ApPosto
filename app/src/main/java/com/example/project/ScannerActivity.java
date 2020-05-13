@@ -36,7 +36,7 @@ public class ScannerActivity extends AppCompatActivity {
     private CameraSource cameraSource;
     private Vibrator v;
     private String code_parking;
-    private int MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+
 
 
     @Override
@@ -85,31 +85,29 @@ public class ScannerActivity extends AppCompatActivity {
             public void receiveDetections(Detector.Detections<Barcode> detections) {
 
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-
-                if (barcodes.size() != 0) {
-
-
-                    if(code_parking==null){
-                        code_parking=barcodes.valueAt(0).displayValue;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        v.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
-                        } else {
-                        //deprecated in API 26
-                        v.vibrate(300);
-                        }
-                        Log.i("provaQr",code_parking);
-                        Intent intent=new Intent();
-                        intent.putExtra("parking_code",code_parking);
-                        setResult(Activity.RESULT_OK,intent);
-                        finish();
-
-                    }
-
-
-                }
+                if (barcodes.size() != 0) sendResult(barcodes);
             }
         });
 
+     }
 
+    private void sendResult( SparseArray<Barcode> barcodes) {
+        if(code_parking==null){
+            code_parking=barcodes.valueAt(0).displayValue;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                //deprecated in API 26
+                v.vibrate(300);
+            }
+            Intent intent=new Intent();
+            intent.putExtra("parking_code",code_parking);
+            setResult(Activity.RESULT_OK,intent);
+            finish();
+
+        }
     }
+
 }
+
+
