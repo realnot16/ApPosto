@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.project.R;
+import com.example.project.userManagement.Profilo;
 import com.example.project.userManagement.ShowProfile;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,6 +30,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,6 +44,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 
@@ -49,15 +54,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private DrawerLayout drawerLayout;
     private Integer filter_destination_meter=1200;
-    private final static int  REQUESTCODEFROMSCANNER=2;
+    private final static int  SCANNER_REQUEST_CODE=2;
+    private final static int  PROFILE_REQUEST_CODE=1;
     private final static int MY_CAMERA_REQUEST_CODE=100;
     FloatingActionButton qrButton;
+    FirebaseAuth mAuth;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout_main);
+        mAuth = FirebaseAuth.getInstance();
+
         // IMPOSTO LA TOOLBAR E LA COLLEGO AL NAVIGATION DRAWER
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -76,7 +86,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         //IMPLEMENTO BOTTONE PER QR CODE ACTIIVTY
-
         qrButton= findViewById(R.id.floatingQrButton);
         qrButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -87,11 +96,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 else{
                     Intent intent=new Intent(MapsActivity.this, ScannerActivity.class);
-                    startActivityForResult(intent,REQUESTCODEFROMSCANNER);
+                    startActivityForResult(intent,SCANNER_REQUEST_CODE);
 
                 }
             }
         });
+    }
+
+    //When initializing your Activity, check to see if the user is currently signed in.
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        user = mAuth.getCurrentUser();
+        //mAuth.signOut();
+        //updateUI(currentUser);
     }
 
     //COLLEGO IL NAVIGATION LAYOUT ALLA TOOLBAR
@@ -108,8 +127,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         drawerLayout.closeDrawers();
                         return true;
                     case R.id.show_profile_id:
-                        Intent i = new Intent(MapsActivity.this, ShowProfile.class);
-                        startActivity(i);
+                        new LoadProfile().execute("http://smartparkingpolito.altervista.org/getProfile.php");
                     default:
                         return true;
                 }
@@ -132,6 +150,76 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    //Prendo i dati sul profilo dal DB
+    private class LoadProfile extends AsyncTask<String,Void,Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            try {
+                URL url = new URL(strings[0]); //
+                //preparazione della richiesta
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection(); //apertura connessione
+                urlConnection.setReadTimeout(1000);
+                urlConnection.setConnectTimeout(1500);
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoInput(true);
+                urlConnection.setDoOutput(true);
+                String params = "email=" +URLEncoder.encode(user.getEmail(), "UTF-8");
+                Log.i("param", params);
+                DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream());
+                dos.writeBytes(params);
+                dos.flush();
+                dos.close();
+
+                urlConnection.connect(); //connessione
+                InputStream is = urlConnection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.ISO_8859_1), 8);
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null)
+                    sb.append(line + "\n");
+                is.close();
+
+                String result = sb.toString();
+                Log.i("result", result);
+                if(result==null){
+                    Log.i("Profile result", "Nessun risultato");
+                }
+                else {
+                    JSONArray jArray = new JSONArray(result);
+
+                    for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
+                        JSONObject json_data = jArray.getJSONObject(i);
+                        Intent profileIntent = new Intent(MapsActivity.this, ShowProfile.class);
+                        Bundle profileBundle = new Bundle();
+                        Profilo profilo = new Profilo();
+                        profilo.setEmail(user.getEmail());
+                        profilo.setFirstname(json_data.getString(Profilo.ProfiloMetaData.FIRSTNAME));
+                        profilo.setLastname(json_data.getString(Profilo.ProfiloMetaData.LASTNAME));
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date birthDate = sdf.parse(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE));
+                        profilo.setBirthdate(birthDate);
+
+                        profilo.setCity(json_data.getString(Profilo.ProfiloMetaData.CITY));
+                        profilo.setPhone(json_data.getString(Profilo.ProfiloMetaData.PHONE));
+                        profilo.setWallet((float) json_data.getDouble(Profilo.ProfiloMetaData.WALLET));
+                        profileBundle.putParcelable("User", profilo);
+                        profileIntent.putExtra("User", profileBundle);
+                        startActivityForResult(profileIntent, PROFILE_REQUEST_CODE);
+                    }
+                }
+
+
+            } catch (Exception e) {
+                Log.e("log_tag", "Error " + e.toString());
+            }
+            return true;
+        }
+
+    }
+
+
     //IMPLEMENTO I FILTRI
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -139,6 +227,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         getMenuInflater().inflate(R.menu.map_filters_menu, menu);
         return true;
     }
+
+
 
     //IMPOSTO LA MAPPA
     private GoogleMap setMap(GoogleMap map) {
@@ -160,11 +250,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * This is where we can add markers or lines, add listeners or move the camera.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -181,7 +267,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //LOAD STATION, da implementare
     //permette di acquisire tutte le stazioni nell'area visualizzata durante il primo accesso alla mappa
-    private  class LoadStations extends AsyncTask<ParametersAsync,Void,Boolean> {
+    private class LoadStations extends AsyncTask<ParametersAsync,Void,Boolean> {
         @Override
         protected Boolean doInBackground(ParametersAsync... parametersAsyncs) {
 
@@ -228,8 +314,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     String no_parking = getResources().getString(R.string.toast_no_parking);
                     Log.i("param1", no_parking);
                     Toast.makeText(getBaseContext(), no_parking,Toast.LENGTH_SHORT).show();
-
-
                 }
                 else {
                     JSONArray jArray = new JSONArray(result);
@@ -241,11 +325,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Log.i("latitudine", latitudine);
                         String longitudine=json_data.getString("longitude");
                         Log.i("longitudine", longitudine);
-
-
-
-
-                    }
+                      }
                 }
 
 
@@ -322,8 +402,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Log.i("longitudine", longitudine);
 
 
-
-
                     }
                 }
 
@@ -337,16 +415,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    //GESTIONE EVENTI SCANNER
+    //Callback method after startActivityForResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
-        if(requestCode==REQUESTCODEFROMSCANNER && resultCode==Activity.RESULT_OK){
-                String result=data.getStringExtra("parking_code");
-            Toast.makeText(MapsActivity.this, result,Toast.LENGTH_SHORT).show();
+        //GESTIONE EVENTI SCANNER
+        if(requestCode==SCANNER_REQUEST_CODE && resultCode==Activity.RESULT_OK) {
+            String result = data.getStringExtra("parking_code");
+            Toast.makeText(MapsActivity.this, result, Toast.LENGTH_SHORT).show();
+        }
+        //GESTIONE DATI PROFILO
+        if(requestCode==PROFILE_REQUEST_CODE && resultCode==Activity.RESULT_OK){
 
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
@@ -356,7 +439,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Intent intent=new Intent(MapsActivity.this,ScannerActivity.class);
-                    startActivityForResult(intent,REQUESTCODEFROMSCANNER);
+                    startActivityForResult(intent,SCANNER_REQUEST_CODE);
 
                 } else {
                     Toast.makeText(MapsActivity.this, R.string.permcameradenied,Toast.LENGTH_SHORT).show();
@@ -369,6 +452,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // permissions this app might request.
         }
     }
+
 
 
 

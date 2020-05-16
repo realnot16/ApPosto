@@ -42,7 +42,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".userManagement.LoginActivity" />
+        <activity android:name=".userManagement.LoginActivity">
+        </activity>
         <activity android:name=".userManagement.SignupActivity" />
         <activity android:name=".userManagement.MainActivity" />
         <activity android:name=".reservation.ReservationsActivity" />

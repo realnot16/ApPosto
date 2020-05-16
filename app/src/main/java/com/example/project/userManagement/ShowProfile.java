@@ -25,6 +25,9 @@ public class ShowProfile extends AppCompatActivity {
     private TextView email;
     private TextView phone;
 
+    FirebaseAuth mAuth;
+    Profilo profilo;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,20 +40,44 @@ public class ShowProfile extends AppCompatActivity {
         email = (TextView) findViewById(R.id.label_mail);
         phone = (TextView) findViewById(R.id.label_phone);
 
-        /*
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
 
-        if (!user.getEmail().isEmpty()) {
-            email.setText(user.getEmail());
-        }
-
-         */
-
+        setData();
 
     }
 
+    private void setData() {
+        Bundle profileBundle = getIntent().getBundleExtra("User");
+
+        //Controllo pancia dell'intent
+        if (profileBundle != null) {
+            //1)Ho dei dati: li visualizzo per modificarli
+            profilo = profileBundle.getParcelable("User");
+            name.setText(profilo.getFirstname()+" "+profilo.getLastname());
+            city.setText(profilo.getCity());
+            birthdate.setText(profilo.getBirthdate().toString());
+            email.setText(profilo.getEmail());
+            phone.setText(profilo.getPhone());
+            wallet.setText(String.valueOf(profilo.getWallet()));
+        } else {
+
+        }
+    }
+
+
+    //onClick su bottone Modifica - per modificare i campi
     public void editProfile(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
         startActivity(intent);
+    }
+
+    //onClick su bottone Ricarica - per ricarica wallet
+    public void walletTopUp(View view) {
+    }
+
+    //onClick su bottone Cambia password - per cambiare la password
+    public void changePassword(View view) {
+
     }
 }
