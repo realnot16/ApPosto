@@ -45,12 +45,16 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private static final String TAG = "Mappa";
     private GoogleMap mMap;
     private DrawerLayout drawerLayout;
     private Integer filter_destination_meter=1200;
@@ -236,12 +240,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.getUiSettings().setCompassEnabled(true);
         //AGGIUNGERE ALTRE MODIFICHE -> POSIZIONE INIZIALE, ZOOM INIZIALE
 
-
-        double lat_start= 45.070841;//fittizie: SOSTITUIRE CON QUELLE DEL DISPOSITIVO
-        double long_start=7.668552;//fittizie
-        String city="Torino";
-        ParametersAsync parametersAsync=new ParametersAsync(lat_start,long_start,city);
-        new LoadStations().execute(parametersAsync);
+        // INIZIALIZZO POSIZIONE ATTUALE
+        LatLng start = new LatLng(45.0781,7.6761);
+        MarkerOptions tor = new MarkerOptions().position(start).title("TOpark");
+        mMap.addMarker(tor);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(start,16F));
 
         return mMap;
     }
@@ -254,12 +257,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.i(TAG,"mappa Pronta");
         mMap = googleMap;
         mMap = setMap(mMap);
-        // Add a marker in Sydney and move the camera
-        LatLng start = new LatLng(45.0781,7.6761);
-        mMap.addMarker(new MarkerOptions().position(start).title("TOpark"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(start));
+
+        //CARICO LE STAZIONI
+
+        double lat_start= 45.070841;//fittizie: SOSTITUIRE CON QUELLE DEL DISPOSITIVO
+        double long_start=7.668552;//fittizie
+        String city="Torino";
+        ParametersAsync parametersAsync=new ParametersAsync(lat_start,long_start,city);
+        new LoadStations().execute(parametersAsync);
+        Log.i(TAG,"Stazioni caricate");
+        Toast prova = Toast.makeText(this, "estrazione finita",Toast.LENGTH_SHORT);
+        prova.show();
 
     }
 
@@ -267,35 +278,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //LOAD STATION, da implementare
     //permette di acquisire tutte le stazioni nell'area visualizzata durante il primo accesso alla mappa
-    private class LoadStations extends AsyncTask<ParametersAsync,Void,Boolean> {
+    private class LoadStations extends AsyncTask<ParametersAsync,Void,ArrayList<Station>> {
         @Override
-        protected Boolean doInBackground(ParametersAsync... parametersAsyncs) {
+        protected ArrayList<Station> doInBackground(ParametersAsync... parametersAsyncs) {
 
             try {
-
-                URL url = new URL("http://smartparkingpolito.altervista.org/AvailableParking.php"); //
+                URL url = new URL("https://smartparkingpolito.altervista.org/AvailableParking.php"); //
                 //preparazione della richiesta
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection(); //apertura connessione
+                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection(); //apertura connessione
                 urlConnection.setReadTimeout(1000);
                 urlConnection.setConnectTimeout(1500);
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setDoInput(true);
                 urlConnection.setDoOutput(true);
-                String lat_dest_string =String.valueOf(parametersAsyncs[0].latitude); //converto in stringhe i valori per inserirli nella richiesta
-                String long_dest_string =String.valueOf(parametersAsyncs[1].longitude);
-                String filter_string =String.valueOf(filter_destination_meter);
+                String lat_dest_string = String.valueOf(parametersAsyncs[0].latitude); //converto in stringhe i valori per inserirli nella richiesta
+                String long_dest_string = String.valueOf(parametersAsyncs[0].longitude);
+                String filter_string = String.valueOf(filter_destination_meter);
 
-
-                String params = "lat_destination=" +URLEncoder.encode(lat_dest_string, "UTF-8")
-                        +"&long_destination=" +URLEncoder.encode(long_dest_string, "UTF-8")
-                        +"&city="+URLEncoder.encode(parametersAsyncs[0].city, "UTF-8")//modificare:estrarre la città da preferenze
-                        +"&dist_filter_meter="+URLEncoder.encode(filter_string, "UTF-8");
+                String params = "lat_destination=" + URLEncoder.encode(lat_dest_string, "UTF-8")
+                        + "&long_destination=" + URLEncoder.encode(long_dest_string, "UTF-8")
+                        + "&city=" + URLEncoder.encode(parametersAsyncs[0].city, "UTF-8")//modificare:estrarre la città da preferenze
+                        + "&dist_filter_meter=" + URLEncoder.encode(filter_string, "UTF-8");
                 Log.i("param", params);
                 DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream());
                 dos.writeBytes(params);
                 dos.flush();
                 dos.close();
-
 
                 urlConnection.connect(); //connessione
                 InputStream is = urlConnection.getInputStream();
@@ -307,25 +315,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     sb.append(line + "\n");
                 }
                 is.close();
-
                 String result = sb.toString();
+
                 Log.i("result", result);
-                if(result==null){
+                if (result == null) {
                     String no_parking = getResources().getString(R.string.toast_no_parking);
                     Log.i("param1", no_parking);
-                    Toast.makeText(getBaseContext(), no_parking,Toast.LENGTH_SHORT).show();
-                }
-                else {
+                    Toast.makeText(getBaseContext(), no_parking, Toast.LENGTH_SHORT).show();
+                } else {
                     JSONArray jArray = new JSONArray(result);
 
                     String outputString = "";
+                    ArrayList<Station> station = new ArrayList<Station>();
                     for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
                         JSONObject json_data = jArray.getJSONObject(i);
-                        String latitudine=json_data.getString("latitude");
-                        Log.i("latitudine", latitudine);
-                        String longitudine=json_data.getString("longitude");
-                        Log.i("longitudine", longitudine);
-                      }
+                        String latitudine = json_data.getString("latitude");
+                        String longitudine = json_data.getString("longitude");
+                        Log.i(TAG, latitudine+" "+longitudine);
+                        double lat = Double.parseDouble(latitudine);
+                        double lng = Double.parseDouble(longitudine);
+                        Station stat = new Station(lat, lng);
+                        station.add(stat);
+
+                    }
+                    return station;
                 }
 
 
@@ -335,7 +348,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return null;
         }
 
-
+        protected void onPostExecute(ArrayList<Station> stations) {
+            Log.e(TAG, "PostExecute");
+            for (int i = 0; i < stations.size(); i++) {         //Ciclo di estrazione oggetti
+                Station stat = stations.get(i);
+                LatLng position = new LatLng(stat.getLatitude(), stat.getLongitude());
+                MarkerOptions marker = new MarkerOptions().position(position).title("Stazione N "+i);
+                mMap.addMarker(marker);
+                Log.i(TAG, "marker aggiunto");
+            }
+        }
     }
 
     //DBASYNCREQUEST, cambiare nome-> non esplicativa

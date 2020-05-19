@@ -5,27 +5,29 @@ package com.example.project.map;
 //mancano alcuni dettagli, da recuperare dal db
 
 public class Station {
-    String latitude;
-    String longitude;
+    double latitude;
+    double longitude;
     String city;
     String name;
 
-    public Station() {
+    public Station(double lat,double lng) {
+        latitude = lat;
+        longitude= lng;
     }
 
-    public String getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public String getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 

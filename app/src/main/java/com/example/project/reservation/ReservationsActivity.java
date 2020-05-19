@@ -13,7 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.project.DetailedReservationActivity;
+//import com.example.project.DetailedReservationActivity;
 import com.example.project.R;
 
 import org.json.JSONArray;
@@ -45,7 +45,7 @@ public class ReservationsActivity extends ListActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservations);
-
+/*
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int pos, long l) {
@@ -58,7 +58,7 @@ public class ReservationsActivity extends ListActivity {
                 intent.putExtra("reservation", reservationBundle);
                 startActivity(intent);
             }
-        });
+        });*/
 
         //codice per recuperare utente da preferenze
         SharedPreferences prefs = getSharedPreferences(MY_SHARED_PREF, Context.MODE_PRIVATE);
@@ -81,13 +81,13 @@ public class ReservationsActivity extends ListActivity {
         protected List<Reservation> doInBackground(String... urls) {//ATTIVITA' CRITICA
             return loadReservationsFromDB(urls[0]);
         }
-
+/*
         @Override
         protected void onPostExecute(List<Reservation> storico) {//QUANDO FINSCO ATTIVITA' CRITICA
 
             ArrayAdapter a= new ArrayAdapter(getApplicationContext(), R.layout.reservation_simple_row_layout, R.id.textViewList, storico);
             getListView().setAdapter(a);
-        }
+        }*/
     }
 
     private List<Reservation> loadReservationsFromDB(String urlstring) {
