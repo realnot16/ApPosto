@@ -34,7 +34,8 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:networkSecurityConfig="@xml/network_security_config"
-            android:value="@string/google_maps_key" /> <!-- connessione sicura di rete -->
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".map.MapsActivity">
             <intent-filter>
