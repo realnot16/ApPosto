@@ -2,12 +2,16 @@ package com.example.project.userManagement;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -18,6 +22,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +36,13 @@ public class SignupActivity extends AppCompatActivity {
     private EditText mail;
     private EditText password;
     private EditText confpassword;
+    private EditText firstname;
+    private EditText lastname;
+    private EditText birthdate;
+    private EditText phone;
+    private EditText city;
+    DatePickerDialog picker;
+    private String birthdateString;
 
     private FirebaseAuth mAuth;
 
@@ -49,9 +65,15 @@ public class SignupActivity extends AppCompatActivity {
 
     //Metodo di inizializzazione
     private void initUI() {
-        mail = findViewById(R.id.signUp_emailField_id);
-        password = findViewById(R.id.signUp_passwordField_id);
-        confpassword = findViewById(R.id.signUp_CpasswordField_id);
+        mail = findViewById(R.id.changePwd_oldField_id);
+        password = findViewById(R.id.changePwd_newField_id);
+        confpassword = findViewById(R.id.changePwd_confNewField_id);
+        firstname = findViewById(R.id.signUp_nameField_id);
+        lastname = findViewById(R.id.signUp_surnameField_id);
+        phone = findViewById(R.id.signUp_phoneField_id);
+        birthdate = findViewById(R.id.signUp_dateField_id);
+        city = findViewById(R.id.signUp_cityField_id);
+        birthdateString = "";
 
         mAuth = FirebaseAuth.getInstance();
     }
@@ -67,6 +89,10 @@ public class SignupActivity extends AppCompatActivity {
         String mailUser = mail.getText().toString();
         String passwordUser = password.getText().toString();
         String confirmPwdUser = confpassword.getText().toString();
+        String nome = firstname.getText().toString();
+        String cognome = lastname.getText().toString();
+        String città = city.getText().toString();
+        String telefono = phone.getText().toString();
 
         if(validateUser(mailUser, passwordUser, confirmPwdUser)) {
 
@@ -89,9 +115,15 @@ public class SignupActivity extends AppCompatActivity {
                             // ...
                         }
                     });
+
+            //uploadUser(nome, cognome, mailUser, telefono, data, città);
         } else{
             Toast.makeText(SignupActivity.this, "Ricontrolla i campi!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void uploadUser(String nome, String cognome, String mailUser, String telefono, Date data, String città) {
+
     }
 
     //Validazione sintattica e semantica degli EditText
@@ -133,5 +165,22 @@ public class SignupActivity extends AppCompatActivity {
         Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
         startActivity(intent);
     }
+
+    public void showDatePickerDialog(View v) {
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        picker = new DatePickerDialog(SignupActivity.this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        birthdateString = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+                        birthdate.setText(birthdateString);
+                    }
+                }, year, month, day);
+        picker.show();
+    }
+
 
 }

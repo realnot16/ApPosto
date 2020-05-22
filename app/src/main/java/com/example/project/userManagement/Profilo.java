@@ -3,7 +3,10 @@ package com.example.project.userManagement;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 
 public class Profilo implements Parcelable {
 
@@ -99,8 +102,9 @@ public class Profilo implements Parcelable {
         this.phone = phone;
     }
 
-    public Date getBirthdate() {
-        return birthdate;
+    public String getBirthdate() {
+        SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy");
+        return f.format(birthdate);
     }
 
     public void setBirthdate(Date birthdate) {

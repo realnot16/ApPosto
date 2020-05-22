@@ -56,7 +56,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.Objects;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -189,6 +189,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         return true;
                     case R.id.show_profile_id:
                         new LoadProfile().execute("http://smartparkingpolito.altervista.org/getProfile.php");
+                        Log.i(TAG, "Ho cliccato su Profilo nel menu.");
                     default:
                         return true;
                 }
@@ -227,7 +228,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 urlConnection.setDoInput(true);
                 urlConnection.setDoOutput(true);
                 String params = "email=" +URLEncoder.encode(user.getEmail(), "UTF-8");
-                Log.i("param", params);
+                Log.i(TAG, "params= "+params);
                 DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream());
                 dos.writeBytes(params);
                 dos.flush();
@@ -245,7 +246,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String result = sb.toString();
                 Log.i("result", result);
                 if(result==null){
-                    Log.i("Profile result", "Nessun risultato");
+                    Log.i("result", "Nessun risultato");
                 }
                 else {
                     JSONArray jArray = new JSONArray(result);
@@ -258,11 +259,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         profilo.setEmail(user.getEmail());
                         profilo.setFirstname(json_data.getString(Profilo.ProfiloMetaData.FIRSTNAME));
                         profilo.setLastname(json_data.getString(Profilo.ProfiloMetaData.LASTNAME));
-
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        Date birthDate = sdf.parse(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE));
-                        profilo.setBirthdate(birthDate);
-
+                        profilo.setBirthdate(Date.valueOf(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE)));
                         profilo.setCity(json_data.getString(Profilo.ProfiloMetaData.CITY));
                         profilo.setPhone(json_data.getString(Profilo.ProfiloMetaData.PHONE));
                         profilo.setWallet((float) json_data.getDouble(Profilo.ProfiloMetaData.WALLET));

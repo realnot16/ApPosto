@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        //mAuth.signOut();
+        mAuth.signOut();
         updateUI(currentUser);
     }
 
@@ -168,7 +168,7 @@ public class LoginActivity extends AppCompatActivity {
         final String passwordUtente = password.getText().toString();
         final boolean checkRicordami = ricordami.isChecked();
 
-        if(!mailUtente.isEmpty() && !mailUtente.isEmpty()) {
+        if(!mailUtente.isEmpty() && !passwordUtente.isEmpty()) {
             mAuth.signInWithEmailAndPassword(mailUtente, passwordUtente)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override

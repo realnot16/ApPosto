@@ -1,23 +1,22 @@
 package com.example.project.userManagement;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.project.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class ShowProfile extends AppCompatActivity {
 
+    private static final String TAG = "ShowProfile_TAG";
     private TextView name;
     private TextView birthdate;
     private TextView city;
@@ -41,7 +40,6 @@ public class ShowProfile extends AppCompatActivity {
         phone = (TextView) findViewById(R.id.label_phone);
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
 
         setData();
 
@@ -56,7 +54,7 @@ public class ShowProfile extends AppCompatActivity {
             profilo = profileBundle.getParcelable("User");
             name.setText(profilo.getFirstname()+" "+profilo.getLastname());
             city.setText(profilo.getCity());
-            birthdate.setText(profilo.getBirthdate().toString());
+            birthdate.setText(profilo.getBirthdate());
             email.setText(profilo.getEmail());
             phone.setText(profilo.getPhone());
             wallet.setText(String.valueOf(profilo.getWallet()));
@@ -78,6 +76,20 @@ public class ShowProfile extends AppCompatActivity {
 
     //onClick su bottone Cambia password - per cambiare la password
     public void changePassword(View view) {
+        String emailAddress = mAuth.getCurrentUser().getEmail();
 
+        if(!emailAddress.isEmpty()) {
+            mAuth.sendPasswordResetEmail(emailAddress)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.i(TAG, "Email sent.");
+                                Toast.makeText(ShowProfile.this, "Una mail è stata inviata al tuo indirizzo di posta.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }else
+            Toast.makeText(this, "Si è verificato un problema", Toast.LENGTH_SHORT).show();
     }
 }

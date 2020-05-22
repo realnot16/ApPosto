@@ -6,6 +6,7 @@
     <string name="signUp_email_description_text">Inserisci email:</string>
     <string name="signUp_password_description_text">Inserisci password:</string>
     <string name="signUp_Cpassword_description_text">Conferma password:</string>
+    <string name="signUp_dati_description_text">Inserisci i tuoi dati:</string>
     <string name="signUp_emailField_text">Email</string>
     <string name="signUp_passwordField_text">Password</string>
     <string name="signUp_CpasswordField_text">Conferma Password</string>
@@ -50,6 +51,12 @@
     <!--   String NavigationToolbar -->
     <string name="open">Apri</string>
     <string name="close">Chiudi</string>
+
+    <!--    String ChangePassword -->
+    <string name="changePwd_oldPwd_text">Vecchia password</string>
+    <string name="changePwd_oldPwd_description">Inserisci la tua password attuale:</string>
+    <string name="changePwd_password_description_text">Inserisci nuova password:</string>
+    <string name="changePwd_button_description_text">Conferma</string>
 
 
 </resources>
