@@ -11,63 +11,105 @@
         android:fitsSystemWindows="true"
         tools:openDrawer="start">
 
-        <!-- 1° Figlio: il layout della mainActivity -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/main_background"
-        android:orientation="vertical">
+    <!-- 1° Figlio: il layout della mainActivity -->
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/sliding_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        app:umanoPanelHeight="68dp"
+        app:umanoShadowHeight="4dp"
+        app:umanoOverlay="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout="@layout/process_layout"
-            tools:layout_editor_absoluteX="70dp"
-            tools:layout_editor_absoluteY="16dp" />
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/map_searchview_shape"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/map"
-            app:layout_constraintTop_toTopOf="@+id/map">
-
-            <SearchView
-                android:id="@+id/searchview_id"
+            android:background="@drawable/main_background"
+            android:orientation="vertical">
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:elevation="14.5sp"
-                android:gravity="center_horizontal"
-                android:imeOptions="actionSearch"
-                android:layoutDirection="rtl"></SearchView>
-        </androidx.appcompat.widget.Toolbar>
+                tools:layout="@layout/process_layout"
+                tools:layout_editor_absoluteX="70dp"
+                tools:layout_editor_absoluteY="16dp" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingQrButton"
-            android:layout_width="56dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginBottom="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="false"
-            android:onClick="onQrButtonClick"
-            app:backgroundTint="#3F51B5"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:rippleColor="#FFFFFF"
-            app:srcCompat="?attr/actionModeSelectAllDrawable" />
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/map_searchview_shape"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/map"
+                app:layout_constraintTop_toTopOf="@+id/map">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <SearchView
+                    android:id="@+id/searchview_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:elevation="14.5sp"
+                    android:gravity="center_horizontal"
+                    android:imeOptions="actionSearch"
+                    android:layoutDirection="rtl"></SearchView>
+            </androidx.appcompat.widget.Toolbar>
+
+
+
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingQrButton"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginBottom="30dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
+                android:onClick="onQrButtonClick"
+                app:backgroundTint="#3F51B5"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:rippleColor="#FFFFFF"
+                app:srcCompat="?attr/actionModeSelectAllDrawable" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/panel_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/main_background">
+
+            <TextView
+                android:id="@+id/lati"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                app:layout_constraintBottom_toTopOf="@+id/longi"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/longi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+
 
     <!-- 2° Figlio: layout del Navigation Drawer -->
 

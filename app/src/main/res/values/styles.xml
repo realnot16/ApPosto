@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/gialloPiscacchia</item>
         <item name="colorPrimaryDark">@color/bluPiscacchia</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowActionBarOverlay">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

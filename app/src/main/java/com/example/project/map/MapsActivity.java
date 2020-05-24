@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project.R;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -54,12 +56,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Objects;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -71,6 +75,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private CameraPosition mCameraPosition;
     private PlacesClient mPlacesClient;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+
+    private View markPanel;
+    private SlidingUpPanelLayout panel;
 
     private final LatLng mDefaultLocation = new LatLng(45.070841, 7.668552);
     private static final int DEFAULT_ZOOM = 15;
@@ -107,6 +114,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout_main);
+
+       panel = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+       panel.setPanelState(PanelState.HIDDEN);
 
         //AUTENTICAZIONE
         mAuth = FirebaseAuth.getInstance();
@@ -305,9 +315,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         String city="Torino";
         ParametersAsync parametersAsync=new ParametersAsync(lat_start,long_start,city);
         new LoadStations().execute(parametersAsync);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Log.i(TAG,"markerClick");
+
+                // Getting the position from the marker
+                LatLng latLng = marker.getPosition();
+
+                // Getting reference to the TextView to set latitude
+                TextView tvLat = (TextView) findViewById(R.id.lati);
+
+                // Getting reference to the TextView to set longitude
+                TextView tvLng = (TextView) findViewById(R.id.longi);
+
+                // Setting the latitude
+                tvLat.setText("Latitude:" + latLng.latitude);
+
+                // Setting the longitude
+                tvLng.setText("Longitude:"+ latLng.longitude);
+
+                panel.setPanelState(PanelState.COLLAPSED);
+                return false;
+            }
+        });
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                panel.setPanelState(PanelState.HIDDEN);
+            }
+        });
         Log.i(TAG,"Stazioni caricate");
         Toast prova = Toast.makeText(this, "estrazione finita",Toast.LENGTH_SHORT);
         prova.show();
+
+
 
 
     }
@@ -317,7 +359,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void setMap() {
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-
+        
         // Posizione di default
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
 

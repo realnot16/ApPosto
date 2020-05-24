@@ -46,6 +46,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-vision:16.2.0'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
 
+    //SLIDER
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
+    //implementation 'com.argonware.slidingdownpanel:library:1.0.0'
+
     //TOOLBAR
     implementation 'androidx.appcompat:appcompat:1.0.0'
 
