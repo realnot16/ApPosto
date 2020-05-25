@@ -58,5 +58,13 @@
     <string name="changePwd_password_description_text">Inserisci nuova password:</string>
     <string name="changePwd_button_description_text">Conferma</string>
 
+    <!--    String mapPanel-->
+    <string name="panel_station">Stazione selezionata</string>
+    <string name="panel_street">Indirizzo</string>
+    <string name="panel_distance">Distanza</string>
+    <string name="panel_price">Tariffa</string>
+    <string name="panel_button">Prenota!</string>
+    <string name="panel_image">Immagine Parcheggio</string>
+
 
 </resources>

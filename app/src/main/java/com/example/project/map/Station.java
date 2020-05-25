@@ -9,10 +9,15 @@ public class Station {
     double longitude;
     String city;
     String name;
+    String street;
 
-    public Station(double lat,double lng) {
+    public Station(double lat,double lng, String name, String city, String street) {
         latitude = lat;
         longitude= lng;
+        this.city= city;
+        this.name=name;
+        this.street=street;
+
     }
 
     public double getLatitude() {
@@ -45,5 +50,13 @@ public class Station {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
     }
 }

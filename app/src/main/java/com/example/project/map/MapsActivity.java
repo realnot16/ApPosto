@@ -116,6 +116,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.map_layout_main);
 
        panel = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+       //panel.setPanelHeight(findViewById(R.id.floatingQrButton).getLayoutParams().height);
        panel.setPanelState(PanelState.HIDDEN);
 
         //AUTENTICAZIONE
@@ -320,6 +321,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public boolean onMarkerClick(Marker marker) {
                 Log.i(TAG,"markerClick");
 
+                Station station = (Station) marker.getTag();
+                TextView stationId = findViewById(R.id.panel_station_id);
+                TextView streetId = findViewById(R.id.panel_street_id);
+
+                stationId.setText(station.getName());
+                streetId.setText(station.getStreet());
+                /*
+
                 // Getting the position from the marker
                 LatLng latLng = marker.getPosition();
 
@@ -333,9 +342,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 tvLat.setText("Latitude:" + latLng.latitude);
 
                 // Setting the longitude
-                tvLng.setText("Longitude:"+ latLng.longitude);
+                tvLng.setText("Longitude:"+ latLng.longitude);*/
 
-                panel.setPanelState(PanelState.COLLAPSED);
+
+                panel.setPanelState(PanelState.EXPANDED);
+
+                //panel.setAnchorPoint(findViewById(R.id.floatingQrButton).getHeight());
+                //panel.setPanelState(PanelState.ANCHORED);
                 return false;
             }
         });
@@ -500,7 +513,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Log.i(TAG, latitudine+" "+longitudine);
                         double lat = Double.parseDouble(latitudine);
                         double lng = Double.parseDouble(longitudine);
-                        Station stat = new Station(lat, lng);
+                        Station stat = new Station(lat, lng,"Duca", "Torino","Via De Martino 23");
                         station.add(stat);
 
                     }
@@ -519,8 +532,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             for (int i = 0; i < stations.size(); i++) {         //Ciclo di estrazione oggetti
                 Station stat = stations.get(i);
                 LatLng position = new LatLng(stat.getLatitude(), stat.getLongitude());
-                MarkerOptions marker = new MarkerOptions().position(position).title("Stazione N "+i);
-                mMap.addMarker(marker);
+                MarkerOptions markerOptions = new MarkerOptions().position(position).title("Stazione N "+i);
+                Marker marker = mMap.addMarker(markerOptions);
+                marker.setTag(stat);
                 Log.i(TAG, "marker aggiunto");
             }
         }

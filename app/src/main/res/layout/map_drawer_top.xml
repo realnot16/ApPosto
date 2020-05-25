@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map-drawer_header_id"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/biancoPiscacchia">
+
+    <ImageView
+        android:id="@+id/map_drawer_header_image_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@android:drawable/sym_def_app_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/map_drawer_header_name_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="android.studio@android.com"
+        app:layout_constraintBottom_toTopOf="@+id/map_drawer_header_mail_id"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map_drawer_header_image_id" />
+
+    <TextView
+        android:id="@+id/map_drawer_header_mail_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Android Studio"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
