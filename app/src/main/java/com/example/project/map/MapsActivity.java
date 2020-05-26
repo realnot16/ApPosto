@@ -162,6 +162,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mPlacesClient = Places.createClient(this);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+        // CONTROLLA CURRENT RESERVATION
+        String urlCurrRes="https://smartparkingpolito.altervista.org/GetCurrentReservation.php";
+        new CheckCurrentReservation().execute(urlCurrRes);
         //AUTOCOMPLETAMENTO INDIRIZZI
 
 
@@ -638,6 +641,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         profileIntent.putExtra("User", profileBundle);
                         startActivityForResult(profileIntent, PROFILE_REQUEST_CODE);
                     }
+
+            } catch (Exception e) {
+                Log.e("log_tag", "Error " + e.toString());
+            }
+            return true;
+        }
+
+    }
+
+    //5-CHECK CURRENT RESERVATION, controlla se sul server è settata una prenotazione per l'user corrente, evita di perdere
+    // la prenotazione se l'app viene chiusa
+    private class CheckCurrentReservation extends AsyncTask<String,Void,Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            try {
+                String params = "id_user=" +URLEncoder.encode(mAuth.getUid(), "UTF-8");
+                JSONArray jArray = ServerTask.askToServer(params,strings[0]);
+                try {
+                    JSONObject json_result = jArray.getJSONObject(1);
+                    if (json_result.getString("result").equals("ok")){
+                        JSONObject json_body = jArray.getJSONObject(0);
+                        currentReservation.setId_booking(json_body.getString("id_booking"));
+                        currentReservation.setAddress_start(json_body.getString("address_start"));
+                        currentReservation.setParking_id(Integer.parseInt(json_body.getString("parking_id")));
+                        currentReservation.setBonus(Integer.parseInt(json_body.getString("bonus")));
+                        currentReservation.setSuccessful(Integer.parseInt(json_body.getString("successful")));
+                    }
+
+                }
+                catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
 
             } catch (Exception e) {
                 Log.e("log_tag", "Error " + e.toString());
