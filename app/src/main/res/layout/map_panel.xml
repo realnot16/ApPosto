@@ -61,6 +61,7 @@
         android:id="@+id/panel_button_reservation_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="onBookStation"
         android:text="@string/panel_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

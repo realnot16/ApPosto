@@ -43,6 +43,7 @@
     <string name="toast_no_parking">Spiacenti nessun posto libero in questa area!</string>
     <string name="permcameradenied">Error: You cannot use the Scanner, shame on you!</string>
 
+
     <!--   String ScannerActivity -->
     <string name="scanner_info">Scan the Qr code on your parking column</string>
     <!-- Place autoComplete API, hardcode, take care -->
@@ -65,6 +66,14 @@
     <string name="panel_price">Tariffa</string>
     <string name="panel_button">Prenota!</string>
     <string name="panel_image">Immagine Parcheggio</string>
+    <!--    Server Result-->
+    <string name="sorry">Sorry! This is not your parking</string>
+    <string name="error_close_res">Sorry! Server Connection problem. Retry!</string>
+    <string name="ok"> The reservation was closed successfully</string>
+    <string name="reserv_success"> The reservation was opened successfully</string>
+    <string name="occupied">Sorry! The parking you booked was already occupied </string>
+    <string name="zero_wallet">Sorry! Your credit is too low. Recharge your wallet!</string>
+
 
 
 </resources>

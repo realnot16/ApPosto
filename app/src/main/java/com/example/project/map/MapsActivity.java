@@ -20,9 +20,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.project.ParametersAsync.CloseReservationParamsAsync;
+import com.example.project.ParametersAsync.LoadStationParamsAsync;
+import com.example.project.ParametersAsync.OpenReservationParamsAsync;
+import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
 import com.example.project.userManagement.Profilo;
 import com.example.project.userManagement.ShowProfile;
@@ -50,12 +55,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -83,6 +90,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private View markPanel;
     private SlidingUpPanelLayout panel;
+    private Station station_selected;
 
     private final LatLng mDefaultLocation = new LatLng(45.070841, 7.668552);
     private static final int DEFAULT_ZOOM = 15;
@@ -110,6 +118,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     FirebaseAuth mAuth;
     FirebaseUser user;
 
+    //CURRENT RESERVATION INSTANCE
+    private CurrentReservation currentReservation;
+
     //VARIE
     private DrawerLayout drawerLayout;
     private Integer filter_destination_meter=1200;  //FILTRO STAZIONI CARICATE
@@ -125,6 +136,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
        panel = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
        //panel.setPanelHeight(findViewById(R.id.floatingQrButton).getLayoutParams().height);
        panel.setPanelState(PanelState.HIDDEN);
+
 
         //AUTENTICAZIONE
         mAuth = FirebaseAuth.getInstance();
@@ -179,6 +191,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // BOTTONE PER QR CODE ACTIIVTY
         qrButton= findViewById(R.id.floatingQrButton);
         setQrButton(qrButton);
+        //Genero una nuova Current Reservation;
+        currentReservation=new CurrentReservation();// In realtà dovrebbe chiedere al server e se non c'è la crea, se c'è la setta
 
     }
 
@@ -253,73 +267,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-
-    //Prendo i dati sul profilo dal DB
-    private class LoadProfile extends AsyncTask<String,Void,Boolean> {
-
-        @Override
-        protected Boolean doInBackground(String... strings) {
-            try {
-                URL url = new URL(strings[0]); //
-                //preparazione della richiesta
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection(); //apertura connessione
-                urlConnection.setReadTimeout(1000);
-                urlConnection.setConnectTimeout(1500);
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setDoInput(true);
-                urlConnection.setDoOutput(true);
-                String params = "email=" +URLEncoder.encode(user.getEmail(), "UTF-8");
-                Log.i(TAG, "params= "+params);
-                DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream());
-                dos.writeBytes(params);
-                dos.flush();
-                dos.close();
-
-                urlConnection.connect(); //connessione
-                InputStream is = urlConnection.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.ISO_8859_1), 8);
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null)
-                    sb.append(line + "\n");
-                is.close();
-
-                String result = sb.toString();
-                Log.i("result", result);
-                if(result==null){
-                    Log.i("result", "Nessun risultato");
-                }
-                else {
-                    JSONArray jArray = new JSONArray(result);
-
-                    for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
-                        JSONObject json_data = jArray.getJSONObject(i);
-                        Intent profileIntent = new Intent(MapsActivity.this, ShowProfile.class);
-                        Bundle profileBundle = new Bundle();
-                        Profilo profilo = new Profilo();
-                        profilo.setEmail(user.getEmail());
-                        profilo.setFirstname(json_data.getString(Profilo.ProfiloMetaData.FIRSTNAME));
-                        profilo.setLastname(json_data.getString(Profilo.ProfiloMetaData.LASTNAME));
-                        profilo.setBirthdate(Date.valueOf(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE)));
-                        profilo.setCity(json_data.getString(Profilo.ProfiloMetaData.CITY));
-                        profilo.setPhone(json_data.getString(Profilo.ProfiloMetaData.PHONE));
-                        profilo.setWallet((float) json_data.getDouble(Profilo.ProfiloMetaData.WALLET));
-                        profileBundle.putParcelable("User", profilo);
-                        profileIntent.putExtra("User", profileBundle);
-                        startActivityForResult(profileIntent, PROFILE_REQUEST_CODE);
-                    }
-                }
-
-
-            } catch (Exception e) {
-                Log.e("log_tag", "Error " + e.toString());
-            }
-            return true;
-        }
-
-    }
-
-
     //IMPLEMENTO I FILTRI
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -344,19 +291,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         double lat_start= 45.070841;//fittizie: SOSTITUIRE CON QUELLE DEL DISPOSITIVO
         double long_start=7.668552;//fittizie
         String city="Torino";
-        ParametersAsync parametersAsync=new ParametersAsync(lat_start,long_start,city);
+        LoadStationParamsAsync parametersAsync=new LoadStationParamsAsync(lat_start,long_start,city);
         new LoadStations().execute(parametersAsync);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Log.i(TAG,"markerClick");
 
-                Station station = (Station) marker.getTag();
+                station_selected = (Station) marker.getTag();
                 TextView stationId = findViewById(R.id.panel_station_id);
                 TextView streetId = findViewById(R.id.panel_street_id);
 
-                stationId.setText(station.getName());
-                streetId.setText(station.getStreet());
+                stationId.setText(station_selected.getId_parking().toString());
+                streetId.setText(station_selected.getStreet());
                 /*
 
                 // Getting the position from the marker
@@ -374,8 +321,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Setting the longitude
                 tvLng.setText("Longitude:"+ latLng.longitude);*/
 
-
                 panel.setPanelState(PanelState.EXPANDED);
+
+
 
                 //panel.setAnchorPoint(findViewById(R.id.floatingQrButton).getHeight());
                 //panel.setPanelState(PanelState.ANCHORED);
@@ -467,7 +415,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //IMPOSTO IL BOTTONE PER QR ACTIVITY
+    //IMPOSTO IL BOTTONE PER QR ACTIVITY + PERMISISON
     private void setQrButton(View qrButton) {
         qrButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -485,76 +433,58 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    //LOAD STATION, da implementare
-    //permette di acquisire tutte le stazioni nell'area visualizzata durante il primo accesso alla mappa
-    private class LoadStations extends AsyncTask<ParametersAsync,Void,ArrayList<Station>> {
+    public void onBookStation(View view) {
+        OpenReservationParamsAsync paramsAsync=new OpenReservationParamsAsync(mAuth.getUid(),station_selected.id_parking,"//FIttizia",0);
+        new OpenReservation().execute(paramsAsync);
+        panel.setPanelState(PanelState.HIDDEN);
+
+
+    }
+
+
+    //TASK ASYNC:
+
+    //1- LOAD STATION, permette di acquisire tutte le stazioni nell'area visualizzata durante il primo accesso alla mappa
+    private class LoadStations extends AsyncTask<LoadStationParamsAsync,Void,ArrayList<Station>> {
         @Override
-        protected ArrayList<Station> doInBackground(ParametersAsync... parametersAsyncs) {
+        protected ArrayList<Station> doInBackground(LoadStationParamsAsync... parametersAsyncs) {
+
+            String url="https://smartparkingpolito.altervista.org/AvailableParking.php";
+            String params=null;
+            ArrayList<Station> station = new ArrayList<Station>();
+
+            //Encoding parametri:
+            String lat_dest_string =String.valueOf(parametersAsyncs[0].latitude); //converto in stringhe i valori per inserirli nella richiesta
+            String long_dest_string =String.valueOf(parametersAsyncs[0].longitude);
 
             try {
-                URL url = new URL("https://smartparkingpolito.altervista.org/AvailableParking.php"); //
-                //preparazione della richiesta
-                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection(); //apertura connessione
-                urlConnection.setReadTimeout(1000);
-                urlConnection.setConnectTimeout(1500);
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setDoInput(true);
-                urlConnection.setDoOutput(true);
-                String lat_dest_string = String.valueOf(parametersAsyncs[0].latitude); //converto in stringhe i valori per inserirli nella richiesta
-                String long_dest_string = String.valueOf(parametersAsyncs[0].longitude);
-                String filter_string = String.valueOf(filter_destination_meter);
+                params = "lat_destination=" +URLEncoder.encode(lat_dest_string, "UTF-8")
+                        +"&long_destination=" +URLEncoder.encode(long_dest_string, "UTF-8")
+                        +"&city="+URLEncoder.encode(parametersAsyncs[0].city, "UTF-8");
 
-                String params = "lat_destination=" + URLEncoder.encode(lat_dest_string, "UTF-8")
-                        + "&long_destination=" + URLEncoder.encode(long_dest_string, "UTF-8")
-                        + "&city=" + URLEncoder.encode(parametersAsyncs[0].city, "UTF-8")//modificare:estrarre la città da preferenze
-                        + "&dist_filter_meter=" + URLEncoder.encode(filter_string, "UTF-8");
-                Log.i("param", params);
-                DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream());
-                dos.writeBytes(params);
-                dos.flush();
-                dos.close();
-
-                urlConnection.connect(); //connessione
-                InputStream is = urlConnection.getInputStream();
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.ISO_8859_1), 8);
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                is.close();
-                String result = sb.toString();
-
-                Log.i("result", result);
-                if (result == null) {
-                    String no_parking = getResources().getString(R.string.toast_no_parking);
-                    Log.i("param1", no_parking);
-                    Toast.makeText(getBaseContext(), no_parking, Toast.LENGTH_SHORT).show();
-                } else {
-                    JSONArray jArray = new JSONArray(result);
-
-                    String outputString = "";
-                    ArrayList<Station> station = new ArrayList<Station>();
+                    JSONArray jArray = ServerTask.askToServer(params,url);
                     for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
                         JSONObject json_data = jArray.getJSONObject(i);
                         String latitudine = json_data.getString("latitude");
                         String longitudine = json_data.getString("longitude");
-                        Log.i(TAG, latitudine+" "+longitudine);
+                        String city=json_data.getString("city");
+                        String street=json_data.getString("street");
+                        Integer id_parking=Integer.parseInt(json_data.getString("id_parking"));
+                        double cost_minute = Double.parseDouble(json_data.getString("cost_minute"));
                         double lat = Double.parseDouble(latitudine);
                         double lng = Double.parseDouble(longitudine);
-                        Station stat = new Station(lat, lng,"Duca", "Torino","Via De Martino 23");
+                        Station stat = new Station(lat, lng,city, street,id_parking,cost_minute);// usare dati scaricati
                         station.add(stat);
 
                     }
-                    return station;
+
+
+
                 }
-
-
-            } catch (Exception e) {
+                catch (Exception e) {
                 Log.e("log_tag", "Error " + e.toString());
-            }
-            return null;
+                }
+                return station;
         }
 
         protected void onPostExecute(ArrayList<Station> stations) {
@@ -562,86 +492,157 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             for (int i = 0; i < stations.size(); i++) {         //Ciclo di estrazione oggetti
                 Station stat = stations.get(i);
                 LatLng position = new LatLng(stat.getLatitude(), stat.getLongitude());
-                MarkerOptions markerOptions = new MarkerOptions().position(position).title("Stazione N "+i);
+                MarkerOptions markerOptions = new MarkerOptions().position(position).title("Stazione N "+stat.getId_parking().toString());
                 Marker marker = mMap.addMarker(markerOptions);
                 marker.setTag(stat);
+
                 Log.i(TAG, "marker aggiunto");
             }
         }
     }
 
-    //DBASYNCREQUEST, cambiare nome-> non esplicativa
-    //raccoglie tutte le stazioni in un area di destinazione selezionata. si avvia in seguito alla ricerca
-    //restituisce i marker o l'arraylist? direi array list
-    private class DbAsyncRequest extends AsyncTask<ParametersAsync,Void,Boolean> {
+    //2- OPEN RESERVATION, permette di aprire una prenotazione
+    private class OpenReservation extends AsyncTask<OpenReservationParamsAsync,Void,String> {
         @Override
-        protected Boolean doInBackground(ParametersAsync... parametersAsyncs) {
+        protected String doInBackground(OpenReservationParamsAsync... parametersAsyncs) {
+            String url="https://smartparkingpolito.altervista.org/OpenReservation.php";
+            String params=null;
+            String control=null;
 
+            //Encoding parametri:
+            String bonus_string=String.valueOf(parametersAsyncs[0].bonus);
+            String id_parking_string=String.valueOf(parametersAsyncs[0].id_parking);
+            String id_user_string=parametersAsyncs[0].id_user;
+            String address_string=parametersAsyncs[0].address_start;
             try {
+                params = "id_user=" + URLEncoder.encode(id_user_string, "UTF-8")
+                        +"&bonus=" +URLEncoder.encode(bonus_string, "UTF-8")
+                        +"&address_start=" +URLEncoder.encode(address_string, "UTF-8")
+                        +"&id_parking="+URLEncoder.encode(id_parking_string, "UTF-8");
 
-                URL url = new URL("http://smartparkingpolito.altervista.org/AvailableParking.php"); //
-                //preparazione della richiesta
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection(); //apertura connessione
-                urlConnection.setReadTimeout(1000);
-                urlConnection.setConnectTimeout(1500);
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setDoInput(true);
-                urlConnection.setDoOutput(true);
-                String lat_dest_string =String.valueOf(parametersAsyncs[0].latitude); //converto in stringhe i valori per inserirli nella richiesta
-                String long_dest_string =String.valueOf(parametersAsyncs[0].longitude);
-                String filter_string =String.valueOf(filter_destination_meter);
-
-
-                String params = "lat_destination=" +URLEncoder.encode(lat_dest_string, "UTF-8")
-                        +"&long_destination=" +URLEncoder.encode(long_dest_string, "UTF-8")
-                        +"&city="+URLEncoder.encode(parametersAsyncs[0].city, "UTF-8")//modificare:estrarre la città da preferenze
-                        +"&dist_filter_meter="+URLEncoder.encode(filter_string, "UTF-8");
-                Log.i("param", params);
-                DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream());
-                dos.writeBytes(params);
-                dos.flush();
-                dos.close();
-
-
-                urlConnection.connect(); //connessione
-                InputStream is = urlConnection.getInputStream();
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
+                JSONArray jsonArray=ServerTask.askToServer(params,url);
+                //gestisci JsonArray
+                JSONObject jsonObjectId=jsonArray.getJSONObject(0);
+                JSONObject jsonObjectControl=jsonArray.getJSONObject(1);  // index 0 booking_id, index 1 control_status
+                control=jsonObjectControl.getString("control");
+                Log.i("cntr0",control);
+                if (control.equals("OK")){   // non esegue l'if
+                    currentReservation.id_booking=jsonObjectId.getString("booking_id");
                 }
-                is.close();
+                 //avverti l'utente che il posto è stato occupato o non ha soldi
 
-                String result = sb.toString();
-                Log.i("result", result);
-                if(result==null){
-                    String no_parking = getResources().getString(R.string.toast_no_parking);
-                    Log.i("param1", no_parking);
-                    Toast.makeText(getBaseContext(), no_parking,Toast.LENGTH_SHORT).show();
+                //Mostrare apertura prenotazione
+                //POP-UP CHE MOSTRA ALL'UTENTE IL RISULTATO;
 
+            }
+            catch (UnsupportedEncodingException | JSONException e) {
+                e.printStackTrace();
+            }
+            return control;
 
-                }
-                else {
-                    JSONArray jArray = new JSONArray(result);
+        }
+        @Override
+        protected void onPostExecute(String result){
+            switch (result){
+                case "OK":
+                    Toast.makeText(MapsActivity.this,getString(R.string.reserv_success),Toast.LENGTH_LONG).show();
+                    break;
+                case "OCCUPIED":
+                    Toast.makeText(MapsActivity.this,getString(R.string.occupied),Toast.LENGTH_LONG).show();
+                    break;
+                case "ZERO_WALLET":
+                    Toast.makeText(MapsActivity.this,getString(R.string.zero_wallet),Toast.LENGTH_LONG).show();
+                    break;
+                case "CONN_ERROR":
+                    Toast.makeText(MapsActivity.this,getString(R.string.error_close_res),Toast.LENGTH_LONG).show();
+                    break;
+            }
+
+        }
+
+    }
+
+    //3- CLOSE RESERVATION, permette di chiudere una prenotazione
+    private class CloseReservation extends AsyncTask<CloseReservationParamsAsync,Void,String> {
+        @Override
+        protected String doInBackground(CloseReservationParamsAsync... parametersAsyncs) {
+
+            String url="https://smartparkingpolito.altervista.org/CloseReservation.php";
+            String params=null;
+            String result=null;
+
+            //Encoding parametri:
+            String id_booking_string =parametersAsyncs[0].booking_id;
+            String successful_string=String.valueOf(parametersAsyncs[0].successfull);
+            String id_parking_string=String.valueOf(parametersAsyncs[0].id_parking);
+            String id_user_string=parametersAsyncs[0].id_user;
+            try {
+                params = "id_user=" + URLEncoder.encode(id_user_string, "UTF-8")
+                        +"&successful=" +URLEncoder.encode(successful_string, "UTF-8")
+                        +"&id_booking=" +URLEncoder.encode(id_booking_string, "UTF-8")
+                        +"&id_parking="+URLEncoder.encode(id_parking_string, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            JSONArray jsonArray=ServerTask.askToServer(params,url);
+            if(jsonArray==null);
+            try {
+                result= jsonArray.getJSONObject(0).getString("result");
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                result="ERROR";
+            }
+
+            return result;
+
+        }
+        @Override
+        protected void onPostExecute(String result){
+            switch (result){
+                case "OK":          currentReservation.id_booking=null;
+                    Toast.makeText(MapsActivity.this,getString(R.string.ok),Toast.LENGTH_LONG).show();
+                    break;
+                case "WRONG_PARKING":Toast.makeText(MapsActivity.this,getString(R.string.sorry),Toast.LENGTH_LONG).show();
+                    break;
+                case "ERROR":        Toast.makeText(MapsActivity.this,getString(R.string.error_close_res),Toast.LENGTH_LONG).show();
+                    break;
+            }
+
+        }
+
+    }
+
+    //4-LOAD PROFILE,Prendo i dati sul profilo dal DB
+    private class LoadProfile extends AsyncTask<String,Void,Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            try {
+                String params = "email=" +URLEncoder.encode(user.getEmail(), "UTF-8");
+                JSONArray jArray = ServerTask.askToServer(params,strings[0]);
 
                     for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
                         JSONObject json_data = jArray.getJSONObject(i);
-                        String latitudine=json_data.getString("latitude");
-                        Log.i("latitudine", latitudine);
-                        String longitudine=json_data.getString("longitude");
-                        Log.i("longitudine", longitudine);
-
-
+                        Intent profileIntent = new Intent(MapsActivity.this, ShowProfile.class);
+                        Bundle profileBundle = new Bundle();
+                        Profilo profilo = new Profilo();
+                        profilo.setEmail(user.getEmail());
+                        profilo.setFirstname(json_data.getString(Profilo.ProfiloMetaData.FIRSTNAME));
+                        profilo.setLastname(json_data.getString(Profilo.ProfiloMetaData.LASTNAME));
+                        profilo.setBirthdate(Date.valueOf(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE)));
+                        profilo.setCity(json_data.getString(Profilo.ProfiloMetaData.CITY));
+                        profilo.setPhone(json_data.getString(Profilo.ProfiloMetaData.PHONE));
+                        profilo.setWallet((float) json_data.getDouble(Profilo.ProfiloMetaData.WALLET));
+                        profileBundle.putParcelable("User", profilo);
+                        profileIntent.putExtra("User", profileBundle);
+                        startActivityForResult(profileIntent, PROFILE_REQUEST_CODE);
                     }
-                }
-
 
             } catch (Exception e) {
                 Log.e("log_tag", "Error " + e.toString());
             }
-            return null;
+            return true;
         }
 
     }
@@ -653,8 +654,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onActivityResult(requestCode,resultCode,data);
         //GESTIONE EVENTI SCANNER
         if(requestCode==SCANNER_REQUEST_CODE && resultCode==Activity.RESULT_OK) {
-            String result = data.getStringExtra("parking_code");
-            Toast.makeText(MapsActivity.this, result, Toast.LENGTH_SHORT).show();
+            Integer result = Integer.parseInt(data.getStringExtra("parking_code"));
+            Toast.makeText(MapsActivity.this, result.toString(), Toast.LENGTH_SHORT).show();
+            String id_user=mAuth.getUid();
+            Integer id_parking=result;
+            String id_booking=currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
+            CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,1);
+            new CloseReservation().execute(paramsAsync);
         }
         //GESTIONE DATI PROFILO
         if(requestCode==PROFILE_REQUEST_CODE && resultCode==Activity.RESULT_OK){

@@ -5,19 +5,21 @@ package com.example.project.map;
 //mancano alcuni dettagli, da recuperare dal db
 
 public class Station {
+
     double latitude;
     double longitude;
     String city;
-    String name;
     String street;
+    Integer id_parking;
+    double cost_minute;
 
-    public Station(double lat,double lng, String name, String city, String street) {
-        latitude = lat;
-        longitude= lng;
-        this.city= city;
-        this.name=name;
-        this.street=street;
-
+    public Station(double latitude, double longitude, String city, String street, Integer id_parking, double cost_minute) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.city = city;
+        this.street = street;
+        this.id_parking = id_parking;
+        this.cost_minute = cost_minute;
     }
 
     public double getLatitude() {
@@ -44,19 +46,27 @@ public class Station {
         this.city = city;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getStreet() {
         return street;
     }
 
     public void setStreet(String street) {
         this.street = street;
+    }
+
+    public Integer getId_parking() {
+        return id_parking;
+    }
+
+    public void setId_parking(Integer id_parking) {
+        this.id_parking = id_parking;
+    }
+
+    public double getCost_minute() {
+        return cost_minute;
+    }
+
+    public void setCost_minute(double cost_minute) {
+        this.cost_minute = cost_minute;
     }
 }
