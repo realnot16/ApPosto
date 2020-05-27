@@ -429,6 +429,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 else{
                     Intent intent=new Intent(MapsActivity.this, ScannerActivity.class);
+                    Boolean canCloseReservation=false;
+                    if(currentReservation.getId_booking()!=null){
+                        canCloseReservation=true;
+                    }
+                    intent.putExtra("canCloseReservation",canCloseReservation);
                     startActivityForResult(intent,SCANNER_REQUEST_CODE);
 
                 }

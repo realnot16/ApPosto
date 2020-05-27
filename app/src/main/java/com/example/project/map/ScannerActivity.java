@@ -13,6 +13,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -21,6 +22,7 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.android.material.snackbar.Snackbar;
 
 
 public class ScannerActivity extends AppCompatActivity {
@@ -30,12 +32,14 @@ public class ScannerActivity extends AppCompatActivity {
     private CameraSource cameraSource;
     private Vibrator v;
     private String code_parking;
+    private Boolean canCloseReservation;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        canCloseReservation=getIntent().getBooleanExtra("canCloseReservation",false);
         setContentView(R.layout.map_layout_scanner);
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -94,10 +98,16 @@ public class ScannerActivity extends AppCompatActivity {
                 //deprecated in API 26
                 v.vibrate(300);
             }
-            Intent intent=new Intent();
-            intent.putExtra("parking_code",code_parking);
-            setResult(Activity.RESULT_OK,intent);
-            finish();
+            if (canCloseReservation==true){
+                Intent intent=new Intent();
+                intent.putExtra("parking_code",code_parking);
+                setResult(Activity.RESULT_OK,intent);
+                finish();
+            }
+            else{
+                Toast.makeText(this,R.string.qr_snackbar,Toast.LENGTH_LONG).show();
+                //Snackbar.make(findViewById(R.id.myCoordinatorLayout),R.string.qr_snackbar,Snackbar.LENGTH_LONG).show();
+            }
 
         }
     }
