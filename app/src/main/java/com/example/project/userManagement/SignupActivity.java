@@ -3,7 +3,6 @@ package com.example.project.userManagement;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,7 +62,7 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.signup_layout);
+        setContentView(R.layout.user_management_signup_layout);
         getWindow().setBackgroundDrawableResource(R.drawable.main_background_light);
 
         //Inizializzazione

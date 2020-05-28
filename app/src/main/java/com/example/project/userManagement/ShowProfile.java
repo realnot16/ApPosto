@@ -31,7 +31,7 @@ public class ShowProfile extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile);
+        setContentView(R.layout.user_management_profile);
 
         name = (TextView) findViewById(R.id.label_name_id);
         birthdate = (TextView) findViewById(R.id.label_birthdate);

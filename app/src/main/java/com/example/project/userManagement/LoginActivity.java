@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_layout);
+        setContentView(R.layout.user_management_login_layout);
         getWindow().setBackgroundDrawableResource(R.drawable.main_background_coloured);
         ImageView img = findViewById(R.id.login_logo_id);
 
