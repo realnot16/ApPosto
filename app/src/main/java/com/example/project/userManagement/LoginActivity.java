@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
-        ImageView img = findViewById(R.id.login_logo_id);
+        ImageView img = findViewById(R.id.iv_storico);
 
         //RIMUOVO TESTO DAL GOOGLE BUTTON
         //TextView textView = (TextView) button.getChildAt(0);

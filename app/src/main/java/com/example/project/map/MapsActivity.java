@@ -29,6 +29,7 @@ import com.example.project.ParametersAsync.LoadStationParamsAsync;
 import com.example.project.ParametersAsync.OpenReservationParamsAsync;
 import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
+import com.example.project.reservation.ReservationsActivity;
 import com.example.project.userManagement.LoginActivity;
 import com.example.project.userManagement.Profilo;
 import com.example.project.userManagement.ShowProfile;
@@ -253,6 +254,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         mAuth.signOut();
                         Intent i = new Intent(MapsActivity.this, LoginActivity.class);
                         startActivity(i);
+                        return true;
+                    case R.id.show_reservations:
+                        Intent intent= new Intent(MapsActivity.this, ReservationsActivity.class);
+                        startActivity(intent);
                         return true;
                     default:
                         return true;
@@ -762,8 +767,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // permissions this app might request.
         }
     }
-
-
-
-
 }

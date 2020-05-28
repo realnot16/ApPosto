@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/loginFields"
+    android:background="@drawable/main_background_not_coloured"
+    android:orientation="vertical"
     tools:context=".reservation.ReservationsActivity">
 
     <ListView
