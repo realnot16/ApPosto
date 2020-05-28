@@ -12,12 +12,14 @@
     <string name="signUp_CpasswordField_text">Conferma Password</string>
     <string name="signUp_yesAccount_description_text">Sei già registrato?</string>
     <string name="signUp_accedi_description_text">Accedi!</string>
-    <string name="signUp_registrati_button_description_text">Registrati</string>
+    <string name="signUp_registrati_button_description_text">Conferma</string>
     <string name="signUp_nome_text">Nome</string>
     <string name="signUp_cognome_text">Cognome</string>
     <string name="signUp_data_text">Data di nascita</string>
     <string name="signUp_cellulare_text">Cellulare</string>
     <string name="signUp_citta_text">Città</string>
+    <string name="signUp_descrizioneDati_update">I tuoi dati:</string>
+    <string name="signUp_email_description_update">Mail (non modificabile):</string>
 
     <!--   String loginLayout -->
     <string name="login_emailField_text">Email</string>

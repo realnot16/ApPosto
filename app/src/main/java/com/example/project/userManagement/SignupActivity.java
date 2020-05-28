@@ -2,10 +2,9 @@ package com.example.project.userManagement;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,9 +12,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project.R;
+import com.example.project.map.MapsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,9 +24,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,18 +31,26 @@ import java.util.regex.Pattern;
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "SignupActivity";
+    private static int CONFIRM_CODE = 0;
+    private TextView dati;
+    private TextView tvMail;
     private EditText mail;
+    private TextView tvPwd;
     private EditText password;
+    private TextView tvConfPwd;
     private EditText confpassword;
     private EditText firstname;
     private EditText lastname;
     private EditText birthdate;
     private EditText phone;
     private EditText city;
+    private TextView accedi;
+    private TextView testoAccedi;
     DatePickerDialog picker;
     private String birthdateString;
 
     private FirebaseAuth mAuth;
+    private Profilo profilo;
 
     @Override
     public void onStart() {
@@ -65,60 +71,115 @@ public class SignupActivity extends AppCompatActivity {
 
     //Metodo di inizializzazione
     private void initUI() {
-        mail = findViewById(R.id.changePwd_oldField_id);
-        password = findViewById(R.id.changePwd_newField_id);
-        confpassword = findViewById(R.id.changePwd_confNewField_id);
+        dati = findViewById(R.id.signUp_descrizioneDati_id);
+        tvMail = findViewById(R.id.signUp_descrizioneEmail_id);
+        mail = findViewById(R.id.signUp_emailField_id);
+        tvPwd = findViewById(R.id.signUp_descrizionePwd_id);
+        password = findViewById(R.id.signUp_passwordField_id);
+        tvConfPwd = findViewById(R.id.signUp_descrizioneConfPwd_id);
+        confpassword = findViewById(R.id.signUp_confpwdField_id);
         firstname = findViewById(R.id.signUp_nameField_id);
         lastname = findViewById(R.id.signUp_surnameField_id);
         phone = findViewById(R.id.signUp_phoneField_id);
         birthdate = findViewById(R.id.signUp_dateField_id);
         city = findViewById(R.id.signUp_cityField_id);
+        accedi = findViewById(R.id.signUp_accedi_id);
+        testoAccedi = findViewById(R.id.signUp_yesAccount_id);
         birthdateString = "";
 
         mAuth = FirebaseAuth.getInstance();
+
+        Bundle profileBundle = getIntent().getBundleExtra("editProfile");
+        if(profileBundle!=null){
+            CONFIRM_CODE = 1;
+            profilo = profileBundle.getParcelable("editProfile");
+            dati.setText(R.string.signUp_descrizioneDati_update);
+            firstname.setText(profilo.getFirstname());
+            lastname.setText(profilo.getLastname());
+            birthdate.setText(profilo.getBirthdate());
+            phone.setText(profilo.getPhone());
+            city.setText(profilo.getCity());
+            mail.setText(profilo.getEmail());
+            mail.setEnabled(false);
+            password.setVisibility(View.GONE);
+            confpassword.setVisibility(View.GONE);
+            tvMail.setText(R.string.signUp_email_description_update);
+            tvPwd.setVisibility(View.GONE);
+            tvConfPwd.setVisibility(View.GONE);
+            accedi.setVisibility(View.GONE);
+            testoAccedi.setVisibility(View.GONE);
+        }
     }
 
     private void updateUI(FirebaseUser currentUser) {
-        Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+        Intent intent = new Intent(SignupActivity.this, MapsActivity.class);
         startActivity(intent);
     }
 
     //It takes in an email address and password, validates them and then creates a new user.
     public void signup(View view){
-        Log.i(TAG, "Hai cliccato su Registrati!");
-        String mailUser = mail.getText().toString();
-        String passwordUser = password.getText().toString();
-        String confirmPwdUser = confpassword.getText().toString();
+        Log.i(TAG, "Hai cliccato su Conferma!");
+
         String nome = firstname.getText().toString();
         String cognome = lastname.getText().toString();
+        //Date datadinascita = Date.valueOf(birthdate.getText().toString());
         String città = city.getText().toString();
         String telefono = phone.getText().toString();
 
-        if(validateUser(mailUser, passwordUser, confirmPwdUser)) {
+        if(CONFIRM_CODE==0) { //Conferma=Registrati
+            String mailUser = mail.getText().toString();
+            String passwordUser = password.getText().toString();
+            String confirmPwdUser = confpassword.getText().toString();
 
-            mAuth.createUserWithEmailAndPassword(mailUser, passwordUser)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "createUserWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                updateUI(user);
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(SignupActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                                //updateUI(null);
+            if (validateUser(mailUser, passwordUser, confirmPwdUser)) {
+
+                mAuth.createUserWithEmailAndPassword(mailUser, passwordUser)
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG, "createUserWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    updateUI(user);
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                    Toast.makeText(SignupActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                    //updateUI(null);
+                                }
+                                // ...
                             }
-                            // ...
-                        }
-                    });
+                        });
 
-            //uploadUser(nome, cognome, mailUser, telefono, data, città);
-        } else{
-            Toast.makeText(SignupActivity.this, "Ricontrolla i campi!", Toast.LENGTH_SHORT).show();
+                //uploadUser(nome, cognome, mailUser, telefono, data, città);
+            } else {
+                Toast.makeText(SignupActivity.this, "Ricontrolla i campi!", Toast.LENGTH_SHORT).show();
+            }
+
+        }else{ //Conferma= Aggiorna dati
+
+            //+Aggiornamento su DB
+
+            Intent editedProfile = new Intent(this, ShowProfile.class);
+            Bundle profBundle = new Bundle();
+            Profilo p = new Profilo();
+            p.setEmail(mail.getText().toString());
+            p.setFirstname(firstname.getText().toString());
+            p.setLastname(lastname.getText().toString());
+            p.setPhone(phone.getText().toString());
+            //p.setBirthdate(Date.valueOf(birthdate.getText().toString()));
+            p.setBirthdate(birthdate.getText().toString());
+            p.setCity(city.getText().toString());
+            profBundle.putParcelable("editedUser", p);
+            editedProfile.putExtra("editedUser", profBundle);
+
+            //Mando indietro i dati modificati
+            //setResult(Activity.RESULT_OK, editedProfile);
+            //finish();
+            startActivity(editedProfile);
+
         }
     }
 

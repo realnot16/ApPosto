@@ -29,6 +29,7 @@ import com.example.project.ParametersAsync.LoadStationParamsAsync;
 import com.example.project.ParametersAsync.OpenReservationParamsAsync;
 import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
+import com.example.project.userManagement.LoginActivity;
 import com.example.project.userManagement.Profilo;
 import com.example.project.userManagement.ShowProfile;
 import com.google.android.gms.common.api.Status;
@@ -110,7 +111,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //SCANNER
     private final static int  SCANNER_REQUEST_CODE=2;
-    private final static int  PROFILE_REQUEST_CODE=1;
     private final static int MY_CAMERA_REQUEST_CODE=100;
     FloatingActionButton qrButton;
 
@@ -246,8 +246,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         drawerLayout.closeDrawers();
                         return true;
                     case R.id.show_profile_id:
-                        new LoadProfile().execute("http://smartparkingpolito.altervista.org/getProfile.php");
-                        Log.i(TAG, "Ho cliccato su Profilo nel menu.");
+                        new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
+                        Log.i(TAG, "Ho cliccato su Profilo nel menu. User:"+mAuth.getCurrentUser().getEmail());
+                        return true;
+                    case R.id.logout_profile_id:
+                        mAuth.signOut();
+                        Intent i = new Intent(MapsActivity.this, LoginActivity.class);
+                        startActivity(i);
+                        return true;
                     default:
                         return true;
                 }
@@ -638,13 +644,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         profilo.setEmail(user.getEmail());
                         profilo.setFirstname(json_data.getString(Profilo.ProfiloMetaData.FIRSTNAME));
                         profilo.setLastname(json_data.getString(Profilo.ProfiloMetaData.LASTNAME));
-                        profilo.setBirthdate(Date.valueOf(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE)));
+                        profilo.setBirthdate(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE));
                         profilo.setCity(json_data.getString(Profilo.ProfiloMetaData.CITY));
                         profilo.setPhone(json_data.getString(Profilo.ProfiloMetaData.PHONE));
                         profilo.setWallet((float) json_data.getDouble(Profilo.ProfiloMetaData.WALLET));
                         profileBundle.putParcelable("User", profilo);
                         profileIntent.putExtra("User", profileBundle);
-                        startActivityForResult(profileIntent, PROFILE_REQUEST_CODE);
+                        startActivity(profileIntent);
                     }
 
             } catch (Exception e) {
@@ -703,10 +709,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,1);
             new CloseReservation().execute(paramsAsync);
         }
-        //GESTIONE DATI PROFILO
-        if(requestCode==PROFILE_REQUEST_CODE && resultCode==Activity.RESULT_OK){
 
-        }
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class ShowProfile extends AppCompatActivity {
 
     private static final String TAG = "ShowProfile_TAG";
+    private static final int PROFILE_REQUEST_CODE = 1;
     private TextView name;
     private TextView birthdate;
     private TextView city;
@@ -47,19 +48,24 @@ public class ShowProfile extends AppCompatActivity {
 
     private void setData() {
         Bundle profileBundle = getIntent().getBundleExtra("User");
+        Bundle editBundle = getIntent().getBundleExtra("editedUser");
 
         //Controllo pancia dell'intent
-        if (profileBundle != null) {
-            //1)Ho dei dati: li visualizzo per modificarli
-            profilo = profileBundle.getParcelable("User");
-            name.setText(profilo.getFirstname()+" "+profilo.getLastname());
-            city.setText(profilo.getCity());
-            birthdate.setText(profilo.getBirthdate());
-            email.setText(profilo.getEmail());
-            phone.setText(profilo.getPhone());
-            wallet.setText(String.valueOf(profilo.getWallet()));
+        if (profileBundle != null || editBundle != null) {
+            if(editBundle!=null) {
+                profilo = editBundle.getParcelable("editedUser");
+                profileBundle = null;
+            }else {
+                profilo = profileBundle.getParcelable("User");
+            }
+                name.setText(profilo.getFirstname()+" "+profilo.getLastname());
+                city.setText(profilo.getCity());
+                birthdate.setText(profilo.getBirthdate());
+                email.setText(profilo.getEmail());
+                phone.setText(profilo.getPhone());
+                wallet.setText(String.valueOf(profilo.getWallet()));
         } else {
-
+            //accesso non consentito direttamente su showprofile
         }
     }
 
@@ -67,7 +73,10 @@ public class ShowProfile extends AppCompatActivity {
     //onClick su bottone Modifica - per modificare i campi
     public void editProfile(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
-        startActivity(intent);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("editProfile", profilo);
+        intent.putExtra("editProfile", bundle);
+        startActivityForResult(intent, PROFILE_REQUEST_CODE);
     }
 
     //onClick su bottone Ricarica - per ricarica wallet
@@ -92,4 +101,30 @@ public class ShowProfile extends AppCompatActivity {
         }else
             Toast.makeText(this, "Si è verificato un problema", Toast.LENGTH_SHORT).show();
     }
+
+   //OnActivityResult
+   @Override
+   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+       super.onActivityResult(requestCode, resultCode, data);
+
+       // check that it is the SecondActivity with an OK result
+       if (requestCode == PROFILE_REQUEST_CODE) {
+           if (resultCode == RESULT_OK) {
+
+               Log.i(TAG, "OnActivityResult");
+               Bundle editedUser = getIntent().getBundleExtra("editedUser");
+               profilo = (Profilo) editedUser.getParcelable("editedUser");
+               name.setText(profilo.getFirstname()+" "+profilo.getLastname());
+               city.setText(profilo.getCity());
+               birthdate.setText(profilo.getBirthdate());
+               email.setText(profilo.getEmail());
+               phone.setText(profilo.getPhone());
+               wallet.setText(String.valueOf(profilo.getWallet()));
+
+
+           }
+       }
+   }
+
+
 }

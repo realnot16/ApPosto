@@ -52,7 +52,7 @@ public class ServerTask {
             else output=new JSONArray(result);
         }
         catch (Exception e) {
-            Log.e("log_tag", "Error " + e.toString());
+            Log.e("log_tag", "Errore " + e.toString());
         }
 
         return output;

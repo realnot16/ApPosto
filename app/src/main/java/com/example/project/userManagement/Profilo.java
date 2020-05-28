@@ -3,6 +3,8 @@ package com.example.project.userManagement;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -38,7 +40,7 @@ public class Profilo implements Parcelable {
     private String lastname;
     private String email;
     private String phone;
-    private Date birthdate;
+    private String birthdate;
     private String city;
     private float wallet;
 
@@ -47,7 +49,8 @@ public class Profilo implements Parcelable {
         lastname = in.readString();
         email = in.readString();
         phone = in.readString();
-        birthdate = new Date(in.readLong());
+        birthdate = in.readString();
+        //birthdate = new Date(in.readLong());
         city = in.readString();
         wallet = in.readFloat();
     }
@@ -65,7 +68,8 @@ public class Profilo implements Parcelable {
         parcel.writeString(lastname);
         parcel.writeString(email);
         parcel.writeString(phone);
-        parcel.writeLong(birthdate.getTime());
+        parcel.writeString(birthdate);
+        //parcel.writeLong(birthdate.getTime());
         parcel.writeString(city);
         parcel.writeFloat(wallet);
     }
@@ -103,11 +107,12 @@ public class Profilo implements Parcelable {
     }
 
     public String getBirthdate() {
-        SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy");
-        return f.format(birthdate);
+        //SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy");
+        //return f.format(birthdate);
+        return birthdate;
     }
 
-    public void setBirthdate(Date birthdate) {
+    public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
     }
 
@@ -125,5 +130,11 @@ public class Profilo implements Parcelable {
 
     public void setWallet(float wallet) {
         this.wallet = wallet;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.firstname;
     }
 }

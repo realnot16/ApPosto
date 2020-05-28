@@ -16,5 +16,10 @@
             android:id="@+id/show_profile_id"
             android:checked="false"
             android:title="Profilo" />
+
+        <item
+            android:id="@+id/logout_profile_id"
+            android:checked="false"
+            android:title="Logout" />
     </group>
 </menu>
