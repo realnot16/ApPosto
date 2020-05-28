@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project.R;
@@ -63,6 +64,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
         ImageView img = findViewById(R.id.login_logo_id);
+
+        //RIMUOVO TESTO DAL GOOGLE BUTTON
+        //TextView textView = (TextView) button.getChildAt(0);
+        //textView.setText("Acc");
 
         //Inizializzazione
         initUI();

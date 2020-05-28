@@ -64,19 +64,17 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_layout);
+        getWindow().setBackgroundDrawableResource(R.drawable.main_background_light);
 
         //Inizializzazione
         initUI();
+
     }
 
     //Metodo di inizializzazione
     private void initUI() {
-        dati = findViewById(R.id.signUp_descrizioneDati_id);
-        tvMail = findViewById(R.id.signUp_descrizioneEmail_id);
         mail = findViewById(R.id.signUp_emailField_id);
-        tvPwd = findViewById(R.id.signUp_descrizionePwd_id);
         password = findViewById(R.id.signUp_passwordField_id);
-        tvConfPwd = findViewById(R.id.signUp_descrizioneConfPwd_id);
         confpassword = findViewById(R.id.signUp_confpwdField_id);
         firstname = findViewById(R.id.signUp_nameField_id);
         lastname = findViewById(R.id.signUp_surnameField_id);

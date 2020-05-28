@@ -528,6 +528,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String id_parking_string=String.valueOf(parametersAsyncs[0].id_parking);
             String id_user_string=parametersAsyncs[0].id_user;
             String address_string=parametersAsyncs[0].address_start;
+            Log.i(TAG, "dettagli prenotazione: "+bonus_string+" "+ id_parking_string+" "+ id_user_string+" "+ address_string);
             try {
                 params = "id_user=" + URLEncoder.encode(id_user_string, "UTF-8")
                         +"&bonus=" +URLEncoder.encode(bonus_string, "UTF-8")
