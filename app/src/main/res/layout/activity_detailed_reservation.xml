@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/main_background"
+    android:background="@drawable/main_background_not_coloured"
     android:orientation="vertical">
 
     <TextView
@@ -36,9 +36,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="5dp"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="1dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="1dp"
             android:layout_toEndOf="@+id/reservation_text_label"
             android:text="TextView" />
