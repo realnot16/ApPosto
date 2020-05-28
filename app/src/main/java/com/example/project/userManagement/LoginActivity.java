@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project.R;
@@ -63,7 +62,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
-        ImageView img = findViewById(R.id.iv_storico);
+        getWindow().setBackgroundDrawableResource(R.drawable.main_background_coloured);
+        ImageView img = findViewById(R.id.login_logo_id);
 
         //RIMUOVO TESTO DAL GOOGLE BUTTON
         //TextView textView = (TextView) button.getChildAt(0);

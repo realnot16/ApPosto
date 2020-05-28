@@ -10,7 +10,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -20,7 +23,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -60,21 +64,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.Arrays;
 import java.util.Objects;
 
-import javax.net.ssl.HttpsURLConnection;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
@@ -146,6 +141,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // TOOLBAR E NAVIGATION DRAWER
         Toolbar toolbar = findViewById(R.id.toolbar);
         setToolbar(toolbar);
+
 
 
         // MAPPA : Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -511,8 +507,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             for (int i = 0; i < stations.size(); i++) {         //Ciclo di estrazione oggetti
                 Station stat = stations.get(i);
                 LatLng position = new LatLng(stat.getLatitude(), stat.getLongitude());
-                MarkerOptions markerOptions = new MarkerOptions().position(position).title("Stazione N "+stat.getId_parking().toString());
-                Marker marker = mMap.addMarker(markerOptions);
+                MarkerOptions markerOptions = new MarkerOptions().position(position)
+                        .title("Stazione N "+stat.getId_parking().toString())
+                        .icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.map_ic_pin));
+                Marker marker = mMap.addMarker(markerOptions);//BitmapDescriptorFactory.fromResource(R.drawable.map_pin)
                 marker.setTag(stat);
 
                 Log.i(TAG, "marker aggiunto");
@@ -520,7 +518,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //2- OPEN RESERVATION, permette di aprire una prenotazione
+    //2- OPEN RESERVATION, permette di aprire una map_icona_panel_prenotazione
     private class OpenReservation extends AsyncTask<OpenReservationParamsAsync,Void,String> {
         @Override
         protected String doInBackground(OpenReservationParamsAsync... parametersAsyncs) {
@@ -533,7 +531,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String id_parking_string=String.valueOf(parametersAsyncs[0].id_parking);
             String id_user_string=parametersAsyncs[0].id_user;
             String address_string=parametersAsyncs[0].address_start;
-            Log.i(TAG, "dettagli prenotazione: "+bonus_string+" "+ id_parking_string+" "+ id_user_string+" "+ address_string);
+            Log.i(TAG, "dettagli map_icona_panel_prenotazione: "+bonus_string+" "+ id_parking_string+" "+ id_user_string+" "+ address_string);
             try {
                 params = "id_user=" + URLEncoder.encode(id_user_string, "UTF-8")
                         +"&bonus=" +URLEncoder.encode(bonus_string, "UTF-8")
@@ -551,7 +549,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                  //avverti l'utente che il posto è stato occupato o non ha soldi
 
-                //Mostrare apertura prenotazione
+                //Mostrare apertura map_icona_panel_prenotazione
                 //POP-UP CHE MOSTRA ALL'UTENTE IL RISULTATO;
 
             }
@@ -582,7 +580,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    //3- CLOSE RESERVATION, permette di chiudere una prenotazione
+    //3- CLOSE RESERVATION, permette di chiudere una map_icona_panel_prenotazione
     private class CloseReservation extends AsyncTask<CloseReservationParamsAsync,Void,String> {
         @Override
         protected String doInBackground(CloseReservationParamsAsync... parametersAsyncs) {
@@ -667,8 +665,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    //5-CHECK CURRENT RESERVATION, controlla se sul server è settata una prenotazione per l'user corrente, evita di perdere
-    // la prenotazione se l'app viene chiusa
+    //5-CHECK CURRENT RESERVATION, controlla se sul server è settata una map_icona_panel_prenotazione per l'user corrente, evita di perdere
+    // la map_icona_panel_prenotazione se l'app viene chiusa
     private class CheckCurrentReservation extends AsyncTask<String,Void,Boolean> {
 
         @Override
@@ -766,5 +764,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // other 'case' lines to check for other
             // permissions this app might request.
         }
+    }
+
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 }

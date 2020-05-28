@@ -102,7 +102,7 @@
             app:layout_constraintVertical_bias="0.328" />
 
         <ImageView
-            android:id="@+id/iv_storico"
+            android:id="@+id/login_logo_id"
             android:layout_width="122dp"
             android:layout_height="103dp"
             app:layout_constraintBottom_toBottomOf="parent"

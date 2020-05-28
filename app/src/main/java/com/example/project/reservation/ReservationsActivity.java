@@ -62,7 +62,7 @@ public class ReservationsActivity extends ListActivity {
         });
 
         updateReservationList();
-        Toast.makeText(this,"Seleziona una prenotazione per visualizzare maggiori dettagli", Toast.LENGTH_LONG);
+        Toast.makeText(this,"Seleziona una map_icona_panel_prenotazione per visualizzare maggiori dettagli", Toast.LENGTH_LONG);
 
     }
 
