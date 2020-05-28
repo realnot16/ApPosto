@@ -32,9 +32,12 @@
 
     <!--   String reservation_row_layout -->
     <string name="reservation_id_text">Codice prenotazione: </string>
-    <string name="reservation_date_text">Data: </string>
+    <string name="reservation_date_text">Inizio prenotazione: </string>
+    <string name="reservation_date_finish_text">Fine prenotazione: </string>
     <string name="reservation_address_text">Indirizzo del posteggio: </string>
     <string name="reservation_amount_text">Costo totale: </string>
+    <string name="detailed_reservation_tv"> Dettagli della prenotazione selezionata  </string>
+    <string name="reservation_omaggio"> </string>
 
 
     <!--   String MapLayout -->

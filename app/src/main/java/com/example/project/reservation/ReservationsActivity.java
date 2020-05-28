@@ -2,19 +2,19 @@ package com.example.project.reservation;
 
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Toast;
 
-//import com.example.project.DetailedReservationActivity;
 import com.example.project.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,13 +31,11 @@ import java.util.List;
 
 public class ReservationsActivity extends ListActivity {
 
-    private static final String MY_SHARED_PREF = "login_prefs";
-    private static final String EMAIL_DATA_KEY = "remember_mail";
     private static final String TAG= "ReservationActivity";
-    private static final String URL_DB= "http://pmscflaviahosting.altervista.org/booking_php.php";
+    private static final String URL_DB= "http://smartparkingpolito.altervista.org/GetReservationsByUserId.php";
     private List<Reservation> storico= new ArrayList<Reservation>();
-    private String mailUtente;
-
+    FirebaseAuth mAuth;
+    FirebaseUser user;
 
 
     @Override
@@ -45,27 +43,26 @@ public class ReservationsActivity extends ListActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservations);
-/*
+
+        mAuth= FirebaseAuth.getInstance();
+        //user= mAuth.getCurrentUser();
+
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int pos, long l) {
-                //qui scrivo cosa fare al click
+                //onClick sugli elementi della ListView
                 Intent intent= new Intent(getApplicationContext(), DetailedReservationActivity.class);
                 Bundle reservationBundle =new Bundle();
                 Reservation selected= (Reservation)adapter.getItemAtPosition(pos);
-                Log.i(TAG, "HAI CLICCATO SULLA PRENOTAZIONE DI: "+selected.getUser_id());
+                //Log.i(TAG, "HAI CLICCATO SULLA PRENOTAZIONE DI: "+selected.getUser_id());
                 reservationBundle.putParcelable("reservation", selected);
                 intent.putExtra("reservation", reservationBundle);
                 startActivity(intent);
             }
-        });*/
-
-        //codice per recuperare utente da preferenze
-        SharedPreferences prefs = getSharedPreferences(MY_SHARED_PREF, Context.MODE_PRIVATE);
-        mailUtente = prefs.getString(EMAIL_DATA_KEY, "No preferenze!");
-        Log.i(TAG, "Utente salvato nelle preferenze:"+mailUtente.toString());
+        });
 
         updateReservationList();
+        Toast.makeText(this,"Seleziona una prenotazione per visualizzare maggiori dettagli", Toast.LENGTH_LONG);
 
     }
 
@@ -81,20 +78,22 @@ public class ReservationsActivity extends ListActivity {
         protected List<Reservation> doInBackground(String... urls) {//ATTIVITA' CRITICA
             return loadReservationsFromDB(urls[0]);
         }
-/*
+
         @Override
         protected void onPostExecute(List<Reservation> storico) {//QUANDO FINSCO ATTIVITA' CRITICA
 
             ArrayAdapter a= new ArrayAdapter(getApplicationContext(), R.layout.reservation_simple_row_layout, R.id.textViewList, storico);
             getListView().setAdapter(a);
-        }*/
+        }
     }
 
     private List<Reservation> loadReservationsFromDB(String urlstring) {
-        URL url;
+
         storico.clear();
         try {
-            url = new URL(urlstring);
+
+
+            URL url = new URL(urlstring);
             //connessione
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setReadTimeout(10000);
@@ -104,9 +103,10 @@ public class ReservationsActivity extends ListActivity {
             urlConnection.setDoOutput(true);
 
             //concateno al POST l'user_id per filtrare la tabella
-            String params = "user_id=" + URLEncoder.encode("flavia@gmail.com", "UTF-8");
-            //utente da preferenze
-            //String params = "user_id=" + URLEncoder.encode(mailUtente.toString(), "UTF-8");
+            String userId= mAuth.getCurrentUser().getUid();
+            Log.i("current user", "Current user: "+userId);
+            String params = "user_id=" + URLEncoder.encode(userId, "UTF-8");
+
             DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream());
             dos.writeBytes(params);
             dos.flush();
@@ -126,30 +126,27 @@ public class ReservationsActivity extends ListActivity {
 
             String result = sb.toString();//il risultato è una stringa Json
 
+            Log.i("giacomo", "Risultato query:"+result);
+
             JSONArray jArray = new JSONArray(result); //decodifico la stringa Json
             //per decodificare uso la classe jsonArray-> collezione di oggetti JsonObject
             //su cui faccio un ciclo, ad ogni oggetto chiedo di darmi l'elemento corrispondente alle colonne della tabella
-
+            Log.i("giacomo", "Lunghezza json Array "+jArray.length());
             String outputString = "";
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject json_data = jArray.getJSONObject(i);
-                Log.i(TAG, "\n ID_BOOKING =  " + json_data.getString("id_booking") +
-                        "\n DATA INIZIO = " + json_data.getString("time_start") +
-                        "\n DATA FINE = " + json_data.getString("time_end") +
-                        "\n INDIRIZZO DI PARTENZA = " + json_data.getString("address_start") +
-                        "\n UTENTE = " + json_data.getString("user_id"));
+               // Log.i(TAG, "\n ID_BOOKING =  " + json_data.getString(Reservation.ReservationMetaData.ID_USER));
 
                 //4d) ottenuto l'array di classe Json posso creare un oggetto Reservation e inserirlo nell'array
                 Reservation temp= new Reservation();
-                temp.setId_booking(json_data.getString("id_booking"));
-                temp.setTime_start(json_data.getString("time_start"));
-                temp.setTime_end(json_data.getString("time_end"));
-                temp.setAddress_start(json_data.getString("address_start"));
-                temp.setBonus(json_data.getInt("bonus"));
-                temp.setSuccessful(json_data.getInt("successful"));
-                temp.setParking_id(json_data.getInt("parking_id"));
-                temp.setUser_id(json_data.getString("user_id"));
-                temp.setAmount((float)json_data.getDouble("amount")); //per ora con un cast, poi si vede
+                temp.setId_booking(json_data.getString(Reservation.ReservationMetaData.ID));
+                temp.setTime_start(json_data.getString(Reservation.ReservationMetaData.TIME_START));
+                temp.setTime_end(json_data.getString(Reservation.ReservationMetaData.TIME_END));
+                temp.setAddress_start(json_data.getString(Reservation.ReservationMetaData.START_ADDRESS));
+                temp.setAddress_start(json_data.getString(Reservation.ReservationMetaData.END_ADDRESS));
+                temp.setBonus(json_data.getInt(Reservation.ReservationMetaData.BONUS));
+                temp.setParking_id(json_data.getInt(Reservation.ReservationMetaData.ID_PARKING));
+                temp.setAmount(json_data.getString(Reservation.ReservationMetaData.AMOUNT));
 
                 storico.add(temp);
                 Log.i(TAG, "Utente inserito nell'array: "+ temp.toString());

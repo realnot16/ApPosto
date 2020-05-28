@@ -18,6 +18,11 @@
             android:title="Profilo" />
 
         <item
+            android:id="@+id/show_reservations"
+            android:checked="false"
+            android:title="Storico prenotazioni" />
+
+        <item
             android:id="@+id/logout_profile_id"
             android:checked="false"
             android:title="Logout" />

@@ -5,10 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_background"
+    android:orientation="vertical"
     tools:context=".reservation.ReservationsActivity">
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:clickable="true" />
 </LinearLayout>

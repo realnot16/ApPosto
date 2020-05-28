@@ -8,7 +8,7 @@
     android:background="@drawable/main_background">
 
     <ImageView
-        android:id="@+id/login_logo_id"
+        android:id="@+id/iv_storico"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="64dp"

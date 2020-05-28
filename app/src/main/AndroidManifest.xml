@@ -49,6 +49,7 @@
         <activity android:name=".userManagement.SignupActivity" />
         <activity android:name=".userManagement.MainActivity" />
         <activity android:name=".reservation.ReservationsActivity" />
+        <activity android:name=".reservation.DetailedReservationActivity" />
         <activity android:name=".userManagement.ShowProfile" />
     </application>
 
