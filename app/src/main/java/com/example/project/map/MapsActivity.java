@@ -243,8 +243,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         drawerLayout.closeDrawers();
                         return true;
                     case R.id.show_profile_id:
-                        new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
-                        Log.i(TAG, "Ho cliccato su Profilo nel menu. User:"+mAuth.getCurrentUser().getEmail());
+                        if(mAuth.getCurrentUser()!=null) {
+                            new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
+                            Log.i(TAG, "Ho cliccato su Profilo nel menu. User:" + mAuth.getCurrentUser().getEmail());
+                        }else {
+                            mAuth.signOut();
+                            Toast.makeText(MapsActivity.this, "Non sei autenticato!", Toast.LENGTH_SHORT).show();
+                            Intent intent1 = new Intent(MapsActivity.this, LoginActivity.class);
+                            startActivity(intent1);
+                        }
                         return true;
                     case R.id.logout_profile_id:
                         mAuth.signOut();

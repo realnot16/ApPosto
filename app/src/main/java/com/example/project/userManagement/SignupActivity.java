@@ -50,6 +50,7 @@ public class SignupActivity extends AppCompatActivity {
     private TextView accedi;
     private TextView testoAccedi;
     private Button bottone;
+    private float tempWallet;
     DatePickerDialog picker;
 
     private FirebaseAuth mAuth;
@@ -106,6 +107,7 @@ public class SignupActivity extends AppCompatActivity {
             accedi.setVisibility(View.GONE);
             testoAccedi.setVisibility(View.GONE);
             bottone.setText(R.string.signUp_conferma_button_description_text);
+            tempWallet = profilo.getWallet();
         }else
             CONFIRM_CODE=0;
     }
@@ -122,9 +124,9 @@ public class SignupActivity extends AppCompatActivity {
 
         if(CONFIRM_CODE==0) { //Conferma=Registrati
 
-            String mailUser = mail.getText().toString();
-            String passwordUser = password.getText().toString();
-            String confirmPwdUser = confpassword.getText().toString();
+            String mailUser = mail.getText().toString().trim();
+            String passwordUser = password.getText().toString().trim();
+            String confirmPwdUser = confpassword.getText().toString().trim();
 
             if (validateUser(mailUser, passwordUser, confirmPwdUser)) {
 
@@ -148,30 +150,30 @@ public class SignupActivity extends AppCompatActivity {
                                 // ...
                             }
                         });
-
-            } else {
-                Toast.makeText(SignupActivity.this, "Ricontrolla i campi!", Toast.LENGTH_SHORT).show();
             }
 
         }else{ //Conferma= Aggiorna dati
 
-            //+Aggiornamento su DB
+
             CONFIRM_CODE = 0;
             Intent editedProfile = new Intent(this, ProfileActivity.class);
             Bundle profBundle = new Bundle();
             Profilo p = new Profilo();
             p.setId_user(mAuth.getCurrentUser().getUid());
-            p.setEmail(mail.getText().toString());
-            p.setFirstname(firstname.getText().toString());
-            p.setLastname(lastname.getText().toString());
-            p.setPhone(phone.getText().toString());
+            p.setEmail(mail.getText().toString().trim());
+            p.setFirstname(firstname.getText().toString().trim());
+            p.setLastname(lastname.getText().toString().trim());
+            p.setPhone(phone.getText().toString().trim());
             //p.setBirthdate(Date.valueOf(birthdate.getText().toString()));
-            p.setBirthdate(birthdate.getText().toString());
-            p.setCity(city.getText().toString());
+            p.setBirthdate(birthdate.getText().toString().trim());
+            p.setCity(city.getText().toString().trim());
+            p.setWallet(tempWallet);
             profBundle.putParcelable("editedUser", p);
             editedProfile.putExtra("editedUser", profBundle);
 
+            //Aggiornamento su DB
             new UpdateUser().execute(p);
+
             //Mando indietro i dati modificati
             //setResult(Activity.RESULT_OK, editedProfile);
             //finish();
@@ -184,11 +186,11 @@ public class SignupActivity extends AppCompatActivity {
         final Profilo nuovoProfilo = new Profilo();
         nuovoProfilo.setEmail(mAuth.getCurrentUser().getEmail());
         nuovoProfilo.setId_user(mAuth.getCurrentUser().getUid());
-        nuovoProfilo.setFirstname(firstname.getText().toString());
-        nuovoProfilo.setLastname(lastname.getText().toString());
-        nuovoProfilo.setBirthdate(birthdate.getText().toString());
-        nuovoProfilo.setCity(city.getText().toString());
-        nuovoProfilo.setPhone(phone.getText().toString());
+        nuovoProfilo.setFirstname(firstname.getText().toString().trim());
+        nuovoProfilo.setLastname(lastname.getText().toString().trim());
+        nuovoProfilo.setBirthdate(birthdate.getText().toString().trim());
+        nuovoProfilo.setCity(city.getText().toString().trim());
+        nuovoProfilo.setPhone(phone.getText().toString().trim());
         nuovoProfilo.setWallet(0);
         new UploadUser().execute(nuovoProfilo);
     }
@@ -197,30 +199,63 @@ public class SignupActivity extends AppCompatActivity {
     //Validazione sintattica e semantica degli EditText
     private boolean validateUser(String mailUser, String passwordUser, String confirmPwdUser) {
             boolean valid = true;
+        Pattern emailPattern = Pattern
+                .compile("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
+                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        Matcher emailMatcher = emailPattern.matcher(mailUser);
 
+        Pattern passwordPattern = Pattern
+                .compile("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}");
+        Matcher passMatcher = passwordPattern.matcher(passwordUser);
+
+        if (TextUtils.isEmpty(firstname.getText().toString())) {
+            firstname.setError("Campo obbligatorio!");
+            valid = false;
+        }
+        if(TextUtils.isEmpty(lastname.getText().toString())) {
+            lastname.setError("Campo obbligatorio!");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(birthdate.getText().toString())){
+            birthdate.setError("Campo obbligatorio!");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(phone.getText().toString())){
+            phone.setError("Campo obbligatorio!");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(city.getText().toString())){
+            city.setError("Campo obbligatorio!");
+            valid = false;
+        }
         if (TextUtils.isEmpty(mailUser)) {
-                Log.i(TAG, "Mail non presente.");
+                mail.setError("Campo obbligatorio!");
                 valid = false;
-        } else if(TextUtils.isEmpty(passwordUser)) {
-                Log.i(TAG, "Password non presente.");
+        }
+        if(TextUtils.isEmpty(passwordUser)) {
+                password.setError("Campo obbligatorio!");
                 valid = false;
-        } else if (TextUtils.isEmpty(confirmPwdUser)){
-                Log.i(TAG, "Password di conferma non presente.");
+        }
+        if (TextUtils.isEmpty(confirmPwdUser)){
+                confpassword.setError("Campo obbligatorio!");
                 valid = false;
-        } else if(passwordUser.compareTo(confirmPwdUser)!=0) {
-                Log.i(TAG, "Le password non coincidono.");
+        }
+
+        //Se i campi obbligatori sono stati compilati:
+        if(valid==true) {
+            if (!emailMatcher.matches()) {
                 valid = false;
-        }else {
-            Pattern emailPattern = Pattern
-                    .compile("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
-                            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-            Pattern passwordPattern = Pattern
-                    .compile("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}");
-            Matcher emailMatcher = emailPattern.matcher(mailUser);
-            Matcher passMatcher = passwordPattern.matcher(passwordUser);
-            if(!emailMatcher.matches() || !passMatcher.matches()) {
+                mail.setError("Ricontrolla la mail inserita");
+            }
+            if (!passMatcher.matches()) {
                 valid = false;
                 Toast.makeText(this, "La password deve contenere almeno 1 maiuscola, 1 minuscola e un numero, e deve essere di almeno 8 caratteri.", Toast.LENGTH_LONG).show();
+                password.getText().clear();
+                confpassword.getText().clear();
+            }
+            if (passwordUser.compareTo(confirmPwdUser) != 0) {
+                confpassword.setError("Le password non coincidono!");
+                valid = false;
             }
         }
 
@@ -310,7 +345,8 @@ public class SignupActivity extends AppCompatActivity {
                         + "&city=" + URLEncoder.encode(p.getCity(), "UTF-8")
                         + "&phone=" + URLEncoder.encode(p.getPhone(), "UTF-8")
                         + "&birthdate=" + URLEncoder.encode(p.getBirthdate(), "UTF-8")
-                        + "&id_user=" + URLEncoder.encode(p.getId_user(), "UTF-8");
+                        + "&id_user=" + URLEncoder.encode(p.getId_user(), "UTF-8")
+                        + "&wallet=" + URLEncoder.encode(String.valueOf(p.getWallet()), "UTF-8");
 
                 JSONArray jsonArray=ServerTask.askToServer(params,url);
                 //gestisci JsonArray
