@@ -104,8 +104,8 @@ public class SignupActivity extends AppCompatActivity {
             mail.setEnabled(false);
             password.setVisibility(View.GONE);
             confpassword.setVisibility(View.GONE);
-            accedi.setVisibility(View.GONE);
-            testoAccedi.setVisibility(View.GONE);
+            //accedi.setVisibility(View.GONE);
+            //testoAccedi.setVisibility(View.GONE);
             bottone.setText(R.string.signUp_conferma_button_description_text);
             tempWallet = profilo.getWallet();
         }else
