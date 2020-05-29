@@ -140,6 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:drawableStart="@drawable/login_ic_lock_open_black_24dp"
+            android:onClick="resetPasswordEmail"
             android:text="@string/login_passwordDimenticata_description_text"
             android:textColor="@color/nero"
             app:layout_constraintBottom_toTopOf="@+id/login_noAccount_id"
