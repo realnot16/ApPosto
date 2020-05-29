@@ -646,6 +646,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Bundle profileBundle = new Bundle();
                         Profilo profilo = new Profilo();
                         profilo.setEmail(user.getEmail());
+                        profilo.setId_user(user.getUid());
                         profilo.setFirstname(json_data.getString(Profilo.ProfiloMetaData.FIRSTNAME));
                         profilo.setLastname(json_data.getString(Profilo.ProfiloMetaData.LASTNAME));
                         profilo.setBirthdate(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE));

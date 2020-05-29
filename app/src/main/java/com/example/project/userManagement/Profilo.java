@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 public class Profilo implements Parcelable {
 
     public static class ProfiloMetaData{
+        public static String ID_USER = "id_user";
         public static String FIRSTNAME = "firstname";
         public static String LASTNAME = "lastname";
         public static String EMAIL = "email";
@@ -21,7 +22,7 @@ public class Profilo implements Parcelable {
         public static String CITY = "city";
         public static String WALLET = "wallet";
         public static String TABLE_NAME = "User";
-        public static String[] COLUMNS = new String[] { FIRSTNAME, LASTNAME, EMAIL, PHONE, BIRTHDATE, CITY, WALLET };
+        public static String[] COLUMNS = new String[] { ID_USER, FIRSTNAME, LASTNAME, EMAIL, PHONE, BIRTHDATE, CITY, WALLET };
     }
 
     public static final Creator<Profilo> CREATOR = new Creator<Profilo>() {
@@ -36,6 +37,7 @@ public class Profilo implements Parcelable {
         }
     };
 
+    private String id_user;
     private String firstname;
     private String lastname;
     private String email;
@@ -45,6 +47,7 @@ public class Profilo implements Parcelable {
     private float wallet;
 
     private Profilo(Parcel in) {
+        id_user = in.readString();
         firstname = in.readString();
         lastname = in.readString();
         email = in.readString();
@@ -64,6 +67,7 @@ public class Profilo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(id_user);
         parcel.writeString(firstname);
         parcel.writeString(lastname);
         parcel.writeString(email);
@@ -130,6 +134,14 @@ public class Profilo implements Parcelable {
 
     public void setWallet(float wallet) {
         this.wallet = wallet;
+    }
+
+    public String getId_user() {
+        return id_user;
+    }
+
+    public void setId_user(String id_user) {
+        this.id_user = id_user;
     }
 
     @NonNull
