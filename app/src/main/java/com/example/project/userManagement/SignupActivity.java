@@ -87,7 +87,7 @@ public class SignupActivity extends AppCompatActivity {
         city = findViewById(R.id.signUp_cityField_id);
         accedi = findViewById(R.id.signUp_accedi_id);
         testoAccedi = findViewById(R.id.signUp_yesAccount_id);
-        bottone = findViewById(R.id.signUp_confirm_button);
+        bottone = findViewById(R.id.signUp_confirm_button_id);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -102,10 +102,10 @@ public class SignupActivity extends AppCompatActivity {
             city.setText(profilo.getCity());
             mail.setText(profilo.getEmail());
             mail.setEnabled(false);
-            password.setVisibility(View.GONE);
-            confpassword.setVisibility(View.GONE);
-            //accedi.setVisibility(View.GONE);
-            //testoAccedi.setVisibility(View.GONE);
+            //confpassword.setVisibility(View.GONE);
+            //password.setVisibility(View.GONE);
+            accedi.setVisibility(View.GONE);
+            testoAccedi.setVisibility(View.GONE);
             bottone.setText(R.string.signUp_conferma_button_description_text);
             tempWallet = profilo.getWallet();
         }else

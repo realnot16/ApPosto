@@ -19,10 +19,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            app:layout_constraintBottom_toTopOf="@+id/signUp_yesAccount_id"
+            android:layout_marginBottom="48dp"
+            app:layout_constraintBottom_toTopOf="@+id/signUp_confirm_button_id"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/signUp_logoText_id"
@@ -97,6 +98,21 @@
                 android:textColorLink="@color/gialloMain" />
 
             <EditText
+                android:id="@+id/signUp_cityField_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/signUp_phoneField_id"
+                android:layout_marginTop="15dp"
+                android:autofillHints="@string/signUp_citta_text"
+                android:ems="10"
+                android:hint="@string/signUp_citta_text"
+                android:inputType="textPersonName"
+                android:padding="10dp"
+                android:textColor="@color/nero"
+                android:textColorHint="@color/hint_color"
+                android:textColorLink="@color/gialloMain" />
+
+            <EditText
                 android:id="@+id/signUp_emailField_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -113,24 +129,10 @@
 
 
             <EditText
-                android:id="@+id/signUp_cityField_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/signUp_phoneField_id"
-                android:layout_marginTop="15dp"
-                android:autofillHints="@string/signUp_citta_text"
-                android:ems="10"
-                android:hint="@string/signUp_citta_text"
-                android:inputType="textPersonName"
-                android:padding="10dp"
-                android:textColor="@color/nero"
-                android:textColorHint="@color/hint_color"
-                android:textColorLink="@color/gialloMain" />
-
-            <EditText
                 android:id="@+id/signUp_passwordField_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignWithParentIfMissing="true"
                 android:layout_below="@id/signUp_emailField_id"
                 android:layout_marginTop="8dp"
                 android:autofillHints="@string/signUp_passwordField_text"
@@ -146,6 +148,7 @@
                 android:id="@+id/signUp_confpwdField_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignWithParentIfMissing="true"
                 android:layout_below="@id/signUp_passwordField_id"
                 android:layout_marginTop="8dp"
                 android:autofillHints="@string/signUp_CpasswordField_text"
@@ -167,23 +170,26 @@
             android:layout_marginBottom="8dp"
             android:text="@string/signUp_yesAccount_description_text"
             android:textColor="@color/nero"
-            app:layout_constraintBottom_toTopOf="@+id/signUp_confirm_button"
+            app:layout_constraintBottom_toTopOf="@+id/signUp_confirm_button_id"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_alignWithParentIfMissing="true"/>
 
         <TextView
             android:id="@+id/signUp_accedi_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:layout_marginBottom="8dp"
             android:onClick="goToLogin"
             android:text="@string/signUp_accedi_description_text"
             android:textColor="@color/bluMain"
-            app:layout_constraintBottom_toTopOf="@+id/signUp_confirm_button"
-            app:layout_constraintStart_toEndOf="@+id/signUp_yesAccount_id" />
+            app:layout_constraintBottom_toTopOf="@+id/signUp_confirm_button_id"
+            app:layout_constraintStart_toEndOf="@+id/signUp_yesAccount_id"
+            android:layout_alignWithParentIfMissing="true"/>
 
         <Button
-            android:id="@+id/signUp_confirm_button"
+            android:id="@+id/signUp_confirm_button_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
