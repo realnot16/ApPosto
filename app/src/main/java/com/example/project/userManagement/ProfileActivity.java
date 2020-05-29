@@ -14,7 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ShowProfile extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ShowProfile_TAG";
     private static final int PROFILE_REQUEST_CODE = 1;
@@ -32,6 +32,7 @@ public class ShowProfile extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_management_profile);
+        getWindow().setBackgroundDrawableResource(R.drawable.main_background_light);
 
         name = (TextView) findViewById(R.id.label_name_id);
         birthdate = (TextView) findViewById(R.id.label_birthdate);
@@ -94,7 +95,7 @@ public class ShowProfile extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Log.i(TAG, "Email sent.");
-                                Toast.makeText(ShowProfile.this, "Una mail è stata inviata al tuo indirizzo di posta.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ProfileActivity.this, "Una mail è stata inviata al tuo indirizzo di posta.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

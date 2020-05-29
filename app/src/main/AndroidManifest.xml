@@ -50,7 +50,7 @@
         <activity android:name=".userManagement.MainActivity" />
         <activity android:name=".reservation.ReservationsActivity" />
         <activity android:name=".reservation.DetailedReservationActivity" />
-        <activity android:name=".userManagement.ShowProfile" />
+        <activity android:name=".userManagement.ProfileActivity" />
     </application>
 
 </manifest>

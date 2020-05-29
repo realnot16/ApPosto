@@ -6,7 +6,8 @@
         <item
             android:id="@+id/show_profile_id"
             android:checked="false"
-            android:title="Profilo" />
+            android:title="Profilo"
+            android:textColorHighlight="@color/bluMain"/>
 
         <item
             android:id="@+id/show_reservations"

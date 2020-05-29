@@ -19,10 +19,6 @@ import android.widget.Toast;
 import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
 import com.example.project.map.MapsActivity;
-import com.example.project.map.Station;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -35,7 +31,6 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -162,7 +157,7 @@ public class SignupActivity extends AppCompatActivity {
 
             //+Aggiornamento su DB
             CONFIRM_CODE = 0;
-            Intent editedProfile = new Intent(this, ShowProfile.class);
+            Intent editedProfile = new Intent(this, ProfileActivity.class);
             Bundle profBundle = new Bundle();
             Profilo p = new Profilo();
             p.setId_user(mAuth.getCurrentUser().getUid());

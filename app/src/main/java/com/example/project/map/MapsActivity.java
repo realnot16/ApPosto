@@ -34,7 +34,7 @@ import com.example.project.R;
 import com.example.project.reservation.ReservationsActivity;
 import com.example.project.userManagement.LoginActivity;
 import com.example.project.userManagement.Profilo;
-import com.example.project.userManagement.ShowProfile;
+import com.example.project.userManagement.ProfileActivity;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -642,7 +642,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
                         JSONObject json_data = jArray.getJSONObject(i);
-                        Intent profileIntent = new Intent(MapsActivity.this, ShowProfile.class);
+                        Intent profileIntent = new Intent(MapsActivity.this, ProfileActivity.class);
                         Bundle profileBundle = new Bundle();
                         Profilo profilo = new Profilo();
                         profilo.setEmail(user.getEmail());

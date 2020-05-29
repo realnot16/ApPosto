@@ -40,8 +40,8 @@ public class ScannerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         canCloseReservation=getIntent().getBooleanExtra("canCloseReservation",false);
-        setContentView(R.layout.map_layout_scanner);
-        cameraView = (SurfaceView) findViewById(R.id.camera_view);
+        setContentView(R.layout.map_layout_qr_scanner);
+        cameraView = (SurfaceView) findViewById(R.id.scanner_camera_id);
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         BarcodeDetector barcodeDetector =
                 new BarcodeDetector.Builder(this)

@@ -178,7 +178,7 @@
             android:layout_marginBottom="8dp"
             android:onClick="goToLogin"
             android:text="@string/signUp_accedi_description_text"
-            android:textColor="@color/gialloMain"
+            android:textColor="@color/bluMain"
             app:layout_constraintBottom_toTopOf="@+id/signUp_confirm_button"
             app:layout_constraintStart_toEndOf="@+id/signUp_yesAccount_id" />
 
