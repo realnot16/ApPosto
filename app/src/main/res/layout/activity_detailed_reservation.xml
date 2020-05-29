@@ -11,6 +11,7 @@
         android:id="@+id/tv_detailed_reservation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
         android:text="@string/detailed_reservation_tv"
         android:textSize="20sp"
@@ -27,7 +28,8 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="5dp"
             android:text="@string/reservation_id_text"
             android:textStyle="bold" />
 
@@ -38,8 +40,8 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="1dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="5dp"
             android:layout_toEndOf="@+id/reservation_text_label"
             android:text="TextView" />
 
@@ -55,6 +57,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:text="@string/reservation_date_text"
             android:textStyle="bold" />
 
@@ -64,7 +68,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="1dp"
-            android:layout_marginEnd="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_toEndOf="@+id/date_text_label"
             android:text="TextView" />
 
@@ -80,6 +85,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:text="@string/reservation_date_finish_text"
             android:textStyle="bold" />
 
@@ -89,7 +96,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="1dp"
-            android:layout_marginEnd="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_toEndOf="@+id/date_text_label2"
             android:text="TextView" />
     </RelativeLayout>
@@ -104,6 +112,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:text="@string/reservation_address_text"
             android:textStyle="bold" />
 
@@ -112,10 +122,27 @@
             android:layout_width="149dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="1dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_toEndOf="@+id/address_text_label"
             android:text="TextView" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/common_google_signin_btn_text_light_focused" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -144,7 +171,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp">
 
         <TextView
             android:id="@+id/tv_reservation_omaggio"
