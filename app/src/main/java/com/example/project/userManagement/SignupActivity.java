@@ -102,10 +102,10 @@ public class SignupActivity extends AppCompatActivity {
             city.setText(profilo.getCity());
             mail.setText(profilo.getEmail());
             mail.setEnabled(false);
-            //confpassword.setVisibility(View.GONE);
-            //password.setVisibility(View.GONE);
-            accedi.setVisibility(View.GONE);
-            testoAccedi.setVisibility(View.GONE);
+            confpassword.setVisibility(View.GONE);
+            password.setVisibility(View.GONE);
+            accedi.setVisibility(View.INVISIBLE);
+            testoAccedi.setVisibility(View.INVISIBLE);
             bottone.setText(R.string.signUp_conferma_button_description_text);
             tempWallet = profilo.getWallet();
         }else
