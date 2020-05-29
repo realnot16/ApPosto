@@ -5,24 +5,37 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
 import com.example.project.map.MapsActivity;
+import com.example.project.map.Station;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.sql.Date;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,13 +43,9 @@ import java.util.regex.Pattern;
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "SignupActivity";
-    private static int CONFIRM_CODE = 0;
-    private TextView dati;
-    private TextView tvMail;
+    private static int CONFIRM_CODE;
     private EditText mail;
-    private TextView tvPwd;
     private EditText password;
-    private TextView tvConfPwd;
     private EditText confpassword;
     private EditText firstname;
     private EditText lastname;
@@ -45,11 +54,11 @@ public class SignupActivity extends AppCompatActivity {
     private EditText city;
     private TextView accedi;
     private TextView testoAccedi;
+    private Button bottone;
     DatePickerDialog picker;
-    private String birthdateString;
 
     private FirebaseAuth mAuth;
-    private Profilo profilo;
+
 
     @Override
     public void onStart() {
@@ -82,15 +91,14 @@ public class SignupActivity extends AppCompatActivity {
         city = findViewById(R.id.signUp_cityField_id);
         accedi = findViewById(R.id.signUp_accedi_id);
         testoAccedi = findViewById(R.id.signUp_yesAccount_id);
-        birthdateString = "";
+        bottone = findViewById(R.id.signUp_confirm_button);
 
         mAuth = FirebaseAuth.getInstance();
 
         Bundle profileBundle = getIntent().getBundleExtra("editProfile");
         if(profileBundle!=null){
             CONFIRM_CODE = 1;
-            profilo = profileBundle.getParcelable("editProfile");
-            dati.setText(R.string.signUp_descrizioneDati_update);
+            Profilo profilo = profileBundle.getParcelable("editProfile");
             firstname.setText(profilo.getFirstname());
             lastname.setText(profilo.getLastname());
             birthdate.setText(profilo.getBirthdate());
@@ -100,12 +108,11 @@ public class SignupActivity extends AppCompatActivity {
             mail.setEnabled(false);
             password.setVisibility(View.GONE);
             confpassword.setVisibility(View.GONE);
-            tvMail.setText(R.string.signUp_email_description_update);
-            tvPwd.setVisibility(View.GONE);
-            tvConfPwd.setVisibility(View.GONE);
             accedi.setVisibility(View.GONE);
             testoAccedi.setVisibility(View.GONE);
-        }
+            bottone.setText(R.string.signUp_conferma_button_description_text);
+        }else
+            CONFIRM_CODE=0;
     }
 
     private void updateUI(FirebaseUser currentUser) {
@@ -117,13 +124,9 @@ public class SignupActivity extends AppCompatActivity {
     public void signup(View view){
         Log.i(TAG, "Hai cliccato su Conferma!");
 
-        String nome = firstname.getText().toString();
-        String cognome = lastname.getText().toString();
-        //Date datadinascita = Date.valueOf(birthdate.getText().toString());
-        String città = city.getText().toString();
-        String telefono = phone.getText().toString();
 
         if(CONFIRM_CODE==0) { //Conferma=Registrati
+
             String mailUser = mail.getText().toString();
             String passwordUser = password.getText().toString();
             String confirmPwdUser = confpassword.getText().toString();
@@ -138,6 +141,7 @@ public class SignupActivity extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d(TAG, "createUserWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    createUser();
                                     updateUI(user);
                                 } else {
                                     // If sign in fails, display a message to the user.
@@ -150,7 +154,6 @@ public class SignupActivity extends AppCompatActivity {
                             }
                         });
 
-                //uploadUser(nome, cognome, mailUser, telefono, data, città);
             } else {
                 Toast.makeText(SignupActivity.this, "Ricontrolla i campi!", Toast.LENGTH_SHORT).show();
             }
@@ -158,10 +161,11 @@ public class SignupActivity extends AppCompatActivity {
         }else{ //Conferma= Aggiorna dati
 
             //+Aggiornamento su DB
-
+            CONFIRM_CODE = 0;
             Intent editedProfile = new Intent(this, ShowProfile.class);
             Bundle profBundle = new Bundle();
             Profilo p = new Profilo();
+            p.setId_user(mAuth.getCurrentUser().getUid());
             p.setEmail(mail.getText().toString());
             p.setFirstname(firstname.getText().toString());
             p.setLastname(lastname.getText().toString());
@@ -172,6 +176,7 @@ public class SignupActivity extends AppCompatActivity {
             profBundle.putParcelable("editedUser", p);
             editedProfile.putExtra("editedUser", profBundle);
 
+            new UpdateUser().execute(p);
             //Mando indietro i dati modificati
             //setResult(Activity.RESULT_OK, editedProfile);
             //finish();
@@ -180,9 +185,19 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadUser(String nome, String cognome, String mailUser, String telefono, Date data, String città) {
-
+    private void createUser() {
+        final Profilo nuovoProfilo = new Profilo();
+        nuovoProfilo.setEmail(mAuth.getCurrentUser().getEmail());
+        nuovoProfilo.setId_user(mAuth.getCurrentUser().getUid());
+        nuovoProfilo.setFirstname(firstname.getText().toString());
+        nuovoProfilo.setLastname(lastname.getText().toString());
+        nuovoProfilo.setBirthdate(birthdate.getText().toString());
+        nuovoProfilo.setCity(city.getText().toString());
+        nuovoProfilo.setPhone(phone.getText().toString());
+        nuovoProfilo.setWallet(0);
+        new UploadUser().execute(nuovoProfilo);
     }
+
 
     //Validazione sintattica e semantica degli EditText
     private boolean validateUser(String mailUser, String passwordUser, String confirmPwdUser) {
@@ -233,11 +248,93 @@ public class SignupActivity extends AppCompatActivity {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        birthdateString = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+                        String birthdateString = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
                         birthdate.setText(birthdateString);
                     }
                 }, year, month, day);
         picker.show();
+    }
+
+
+    //TASK PER CARICARE NUOVO UTENTE SUL DB
+    private class UploadUser extends AsyncTask<Profilo, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Profilo... profili) {
+
+            String url = "https://smartparkingpolito.altervista.org/CreateProfile.php";
+            String params = null;
+            Profilo p = profili[0];
+
+            //Encoding parametri:
+
+            try {
+                params = "email=" + URLEncoder.encode(p.getEmail(), "UTF-8")
+                        + "&firstname=" + URLEncoder.encode(p.getFirstname(), "UTF-8")
+                        + "&lastname=" + URLEncoder.encode(p.getLastname(), "UTF-8")
+                        + "&city=" + URLEncoder.encode(p.getCity(), "UTF-8")
+                        + "&phone=" + URLEncoder.encode(p.getPhone(), "UTF-8")
+                        + "&birthdate=" + URLEncoder.encode(p.getBirthdate(), "UTF-8")
+                        + "&id_user=" + URLEncoder.encode(p.getId_user(), "UTF-8");
+
+                JSONArray jsonArray=ServerTask.askToServer(params,url);
+                //gestisci JsonArray
+                JSONObject jsonObjectControl=jsonArray.getJSONObject(0);
+                String control=jsonObjectControl.getString("control");
+                Log.i("cntr0",control);
+                if (control.equals("OK")){   // non esegue l'if
+                    //UTENTE REGISTRATO CORRETTAMENTE
+                    Log.i(TAG, "Utente registrato correttamente.");
+                    return true;
+                }
+
+            }
+            catch (UnsupportedEncodingException | JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+    }
+
+    //TASK PER AGGIORNARE UTENTE SU DB
+    private class UpdateUser extends AsyncTask<Profilo, Void, Boolean>{
+
+        @Override
+        protected Boolean doInBackground(Profilo... profili) {
+            String url = "https://smartparkingpolito.altervista.org/UpdateProfile.php";
+            String params = null;
+            Profilo p = profili[0];
+
+            //Encoding parametri:
+
+            try {
+                params = "firstname=" + URLEncoder.encode(p.getFirstname(), "UTF-8")
+                        + "&lastname=" + URLEncoder.encode(p.getLastname(), "UTF-8")
+                        + "&city=" + URLEncoder.encode(p.getCity(), "UTF-8")
+                        + "&phone=" + URLEncoder.encode(p.getPhone(), "UTF-8")
+                        + "&birthdate=" + URLEncoder.encode(p.getBirthdate(), "UTF-8")
+                        + "&id_user=" + URLEncoder.encode(p.getId_user(), "UTF-8");
+
+                JSONArray jsonArray=ServerTask.askToServer(params,url);
+                //gestisci JsonArray
+                JSONObject jsonObjectControl=jsonArray.getJSONObject(0);
+                String control=jsonObjectControl.getString("control");
+                Log.i("cntr0",control);
+                if (control.equals("OK")){   // non esegue l'if
+                    //UTENTE AGGIORNATO CORRETTAMENTE
+                    Log.i(TAG, "Utente aggiornato correttamente.");
+                    return true;
+                }
+
+            }
+            catch (UnsupportedEncodingException | JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
     }
 
 

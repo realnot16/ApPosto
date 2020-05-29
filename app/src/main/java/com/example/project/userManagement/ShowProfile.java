@@ -102,6 +102,7 @@ public class ShowProfile extends AppCompatActivity {
             Toast.makeText(this, "Si è verificato un problema", Toast.LENGTH_SHORT).show();
     }
 
+    /*
    //OnActivityResult
    @Override
    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -125,6 +126,8 @@ public class ShowProfile extends AppCompatActivity {
            }
        }
    }
+
+     */
 
 
 }
