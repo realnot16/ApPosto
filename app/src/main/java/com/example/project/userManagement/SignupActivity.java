@@ -24,6 +24,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +56,7 @@ public class SignupActivity extends AppCompatActivity {
     DatePickerDialog picker;
 
     private FirebaseAuth mAuth;
+    private String token;
 
 
     @Override
@@ -90,6 +93,7 @@ public class SignupActivity extends AppCompatActivity {
         bottone = findViewById(R.id.signUp_confirm_button_id);
 
         mAuth = FirebaseAuth.getInstance();
+        getToken();
 
         Bundle profileBundle = getIntent().getBundleExtra("editProfile");
         if(profileBundle!=null){
@@ -192,6 +196,7 @@ public class SignupActivity extends AppCompatActivity {
         nuovoProfilo.setCity(city.getText().toString().trim());
         nuovoProfilo.setPhone(phone.getText().toString().trim());
         nuovoProfilo.setWallet(0);
+        nuovoProfilo.setDeviceToken(token);
         new UploadUser().execute(nuovoProfilo);
     }
 
@@ -305,7 +310,8 @@ public class SignupActivity extends AppCompatActivity {
                         + "&city=" + URLEncoder.encode(p.getCity(), "UTF-8")
                         + "&phone=" + URLEncoder.encode(p.getPhone(), "UTF-8")
                         + "&birthdate=" + URLEncoder.encode(p.getBirthdate(), "UTF-8")
-                        + "&id_user=" + URLEncoder.encode(p.getId_user(), "UTF-8");
+                        + "&id_user=" + URLEncoder.encode(p.getId_user(), "UTF-8")
+                        + "&device_token=" + URLEncoder.encode(p.getDeviceToken(), "UTF-8");
 
                 JSONArray jsonArray=ServerTask.askToServer(params,url);
                 //gestisci JsonArray
@@ -366,6 +372,25 @@ public class SignupActivity extends AppCompatActivity {
             }
             return true;
         }
+    }
+
+    //Prendere il token del dispositivo alla registrazione
+    public void getToken(){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if(task.isSuccessful()){
+                    token = task.getResult().getToken();
+                    Log.i(TAG, "Token: "+token);
+                    //myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid).setValue(token) ? per salvare uid dell'utente
+                }else{
+                    Log.i(TAG, "Problema", task.getException());
+                    return;
+                }
+            }
+
+        });
+
     }
 
 

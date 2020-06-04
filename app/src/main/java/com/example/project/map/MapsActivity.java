@@ -782,4 +782,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+
 }

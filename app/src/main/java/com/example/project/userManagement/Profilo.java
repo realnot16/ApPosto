@@ -45,6 +45,7 @@ public class Profilo implements Parcelable {
     private String birthdate;
     private String city;
     private float wallet;
+    private String deviceToken;
 
     private Profilo(Parcel in) {
         id_user = in.readString();
@@ -56,6 +57,7 @@ public class Profilo implements Parcelable {
         //birthdate = new Date(in.readLong());
         city = in.readString();
         wallet = in.readFloat();
+        deviceToken = in.readString();
     }
 
     public Profilo(){}
@@ -76,6 +78,7 @@ public class Profilo implements Parcelable {
         //parcel.writeLong(birthdate.getTime());
         parcel.writeString(city);
         parcel.writeFloat(wallet);
+        parcel.writeString(deviceToken);
     }
 
     public String getFirstname() {
@@ -142,6 +145,14 @@ public class Profilo implements Parcelable {
 
     public void setId_user(String id_user) {
         this.id_user = id_user;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 
     @NonNull
