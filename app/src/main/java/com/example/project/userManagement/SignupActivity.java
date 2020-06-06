@@ -40,7 +40,6 @@ import java.util.regex.Pattern;
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "SignupActivity";
-    private static int CONFIRM_CODE;
     private EditText mail;
     private EditText password;
     private EditText confpassword;
@@ -57,15 +56,8 @@ public class SignupActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private String token;
+    private Bundle profileBundle;
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +87,9 @@ public class SignupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         getToken();
 
-        Bundle profileBundle = getIntent().getBundleExtra("editProfile");
+        profileBundle = getIntent().getBundleExtra("editProfile");
         if(profileBundle!=null){
-            CONFIRM_CODE = 1;
+
             Profilo profilo = profileBundle.getParcelable("editProfile");
             firstname.setText(profilo.getFirstname());
             lastname.setText(profilo.getLastname());
@@ -112,8 +104,8 @@ public class SignupActivity extends AppCompatActivity {
             testoAccedi.setVisibility(View.INVISIBLE);
             bottone.setText(R.string.signUp_conferma_button_description_text);
             tempWallet = profilo.getWallet();
-        }else
-            CONFIRM_CODE=0;
+        }
+
     }
 
     private void updateUI(FirebaseUser currentUser) {
@@ -123,16 +115,22 @@ public class SignupActivity extends AppCompatActivity {
 
     //It takes in an email address and password, validates them and then creates a new user.
     public void signup(View view){
-        Log.i(TAG, "Hai cliccato su Conferma!");
+        Log.i(TAG, "Hai cliccato sul bottone!");
 
 
-        if(CONFIRM_CODE==0) { //Conferma=Registrati
+        if(profileBundle==null) { //Conferma=Registrati
 
             String mailUser = mail.getText().toString().trim();
             String passwordUser = password.getText().toString().trim();
             String confirmPwdUser = confpassword.getText().toString().trim();
+            String firstnameUser = firstname.getText().toString().trim();
+            String lastnameUser = lastname.getText().toString().trim();
+            String cityUser = city.getText().toString().trim();
+            String birthdateUser = birthdate.getText().toString().trim();
+            String phoneUser = phone.getText().toString().trim();
 
-            if (validateUser(mailUser, passwordUser, confirmPwdUser)) {
+            if (validateUser(mailUser, passwordUser, confirmPwdUser, firstnameUser,
+                    lastnameUser, cityUser, birthdateUser, phoneUser)) {
 
                 mAuth.createUserWithEmailAndPassword(mailUser, passwordUser)
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -158,10 +156,6 @@ public class SignupActivity extends AppCompatActivity {
 
         }else{ //Conferma= Aggiorna dati
 
-
-            CONFIRM_CODE = 0;
-            Intent editedProfile = new Intent(this, ProfileActivity.class);
-            Bundle profBundle = new Bundle();
             Profilo p = new Profilo();
             p.setId_user(mAuth.getCurrentUser().getUid());
             p.setEmail(mail.getText().toString().trim());
@@ -172,16 +166,9 @@ public class SignupActivity extends AppCompatActivity {
             p.setBirthdate(birthdate.getText().toString().trim());
             p.setCity(city.getText().toString().trim());
             p.setWallet(tempWallet);
-            profBundle.putParcelable("editedUser", p);
-            editedProfile.putExtra("editedUser", profBundle);
 
             //Aggiornamento su DB
             new UpdateUser().execute(p);
-
-            //Mando indietro i dati modificati
-            //setResult(Activity.RESULT_OK, editedProfile);
-            //finish();
-            startActivity(editedProfile);
 
         }
     }
@@ -202,7 +189,8 @@ public class SignupActivity extends AppCompatActivity {
 
 
     //Validazione sintattica e semantica degli EditText
-    private boolean validateUser(String mailUser, String passwordUser, String confirmPwdUser) {
+    private boolean validateUser(String mailUser, String passwordUser, String confirmPwdUser,
+                                 String firstnameUser, String lastnameUser, String cityUser, String birthdateUser, String phoneUser) {
             boolean valid = true;
         Pattern emailPattern = Pattern
                 .compile("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
@@ -213,23 +201,33 @@ public class SignupActivity extends AppCompatActivity {
                 .compile("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}");
         Matcher passMatcher = passwordPattern.matcher(passwordUser);
 
-        if (TextUtils.isEmpty(firstname.getText().toString())) {
+        Pattern letteralPattern = Pattern.compile("[A-Z][a-z]*");
+        Matcher firstnameMatcher = letteralPattern.matcher(firstnameUser);
+        Matcher cityMatcher = letteralPattern.matcher(cityUser);
+
+        Pattern lastnamePattern = Pattern.compile("^[A-Z]+([ '-]?[a-zA-Z]+)*$");
+        Matcher lastnameMatcher = lastnamePattern.matcher(lastnameUser);
+
+        Pattern phonePattern = Pattern.compile("^((\\+?\\d{1,3}) ?)?(\\d{1,10})$");
+        Matcher phoneMatcher = phonePattern.matcher(phoneUser);
+
+        if (TextUtils.isEmpty(firstnameUser)) {
             firstname.setError("Campo obbligatorio!");
             valid = false;
         }
-        if(TextUtils.isEmpty(lastname.getText().toString())) {
+        if(TextUtils.isEmpty(lastnameUser)) {
             lastname.setError("Campo obbligatorio!");
             valid = false;
         }
-        if (TextUtils.isEmpty(birthdate.getText().toString())){
+        if (TextUtils.isEmpty(birthdateUser)){
             birthdate.setError("Campo obbligatorio!");
             valid = false;
         }
-        if (TextUtils.isEmpty(phone.getText().toString())){
+        if (TextUtils.isEmpty(phoneUser)){
             phone.setError("Campo obbligatorio!");
             valid = false;
         }
-        if (TextUtils.isEmpty(city.getText().toString())){
+        if (TextUtils.isEmpty(cityUser)){
             city.setError("Campo obbligatorio!");
             valid = false;
         }
@@ -248,6 +246,23 @@ public class SignupActivity extends AppCompatActivity {
 
         //Se i campi obbligatori sono stati compilati:
         if(valid==true) {
+
+            if (!firstnameMatcher.matches()) {
+                valid = false;
+                firstname.setError("Ricontrolla il nome inserito");
+            }
+            if (!lastnameMatcher.matches()) {
+                valid = false;
+                lastname.setError("Ricontrolla il cognome inserito");
+            }
+            if(!phoneMatcher.matches()){
+                valid = false;
+                phone.setError("Ricontrolla il cellulare inserito");
+            }
+            if (!cityMatcher.matches()) {
+                valid = false;
+                city.setError("Ricontrolla la città inserita");
+            }
             if (!emailMatcher.matches()) {
                 valid = false;
                 mail.setError("Ricontrolla la mail inserita");
@@ -344,7 +359,6 @@ public class SignupActivity extends AppCompatActivity {
             Profilo p = profili[0];
 
             //Encoding parametri:
-
             try {
                 params = "firstname=" + URLEncoder.encode(p.getFirstname(), "UTF-8")
                         + "&lastname=" + URLEncoder.encode(p.getLastname(), "UTF-8")
@@ -353,6 +367,7 @@ public class SignupActivity extends AppCompatActivity {
                         + "&birthdate=" + URLEncoder.encode(p.getBirthdate(), "UTF-8")
                         + "&id_user=" + URLEncoder.encode(p.getId_user(), "UTF-8")
                         + "&wallet=" + URLEncoder.encode(String.valueOf(p.getWallet()), "UTF-8");
+
 
                 JSONArray jsonArray=ServerTask.askToServer(params,url);
                 //gestisci JsonArray
@@ -372,6 +387,13 @@ public class SignupActivity extends AppCompatActivity {
             }
             return true;
         }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if(aBoolean==true)
+                startActivity(new Intent(SignupActivity.this, ProfileActivity.class));
+        }
     }
 
     //Prendere il token del dispositivo alla registrazione
@@ -382,7 +404,6 @@ public class SignupActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     token = task.getResult().getToken();
                     Log.i(TAG, "Token: "+token);
-                    //myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid).setValue(token) ? per salvare uid dell'utente
                 }else{
                     Log.i(TAG, "Problema", task.getException());
                     return;

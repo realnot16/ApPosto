@@ -3,16 +3,24 @@ package com.example.project.userManagement;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.net.URLEncoder;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -43,31 +51,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        setData();
+        //Mostro i dati dell'utente prendendoli dal db
+        new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
 
-    }
-
-    private void setData() {
-        Bundle profileBundle = getIntent().getBundleExtra("User");
-        Bundle editBundle = getIntent().getBundleExtra("editedUser");
-
-        //Controllo pancia dell'intent
-        if (profileBundle != null || editBundle != null) {
-            if(editBundle!=null) {
-                profilo = editBundle.getParcelable("editedUser");
-                profileBundle = null;
-            }else {
-                profilo = profileBundle.getParcelable("User");
-            }
-                name.setText(profilo.getFirstname()+" "+profilo.getLastname());
-                city.setText(profilo.getCity());
-                birthdate.setText(profilo.getBirthdate());
-                email.setText(profilo.getEmail());
-                phone.setText(profilo.getPhone());
-                wallet.setText(String.valueOf(profilo.getWallet()));
-        } else {
-            //accesso non consentito direttamente su showprofile
-        }
     }
 
 
@@ -103,32 +89,51 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Si è verificato un problema", Toast.LENGTH_SHORT).show();
     }
 
-    /*
-   //OnActivityResult
-   @Override
-   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-       super.onActivityResult(requestCode, resultCode, data);
 
-       // check that it is the SecondActivity with an OK result
-       if (requestCode == PROFILE_REQUEST_CODE) {
-           if (resultCode == RESULT_OK) {
+    private class LoadProfile extends AsyncTask<String, Void, Boolean> {
 
-               Log.i(TAG, "OnActivityResult");
-               Bundle editedUser = getIntent().getBundleExtra("editedUser");
-               profilo = (Profilo) editedUser.getParcelable("editedUser");
-               name.setText(profilo.getFirstname()+" "+profilo.getLastname());
-               city.setText(profilo.getCity());
-               birthdate.setText(profilo.getBirthdate());
-               email.setText(profilo.getEmail());
-               phone.setText(profilo.getPhone());
-               wallet.setText(String.valueOf(profilo.getWallet()));
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            try {
+                FirebaseUser user = mAuth.getCurrentUser();
+                String params = "email=" + URLEncoder.encode(user.getEmail(), "UTF-8");
+                JSONArray jArray = ServerTask.askToServer(params,strings[0]);
 
+                for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
+                    JSONObject json_data = jArray.getJSONObject(i);
+                    profilo = new Profilo();
+                    profilo.setEmail(user.getEmail());
+                    profilo.setId_user(user.getUid());
+                    profilo.setFirstname(json_data.getString(Profilo.ProfiloMetaData.FIRSTNAME));
+                    profilo.setLastname(json_data.getString(Profilo.ProfiloMetaData.LASTNAME));
+                    profilo.setBirthdate(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE));
+                    profilo.setCity(json_data.getString(Profilo.ProfiloMetaData.CITY));
+                    profilo.setPhone(json_data.getString(Profilo.ProfiloMetaData.PHONE));
+                    profilo.setWallet((float) json_data.getDouble(Profilo.ProfiloMetaData.WALLET));
+                    profilo.setDeviceToken(json_data.getString(Profilo.ProfiloMetaData.DEVICE_TOKEN));
+                }
 
-           }
-       }
-   }
+            } catch (Exception e) {
+                Log.e("log_tag", "Error " + e.toString());
+            }
 
-     */
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if(aBoolean==true) {
+                name.setText(profilo.getFirstname() + " " + profilo.getLastname());
+                city.setText(profilo.getCity());
+                birthdate.setText(profilo.getBirthdate());
+                email.setText(profilo.getEmail());
+                phone.setText(profilo.getPhone());
+                wallet.setText(String.valueOf(profilo.getWallet()));
+            }
+        }
+    }
+
 
 
 }

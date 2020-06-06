@@ -239,28 +239,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (menuItem.isChecked()) menuItem.setChecked(false);
                 else menuItem.setChecked(true);
                 switch (menuItem.getItemId()) {
-                    case R.id.home:
-                        drawerLayout.closeDrawers();
-                        return true;
                     case R.id.show_profile_id:
                         if(mAuth.getCurrentUser()!=null) {
-                            new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
+                            //new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
+                            startActivity(new Intent(MapsActivity.this, ProfileActivity.class));
                             Log.i(TAG, "Ho cliccato su Profilo nel menu. User:" + mAuth.getCurrentUser().getEmail());
                         }else {
                             mAuth.signOut();
                             Toast.makeText(MapsActivity.this, "Non sei autenticato!", Toast.LENGTH_SHORT).show();
-                            Intent intent1 = new Intent(MapsActivity.this, LoginActivity.class);
-                            startActivity(intent1);
+                            startActivity(new Intent(MapsActivity.this, LoginActivity.class));
                         }
                         return true;
                     case R.id.logout_profile_id:
                         mAuth.signOut();
-                        Intent i = new Intent(MapsActivity.this, LoginActivity.class);
-                        startActivity(i);
+                        startActivity(new Intent(MapsActivity.this, LoginActivity.class));
                         return true;
                     case R.id.show_reservations:
-                        Intent intent= new Intent(MapsActivity.this, ReservationsActivity.class);
-                        startActivity(intent);
+                        startActivity(new Intent(MapsActivity.this, ReservationsActivity.class));
                         return true;
                     default:
                         return true;
@@ -638,42 +633,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    //4-LOAD PROFILE,Prendo i dati sul profilo dal DB
-    private class LoadProfile extends AsyncTask<String,Void,Boolean> {
 
-        @Override
-        protected Boolean doInBackground(String... strings) {
-            try {
-                String params = "email=" +URLEncoder.encode(user.getEmail(), "UTF-8");
-                JSONArray jArray = ServerTask.askToServer(params,strings[0]);
-
-                    for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
-                        JSONObject json_data = jArray.getJSONObject(i);
-                        Intent profileIntent = new Intent(MapsActivity.this, ProfileActivity.class);
-                        Bundle profileBundle = new Bundle();
-                        Profilo profilo = new Profilo();
-                        profilo.setEmail(user.getEmail());
-                        profilo.setId_user(user.getUid());
-                        profilo.setFirstname(json_data.getString(Profilo.ProfiloMetaData.FIRSTNAME));
-                        profilo.setLastname(json_data.getString(Profilo.ProfiloMetaData.LASTNAME));
-                        profilo.setBirthdate(json_data.getString(Profilo.ProfiloMetaData.BIRTHDATE));
-                        profilo.setCity(json_data.getString(Profilo.ProfiloMetaData.CITY));
-                        profilo.setPhone(json_data.getString(Profilo.ProfiloMetaData.PHONE));
-                        profilo.setWallet((float) json_data.getDouble(Profilo.ProfiloMetaData.WALLET));
-                        profileBundle.putParcelable("User", profilo);
-                        profileIntent.putExtra("User", profileBundle);
-                        startActivity(profileIntent);
-                    }
-
-            } catch (Exception e) {
-                Log.e("log_tag", "Error " + e.toString());
-            }
-            return true;
-        }
-
-    }
-
-    //5-CHECK CURRENT RESERVATION, controlla se sul server è settata una map_icona_panel_prenotazione per l'user corrente, evita di perdere
+    //4-CHECK CURRENT RESERVATION, controlla se sul server è settata una map_icona_panel_prenotazione per l'user corrente, evita di perdere
     // la map_icona_panel_prenotazione se l'app viene chiusa
     private class CheckCurrentReservation extends AsyncTask<String,Void,Boolean> {
 

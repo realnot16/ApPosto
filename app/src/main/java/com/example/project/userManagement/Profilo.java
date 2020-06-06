@@ -22,7 +22,8 @@ public class Profilo implements Parcelable {
         public static String CITY = "city";
         public static String WALLET = "wallet";
         public static String TABLE_NAME = "User";
-        public static String[] COLUMNS = new String[] { ID_USER, FIRSTNAME, LASTNAME, EMAIL, PHONE, BIRTHDATE, CITY, WALLET };
+        public static String DEVICE_TOKEN = "device_token";
+        public static String[] COLUMNS = new String[] { ID_USER, FIRSTNAME, LASTNAME, EMAIL, PHONE, BIRTHDATE, CITY, WALLET, DEVICE_TOKEN };
     }
 
     public static final Creator<Profilo> CREATOR = new Creator<Profilo>() {
