@@ -5,27 +5,39 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthCredential;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
+import java.security.AuthProvider;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ShowProfile_TAG";
-    private static final int PROFILE_REQUEST_CODE = 1;
     private TextView name;
     private TextView birthdate;
     private TextView city;
@@ -51,7 +63,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        //Mostro i dati dell'utente prendendoli dal db
+
+        //Mostra i dati dell'utente prendendoli dal db
         new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
 
     }
@@ -63,7 +76,7 @@ public class ProfileActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putParcelable("editProfile", profilo);
         intent.putExtra("editProfile", bundle);
-        startActivityForResult(intent, PROFILE_REQUEST_CODE);
+        startActivity(intent);
     }
 
     //onClick su bottone Ricarica - per ricarica wallet
@@ -72,21 +85,27 @@ public class ProfileActivity extends AppCompatActivity {
 
     //onClick su bottone Cambia password - per cambiare la password
     public void changePassword(View view) {
-        String emailAddress = mAuth.getCurrentUser().getEmail();
 
-        if(!emailAddress.isEmpty()) {
-            mAuth.sendPasswordResetEmail(emailAddress)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.i(TAG, "Email sent.");
-                                Toast.makeText(ProfileActivity.this, "Una mail è stata inviata al tuo indirizzo di posta.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        }else
-            Toast.makeText(this, "Si è verificato un problema", Toast.LENGTH_SHORT).show();
+       //if(!GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD.equals(LoginActivity.credential.getSignInMethod())){
+       //if(LoginActivity.credential.getSignInMethod().equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
+        ;
+        //if(!GoogleAuthProvider.getCredential(GoogleSignIn.getLastSignedInAccount(this).getIdToken(), null).getSignInMethod().equals(GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD)){
+           String emailAddress = mAuth.getCurrentUser().getEmail();
+
+           if (!emailAddress.isEmpty()) {
+               mAuth.sendPasswordResetEmail(emailAddress)
+                       .addOnCompleteListener(new OnCompleteListener<Void>() {
+                           @Override
+                           public void onComplete(@NonNull Task<Void> task) {
+                               if (task.isSuccessful()) {
+                                   Log.i(TAG, "Email sent.");
+                                   Toast.makeText(ProfileActivity.this, "Una mail è stata inviata al tuo indirizzo di posta.", Toast.LENGTH_SHORT).show();
+                               }
+                           }
+                       });
+           } else
+               Toast.makeText(this, "Si è verificato un problema", Toast.LENGTH_SHORT).show();
+       //}
     }
 
 
@@ -102,6 +121,7 @@ public class ProfileActivity extends AppCompatActivity {
                 for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
                     JSONObject json_data = jArray.getJSONObject(i);
                     profilo = new Profilo();
+                    profilo.setGoogleSignIn(json_data.getInt(Profilo.ProfiloMetaData.G_SIGNIN));
                     profilo.setEmail(user.getEmail());
                     profilo.setId_user(user.getUid());
                     profilo.setFirstname(json_data.getString(Profilo.ProfiloMetaData.FIRSTNAME));
@@ -124,12 +144,21 @@ public class ProfileActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
             if(aBoolean==true) {
-                name.setText(profilo.getFirstname() + " " + profilo.getLastname());
-                city.setText(profilo.getCity());
-                birthdate.setText(profilo.getBirthdate());
-                email.setText(profilo.getEmail());
-                phone.setText(profilo.getPhone());
-                wallet.setText(String.valueOf(profilo.getWallet()));
+                if(profilo.getGoogleSignIn()==0) {
+                    name.setText(profilo.getFirstname() + " " + profilo.getLastname());
+                    city.setText(profilo.getCity());
+                    birthdate.setText(profilo.getBirthdate());
+                    email.setText(profilo.getEmail());
+                    phone.setText(profilo.getPhone());
+                    wallet.setText(String.valueOf(profilo.getWallet()));
+
+                }else{  //Ha fatto l'accesso con Google per la prima volta: prima deve compilare i campi del profilo!
+                    Intent i = new Intent(ProfileActivity.this, SignupActivity.class);
+                    i.putExtra("isGSignIn", "GSignIn_yes");
+                    startActivity(i);
+                    Toast.makeText(ProfileActivity.this, "Compila i campi per visualizzare il profilo!", Toast.LENGTH_LONG).show();
+                }
+
             }
         }
     }

@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 public class Profilo implements Parcelable {
 
     public static class ProfiloMetaData{
+        public static String G_SIGNIN = "googleSignIn";
         public static String ID_USER = "id_user";
         public static String FIRSTNAME = "firstname";
         public static String LASTNAME = "lastname";
@@ -23,7 +24,7 @@ public class Profilo implements Parcelable {
         public static String WALLET = "wallet";
         public static String TABLE_NAME = "User";
         public static String DEVICE_TOKEN = "device_token";
-        public static String[] COLUMNS = new String[] { ID_USER, FIRSTNAME, LASTNAME, EMAIL, PHONE, BIRTHDATE, CITY, WALLET, DEVICE_TOKEN };
+        public static String[] COLUMNS = new String[] { G_SIGNIN, ID_USER, FIRSTNAME, LASTNAME, EMAIL, PHONE, BIRTHDATE, CITY, WALLET, DEVICE_TOKEN };
     }
 
     public static final Creator<Profilo> CREATOR = new Creator<Profilo>() {
@@ -38,6 +39,8 @@ public class Profilo implements Parcelable {
         }
     };
 
+
+    private int googleSignIn;
     private String id_user;
     private String firstname;
     private String lastname;
@@ -49,6 +52,7 @@ public class Profilo implements Parcelable {
     private String deviceToken;
 
     private Profilo(Parcel in) {
+
         id_user = in.readString();
         firstname = in.readString();
         lastname = in.readString();
@@ -155,6 +159,15 @@ public class Profilo implements Parcelable {
     public void setDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
     }
+
+    public int getGoogleSignIn() {
+        return googleSignIn;
+    }
+
+    public void setGoogleSignIn(int googleSignIn) {
+        this.googleSignIn = googleSignIn;
+    }
+
 
     @NonNull
     @Override

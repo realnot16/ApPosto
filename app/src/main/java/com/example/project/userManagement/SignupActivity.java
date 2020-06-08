@@ -58,6 +58,12 @@ public class SignupActivity extends AppCompatActivity {
     private String token;
     private Bundle profileBundle;
 
+    private String firstnameUser;
+    private String lastnameUser;
+    private String cityUser;
+    private String birthdateUser;
+    private String phoneUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +94,7 @@ public class SignupActivity extends AppCompatActivity {
         getToken();
 
         profileBundle = getIntent().getBundleExtra("editProfile");
+        //SE PROVENGO DA MODIFICA PROFILO
         if(profileBundle!=null){
 
             Profilo profilo = profileBundle.getParcelable("editProfile");
@@ -104,33 +111,54 @@ public class SignupActivity extends AppCompatActivity {
             testoAccedi.setVisibility(View.INVISIBLE);
             bottone.setText(R.string.signUp_conferma_button_description_text);
             tempWallet = profilo.getWallet();
+
+            profileBundle.clear();
+
+            //SE USER SI E' LOGGATO CON GOOGLE (deve compilare i campi profilo PRIMA VOLTA)
+        }else {
+            String isGSignIN = getIntent().getStringExtra("isGSignIn");
+            if (isGSignIN!=null && isGSignIN.equals("GSignIn_yes")) {
+                mail.setText(mAuth.getCurrentUser().getEmail());
+                mail.setEnabled(false);
+                confpassword.setVisibility(View.GONE);
+                password.setVisibility(View.GONE);
+                accedi.setVisibility(View.INVISIBLE);
+                testoAccedi.setVisibility(View.INVISIBLE);
+                tempWallet = 0;
+            }
         }
 
     }
 
+
+
     private void updateUI(FirebaseUser currentUser) {
-        Intent intent = new Intent(SignupActivity.this, MapsActivity.class);
-        startActivity(intent);
+        if(currentUser!=null) {
+            Intent intent = new Intent(SignupActivity.this, MapsActivity.class);
+            startActivity(intent);
+        }
     }
 
     //It takes in an email address and password, validates them and then creates a new user.
     public void signup(View view){
         Log.i(TAG, "Hai cliccato sul bottone!");
 
+        firstnameUser = firstname.getText().toString().trim();
+        lastnameUser = lastname.getText().toString().trim();
+        cityUser = city.getText().toString().trim();
+        birthdateUser = birthdate.getText().toString().trim();
+        phoneUser = phone.getText().toString().trim();
 
-        if(profileBundle==null) { //Conferma=Registrati
+        String intentFrom = getIntent().getStringExtra("From");
+        if(intentFrom!=null && intentFrom.equals("LoginActivity")) { //Conferma=Registrati
+            Log.i(TAG, "Registrazione dati");
 
-            String mailUser = mail.getText().toString().trim();
             String passwordUser = password.getText().toString().trim();
             String confirmPwdUser = confpassword.getText().toString().trim();
-            String firstnameUser = firstname.getText().toString().trim();
-            String lastnameUser = lastname.getText().toString().trim();
-            String cityUser = city.getText().toString().trim();
-            String birthdateUser = birthdate.getText().toString().trim();
-            String phoneUser = phone.getText().toString().trim();
+            String mailUser = mail.getText().toString().trim();
 
-            if (validateUser(mailUser, passwordUser, confirmPwdUser, firstnameUser,
-                    lastnameUser, cityUser, birthdateUser, phoneUser)) {
+            if (validateUser(firstnameUser, lastnameUser, cityUser, birthdateUser, phoneUser) &&
+                    validateEmailPassword(mailUser, passwordUser, confirmPwdUser)) {
 
                 mAuth.createUserWithEmailAndPassword(mailUser, passwordUser)
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -156,22 +184,28 @@ public class SignupActivity extends AppCompatActivity {
 
         }else{ //Conferma= Aggiorna dati
 
-            Profilo p = new Profilo();
-            p.setId_user(mAuth.getCurrentUser().getUid());
-            p.setEmail(mail.getText().toString().trim());
-            p.setFirstname(firstname.getText().toString().trim());
-            p.setLastname(lastname.getText().toString().trim());
-            p.setPhone(phone.getText().toString().trim());
-            //p.setBirthdate(Date.valueOf(birthdate.getText().toString()));
-            p.setBirthdate(birthdate.getText().toString().trim());
-            p.setCity(city.getText().toString().trim());
-            p.setWallet(tempWallet);
+            Log.i(TAG, "Aggiornamento dati");
+            if(validateUser(firstnameUser, lastnameUser, cityUser, birthdateUser, phoneUser)) {
+                Profilo p = new Profilo();
+                p.setId_user(mAuth.getCurrentUser().getUid());
+                p.setEmail(mAuth.getCurrentUser().getEmail());
+                p.setFirstname(firstnameUser);
+                p.setLastname(lastnameUser);
+                p.setPhone(phoneUser);
+                //p.setBirthdate(Date.valueOf(birthdate.getText().toString()));
+                p.setBirthdate(birthdateUser);
+                p.setCity(cityUser);
+                p.setWallet(tempWallet);
+                p.setGoogleSignIn(0);   //Diventa un account come gli altri
 
-            //Aggiornamento su DB
-            new UpdateUser().execute(p);
+                //Aggiornamento su DB
+                new UpdateUser().execute(p);
+            }
 
         }
     }
+
+
 
     private void createUser() {
         final Profilo nuovoProfilo = new Profilo();
@@ -189,26 +223,18 @@ public class SignupActivity extends AppCompatActivity {
 
 
     //Validazione sintattica e semantica degli EditText
-    private boolean validateUser(String mailUser, String passwordUser, String confirmPwdUser,
-                                 String firstnameUser, String lastnameUser, String cityUser, String birthdateUser, String phoneUser) {
+    private boolean validateUser(String firstnameUser, String lastnameUser,
+                                 String cityUser, String birthdateUser, String phoneUser) {
             boolean valid = true;
-        Pattern emailPattern = Pattern
-                .compile("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
-                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-        Matcher emailMatcher = emailPattern.matcher(mailUser);
 
-        Pattern passwordPattern = Pattern
-                .compile("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}");
-        Matcher passMatcher = passwordPattern.matcher(passwordUser);
-
-        Pattern letteralPattern = Pattern.compile("[A-Z][a-z]*");
+        Pattern letteralPattern = Pattern.compile("[A-Z][a-z]{1,13}");
         Matcher firstnameMatcher = letteralPattern.matcher(firstnameUser);
         Matcher cityMatcher = letteralPattern.matcher(cityUser);
 
-        Pattern lastnamePattern = Pattern.compile("^[A-Z]+([ '-]?[a-zA-Z]+)*$");
+        Pattern lastnamePattern = Pattern.compile("^[A-Z]+([ '-]?[a-zA-Z]+){1,20}$");
         Matcher lastnameMatcher = lastnamePattern.matcher(lastnameUser);
 
-        Pattern phonePattern = Pattern.compile("^((\\+?\\d{1,3}) ?)?(\\d{1,10})$");
+        Pattern phonePattern = Pattern.compile("^((\\+?\\d{1,3}) ?)?(\\d{10})$");
         Matcher phoneMatcher = phonePattern.matcher(phoneUser);
 
         if (TextUtils.isEmpty(firstnameUser)) {
@@ -231,18 +257,7 @@ public class SignupActivity extends AppCompatActivity {
             city.setError("Campo obbligatorio!");
             valid = false;
         }
-        if (TextUtils.isEmpty(mailUser)) {
-                mail.setError("Campo obbligatorio!");
-                valid = false;
-        }
-        if(TextUtils.isEmpty(passwordUser)) {
-                password.setError("Campo obbligatorio!");
-                valid = false;
-        }
-        if (TextUtils.isEmpty(confirmPwdUser)){
-                confpassword.setError("Campo obbligatorio!");
-                valid = false;
-        }
+
 
         //Se i campi obbligatori sono stati compilati:
         if(valid==true) {
@@ -263,6 +278,38 @@ public class SignupActivity extends AppCompatActivity {
                 valid = false;
                 city.setError("Ricontrolla la città inserita");
             }
+
+        }
+
+            return valid;
+    }
+
+    private boolean validateEmailPassword(String mailUser, String passwordUser, String confirmPwdUser) {
+        boolean valid = true;
+
+        Pattern emailPattern = Pattern
+                .compile("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
+                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        Matcher emailMatcher = emailPattern.matcher(mailUser);
+
+        Pattern passwordPattern = Pattern
+                .compile("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}");
+        Matcher passMatcher = passwordPattern.matcher(passwordUser);
+
+        if (TextUtils.isEmpty(mailUser)) {
+            mail.setError("Campo obbligatorio!");
+            valid = false;
+        }
+        if(TextUtils.isEmpty(passwordUser)) {
+            password.setError("Campo obbligatorio!");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(confirmPwdUser)){
+            confpassword.setError("Campo obbligatorio!");
+            valid = false;
+        }
+
+        if(valid==true){
             if (!emailMatcher.matches()) {
                 valid = false;
                 mail.setError("Ricontrolla la mail inserita");
@@ -278,8 +325,7 @@ public class SignupActivity extends AppCompatActivity {
                 valid = false;
             }
         }
-
-            return valid;
+        return valid;
     }
 
     public void goToLogin(View view){
@@ -298,7 +344,7 @@ public class SignupActivity extends AppCompatActivity {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        String birthdateString = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+                        String birthdateString = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
                         birthdate.setText(birthdateString);
                     }
                 }, year, month, day);
@@ -366,7 +412,8 @@ public class SignupActivity extends AppCompatActivity {
                         + "&phone=" + URLEncoder.encode(p.getPhone(), "UTF-8")
                         + "&birthdate=" + URLEncoder.encode(p.getBirthdate(), "UTF-8")
                         + "&id_user=" + URLEncoder.encode(p.getId_user(), "UTF-8")
-                        + "&wallet=" + URLEncoder.encode(String.valueOf(p.getWallet()), "UTF-8");
+                        + "&wallet=" + URLEncoder.encode(String.valueOf(p.getWallet()), "UTF-8")
+                        + "&googleSignIn=" + URLEncoder.encode(String.valueOf(p.getGoogleSignIn()), "UTF-8");
 
 
                 JSONArray jsonArray=ServerTask.askToServer(params,url);

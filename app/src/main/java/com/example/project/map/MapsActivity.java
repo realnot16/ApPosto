@@ -241,7 +241,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 switch (menuItem.getItemId()) {
                     case R.id.show_profile_id:
                         if(mAuth.getCurrentUser()!=null) {
-                            //new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
                             startActivity(new Intent(MapsActivity.this, ProfileActivity.class));
                             Log.i(TAG, "Ho cliccato su Profilo nel menu. User:" + mAuth.getCurrentUser().getEmail());
                         }else {

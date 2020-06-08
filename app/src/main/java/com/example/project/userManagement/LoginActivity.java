@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,8 +15,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
 import com.example.project.map.MapsActivity;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -29,6 +32,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.security.AlgorithmParameterGenerator;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -47,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
     //Google sign-in
     GoogleSignInClient googleSignInClient;
     SignInButton button;
+    private String token;
 
     //When initializing your Activity, check to see if the user is currently signed in.
     @Override
@@ -124,6 +138,8 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+
+                getToken();
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
@@ -146,6 +162,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            new UploadGoogleSignin().execute(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -218,6 +235,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.i(TAG, "Hai cliccato su Registrati. Verrai reindirizzato alla pagina di registrazione.");
 
         Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+        intent.putExtra("From", "LoginActivity");
         startActivity(intent);
     }
 
@@ -239,6 +257,64 @@ public class LoginActivity extends AppCompatActivity {
                     });
         }else
             Toast.makeText(this, "Compila il campo mail per poter ripristinare la password.", Toast.LENGTH_SHORT).show();
+
+    }
+
+
+    //TASK PER CARICARE NUOVO UTENTE SUL DB
+    private class UploadGoogleSignin extends AsyncTask<FirebaseUser, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(FirebaseUser... firebaseUsers) {
+
+            String url = "https://smartparkingpolito.altervista.org/CreateProfile.php";
+            String params = null;
+            FirebaseUser user = firebaseUsers[0];
+
+            //Encoding parametri:
+
+            try {
+                params = "email=" + URLEncoder.encode(user.getEmail(), "UTF-8")
+                        + "&id_user=" + URLEncoder.encode(user.getUid(), "UTF-8")
+                        + "&device_token=" + URLEncoder.encode(token, "UTF-8")
+                        + "&googleSignIn=" + URLEncoder.encode("1", "UTF-8");
+
+                JSONArray jsonArray= ServerTask.askToServer(params,url);
+                //gestisci JsonArray
+                JSONObject jsonObjectControl=jsonArray.getJSONObject(0);
+                String control=jsonObjectControl.getString("control");
+                Log.i("cntr0",control);
+                if (control.equals("OK")){   // non esegue l'if
+                    //UTENTE REGISTRATO CORRETTAMENTE
+                    Log.i(TAG, "Utente Google salvato correttamente.");
+                    return true;
+                }
+
+            }
+            catch (UnsupportedEncodingException | JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+    }
+
+    //Prendere il token del dispositivo alla registrazione
+    public void getToken(){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if(task.isSuccessful()){
+                    token = task.getResult().getToken();
+                    Log.i(TAG, "Token: "+token);
+                }else{
+                    Log.i(TAG, "Problema", task.getException());
+                    return;
+                }
+            }
+
+        });
 
     }
 }
