@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/map_drawer_header_background"
+    android:paddingTop="30dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/textView"
+            style="@android:style/Widget.Material.Light.TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoText="false"
+            android:text="@string/panel_no_rdrc_text"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:autoSizeTextType="uniform" />
+
+
+        <Button
+            android:id="@+id/panel_cancel_no_rdrct"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="0.5"
+            android:background="#F30657"
+            android:onClick="onEndReservationForFree"
+            android:text="@string/panel_no_rdrct"
+            android:textColor="@color/bianco" />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

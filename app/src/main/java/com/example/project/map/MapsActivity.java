@@ -1,17 +1,22 @@
 package com.example.project.map;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -20,12 +25,14 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.project.NotificationService;
 import com.example.project.ParametersAsync.CloseReservationParamsAsync;
 import com.example.project.ParametersAsync.LoadStationParamsAsync;
 import com.example.project.ParametersAsync.OpenReservationParamsAsync;
@@ -71,6 +78,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
@@ -87,6 +96,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private View markPanel;
     private SlidingUpPanelLayout panel;
+    private SlidingUpPanelLayout redirectPanel;
     private Station station_selected;
 
     private final LatLng mDefaultLocation = new LatLng(45.070841, 7.668552);
@@ -106,7 +116,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     //SCANNER
+    private final static int  NOTIFICATION_REQUEST_CODE=3;
     private final static int  SCANNER_REQUEST_CODE=2;
+    private final static int  PROFILE_REQUEST_CODE=1;
     private final static int MY_CAMERA_REQUEST_CODE=100;
     FloatingActionButton qrButton;
 
@@ -120,21 +132,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //VARIE
     private DrawerLayout drawerLayout;
     private Integer filter_destination_meter=1200;  //FILTRO STAZIONI CARICATE
+    //POPUP
+    private String new_parking_rdrct;
+    private AlertDialog popup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout_main);
-
         //SLIDER STAZIONI
 
        panel = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
        //panel.setPanelHeight(findViewById(R.id.floatingQrButton).getLayoutParams().height);
        panel.setPanelState(PanelState.HIDDEN);
-
-
-        //AUTENTICAZIONE
+       //AUTENTICAZIONE
         mAuth = FirebaseAuth.getInstance();
 
 
@@ -187,12 +199,54 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        // MESSAGE BROADCAST RECEIVER
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        Log.i("BroadCast","fino a qui ok");
+                        if (intent.hasExtra("id_parking")){
+                        String id_parking = intent.getStringExtra("id_parking");
+                        String distance = intent.getStringExtra("distance");
+                        String address = intent.getStringExtra("address");
+                        showRdrctPopup(id_parking,distance,address);
+                        new_parking_rdrct=id_parking;
+                        }
+                        else showRdrctPopup(null,null,null);
 
+
+
+                    }
+                }, new IntentFilter(NotificationService.ACTION_MESSAGE_BROADCAST)
+        );
         // BOTTONE PER QR CODE ACTIIVTY
         qrButton= findViewById(R.id.floatingQrButton);
         setQrButton(qrButton);
         //Genero una nuova Current Reservation;
         currentReservation=new CurrentReservation();// In realtà dovrebbe chiedere al server e se non c'è la crea, se c'è la setta
+
+    }
+    // Aggiorna e mostra il pannello di redirect se arriva la notifica
+    private void showRdrctPopup(@Nullable String id_parking,@Nullable String distance,@Nullable String address) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        LayoutInflater layoutInflater = getLayoutInflater();
+        View customView;
+
+        if (id_parking!=null){
+        customView = layoutInflater.inflate(R.layout.map_redir_popup, null);
+        TextView tv_panel_park= (TextView) customView.findViewById(R.id.tv_park_id);
+        tv_panel_park.setText(id_parking);
+        TextView tv_panel_dist= (TextView) customView.findViewById(R.id.tv_dist_id);
+        tv_panel_dist.setText(distance+"m");
+        TextView tv_panel_address= (TextView) customView.findViewById(R.id.tv_address_id);
+        tv_panel_address.setText(address);
+        }
+        else customView = layoutInflater.inflate(R.layout.map_no_redir_popup, null);
+        builder.setView(customView);
+        builder.setCancelable(false);
+        popup=builder.create();
+        popup.show();
 
     }
 
@@ -426,7 +480,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //IMPOSTO IL BOTTONE PER QR ACTIVITY + PERMISISON
+    //IMPOSTO IL BOTTONE PER QR ACTIVITY + PERMISSION
     private void setQrButton(View qrButton) {
         qrButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -450,9 +504,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onBookStation(View view) {
+        if (currentReservation.getId_booking()==null){
         OpenReservationParamsAsync paramsAsync=new OpenReservationParamsAsync(mAuth.getUid(),station_selected.id_parking,"//FIttizia",0);
         new OpenReservation().execute(paramsAsync);
         panel.setPanelState(PanelState.HIDDEN);
+        }
+        else Toast.makeText(this,R.string.alreadybooked,Toast.LENGTH_LONG).show();
 
 
     }
@@ -632,7 +689,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-
     //4-CHECK CURRENT RESERVATION, controlla se sul server è settata una map_icona_panel_prenotazione per l'user corrente, evita di perdere
     // la map_icona_panel_prenotazione se l'app viene chiusa
     private class CheckCurrentReservation extends AsyncTask<String,Void,Boolean> {
@@ -666,7 +722,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-
     //Callback method after startActivityForResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -681,9 +736,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,1);
             new CloseReservation().execute(paramsAsync);
         }
+        //GESTIONE DATI PROFILO
+        if(requestCode==PROFILE_REQUEST_CODE && resultCode==Activity.RESULT_OK){
 
+        }
     }
 
+    //Callback dopo richiesta Permessi
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,@NonNull int[] grantResults) {
@@ -741,6 +800,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Canvas canvas = new Canvas(bitmap);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    public void onEndReservationForFree(View view){
+        String id_user=mAuth.getUid();
+        Integer id_parking=currentReservation.parking_id;
+        String id_booking=currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
+        CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,0);
+        new CloseReservation().execute(paramsAsync);
+        popup.cancel();
+
+    }
+    public void onRedirect(View view){
+        String id_user=mAuth.getUid();
+        Integer id_parking=currentReservation.parking_id;
+        String id_booking=currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
+        CloseReservationParamsAsync paramsAsyncClose= new CloseReservationParamsAsync(id_user,id_parking,id_booking,2);
+        new CloseReservation().execute(paramsAsyncClose);
+
+        if (new_parking_rdrct!=null){
+        Integer id_new_parking=Integer.valueOf(new_parking_rdrct);
+        OpenReservationParamsAsync paramsAsyncOpen=new OpenReservationParamsAsync(mAuth.getUid(),id_new_parking,"//FIttizia",1);
+        new OpenReservation().execute(paramsAsyncOpen);
+        }
+        popup.cancel();
+
     }
 
 }

@@ -79,7 +79,18 @@
     <string name="reserv_success"> The reservation was opened successfully</string>
     <string name="occupied">Sorry! The parking you booked was already occupied </string>
     <string name="zero_wallet">Sorry! Your credit is too low. Recharge your wallet!</string>
-
+    <string name="alreadybooked">Sorry you can\'t open another reservation!</string>
+    <!--    Notification & Redirect-->
+    <string name="channel_name">appostoChannel</string>
+    <string name="channel_description">Channel for apposto</string>
+    <string name="redirectMessage">Sorry! Someone is trying to occupy your place. What do you prefer?</string>
+    <string name="panel_rdrct">"REDIRECT "</string>
+    <string name="panel_no_rdrct">END RESERVATION for FREE</string>
+    <string name="panel_rdrc_text">You will be redirect to the nearest parking from your last destination!</string>
+    <string name="panel_label_park">Parking n:</string>
+    <string name="panel_label_dist">Distance:</string>
+    <string name="panel_label_address">Address:</string>
+    <string name="panel_no_rdrc_text">Sorry!There aren\'t others free parking near your destination!</string>
 
 
 </resources>
