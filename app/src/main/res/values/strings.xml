@@ -90,7 +90,7 @@
     <string name="panel_label_park">Parking n:</string>
     <string name="panel_label_dist">Distance:</string>
     <string name="panel_label_address">Address:</string>
-    <string name="panel_no_rdrc_text">Sorry!There aren\'t others free parking near your destination!</string>
+    <string name="panel_no_rdrc_text">Sorry! There aren\'t others free parking near your destination!</string>
 
 
 </resources>

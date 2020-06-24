@@ -4,108 +4,96 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/map_drawer_header_background"
-    android:paddingTop="30dp">
+    android:background="@drawable/map_drawer_header_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textView"
+            style="@android:style/Widget.Material.Light.TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/panel_rdrc_text"
+            android:textAlignment="textStart"
+            android:textColor="#000000"
+            android:textSize="18sp" />
 
-            <LinearLayout
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
+
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingLeft="5dp">
+                android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView"
-                    style="@android:style/Widget.Material.Light.TextView"
-                    android:layout_width="match_parent"
+                    android:id="@+id/label_tv_park_id"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/panel_rdrc_text"
-                    android:textAlignment="textStart"
-                    android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:text="@string/panel_label_park"
+                    android:textStyle="bold" />
 
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/tv_park_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                        <TextView
-                            android:id="@+id/label_tv_park_id"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/panel_label_park"
-                            android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/label_tv_dist_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/panel_label_dist"
+                    android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/tv_park_id"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </TableRow>
+                <TextView
+                    android:id="@+id/tv_dist_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+            </TableRow>
 
-                        <TextView
-                            android:id="@+id/label_tv_dist_id"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/panel_label_dist"
-                            android:textStyle="bold" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                        <TextView
-                            android:id="@+id/tv_dist_id"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/label_tv_address_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/panel_label_address"
+                    android:textStyle="bold" />
 
-                    </TableRow>
+                <TextView
+                    android:id="@+id/tv_address_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/label_tv_address_id"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/panel_label_address"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_address_id"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </TableRow>
-
-                </TableLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
+        </TableLayout>
 
         <LinearLayout
+            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/panel_cancel_rdrct"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="2dp"
@@ -118,6 +106,7 @@
 
             <Button
                 android:id="@+id/panel_button_rdrct"
+                style='"?android:attr/buttonBarButtonStyle"'
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="2dp"
@@ -131,5 +120,4 @@
         </LinearLayout>
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
