@@ -199,12 +199,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        // MESSAGE BROADCAST RECEIVER
+        // MESSAGE BROADCAST RECEIVER per catturare i messaggi provenienti dal Notification Service
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        Log.i("BroadCast","fino a qui ok");
                         if (intent.hasExtra("id_parking")){
                         String id_parking = intent.getStringExtra("id_parking");
                         String distance = intent.getStringExtra("distance");
@@ -219,34 +218,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 }, new IntentFilter(NotificationService.ACTION_MESSAGE_BROADCAST)
         );
+
         // BOTTONE PER QR CODE ACTIIVTY
         qrButton= findViewById(R.id.floatingQrButton);
         setQrButton(qrButton);
         //Genero una nuova Current Reservation;
         currentReservation=new CurrentReservation();// In realtà dovrebbe chiedere al server e se non c'è la crea, se c'è la setta
-
-    }
-    // Aggiorna e mostra il pannello di redirect se arriva la notifica
-    private void showRdrctPopup(@Nullable String id_parking,@Nullable String distance,@Nullable String address) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-        LayoutInflater layoutInflater = getLayoutInflater();
-        View customView;
-
-        if (id_parking!=null){
-        customView = layoutInflater.inflate(R.layout.map_redir_popup, null);
-        TextView tv_panel_park= (TextView) customView.findViewById(R.id.tv_park_id);
-        tv_panel_park.setText(id_parking);
-        TextView tv_panel_dist= (TextView) customView.findViewById(R.id.tv_dist_id);
-        tv_panel_dist.setText(distance+"m");
-        TextView tv_panel_address= (TextView) customView.findViewById(R.id.tv_address_id);
-        tv_panel_address.setText(address);
-        }
-        else customView = layoutInflater.inflate(R.layout.map_no_redir_popup, null);
-        builder.setView(customView);
-        builder.setCancelable(false);
-        popup=builder.create();
-        popup.show();
 
     }
 
@@ -340,11 +317,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i(TAG,"mappa Pronta");
@@ -355,7 +327,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         double lat_start= 45.070841;//fittizie: SOSTITUIRE CON QUELLE DEL DISPOSITIVO
         double long_start=7.668552;//fittizie
-        String city="Torino";
+        String city="Torino";//fittizia
         LoadStationParamsAsync parametersAsync=new LoadStationParamsAsync(lat_start,long_start,city);
         new LoadStations().execute(parametersAsync);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -801,7 +773,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+    //-----POP UP REDIRECT-------------
 
+    // Aggiorna e mostra il pannello di redirect se arriva la notifica
+    private void showRdrctPopup(@Nullable String id_parking,@Nullable String distance,@Nullable String address) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        LayoutInflater layoutInflater = getLayoutInflater();
+        View customView;
+
+        if (id_parking!=null){
+            customView = layoutInflater.inflate(R.layout.map_redir_popup, null);
+            TextView tv_panel_park= (TextView) customView.findViewById(R.id.tv_park_id);
+            tv_panel_park.setText(id_parking);
+            TextView tv_panel_dist= (TextView) customView.findViewById(R.id.tv_dist_id);
+            tv_panel_dist.setText(distance+"m");
+            TextView tv_panel_address= (TextView) customView.findViewById(R.id.tv_address_id);
+            tv_panel_address.setText(address);
+        }
+        else customView = layoutInflater.inflate(R.layout.map_no_redir_popup, null);
+        builder.setView(customView);
+        builder.setCancelable(false);
+        popup=builder.create();
+        popup.show();
+
+    }
+
+    //METODI DEI BOTTONI DEL POPUP DI REINDIRIZZAMENTO
     public void onEndReservationForFree(View view){
         String id_user=mAuth.getUid();
         Integer id_parking=currentReservation.parking_id;
@@ -814,14 +812,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onRedirect(View view){
         String id_user=mAuth.getUid();
         Integer id_parking=currentReservation.parking_id;
-        String id_booking=currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
-        CloseReservationParamsAsync paramsAsyncClose= new CloseReservationParamsAsync(id_user,id_parking,id_booking,2);
-        new CloseReservation().execute(paramsAsyncClose);
+        String id_booking=currentReservation.id_booking;
+        CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,2);
+        new CloseReservation().execute(paramsAsync);
 
         if (new_parking_rdrct!=null){
         Integer id_new_parking=Integer.valueOf(new_parking_rdrct);
         OpenReservationParamsAsync paramsAsyncOpen=new OpenReservationParamsAsync(mAuth.getUid(),id_new_parking,"//FIttizia",1);
         new OpenReservation().execute(paramsAsyncOpen);
+        //TO DO:Chiama metodo per reindirizzare navigatore
         }
         popup.cancel();
 
