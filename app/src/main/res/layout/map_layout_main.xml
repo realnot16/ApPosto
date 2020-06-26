@@ -27,6 +27,19 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/refreshButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="490dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="onRefreshClick"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_popup_sync" />
+
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/map"
                 android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -34,7 +47,9 @@
                 android:layout_height="match_parent"
                 tools:layout="@layout/process_layout"
                 tools:layout_editor_absoluteX="70dp"
-                tools:layout_editor_absoluteY="16dp" />
+                tools:layout_editor_absoluteY="16dp" >
+
+            </androidx.fragment.app.FragmentContainerView>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"

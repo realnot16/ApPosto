@@ -75,6 +75,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -93,7 +94,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private CameraPosition mCameraPosition;
     private PlacesClient mPlacesClient;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-
+    private List<Marker> AllMarkers;
     private View markPanel;
     private SlidingUpPanelLayout panel;
     private SlidingUpPanelLayout redirectPanel;
@@ -148,7 +149,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
        panel.setPanelState(PanelState.HIDDEN);
        //AUTENTICAZIONE
         mAuth = FirebaseAuth.getInstance();
-
+        // SETTO LISTA MARKERS
+        AllMarkers = new ArrayList<Marker>();
 
         // TOOLBAR E NAVIGATION DRAWER
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -172,6 +174,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         // CONTROLLA CURRENT RESERVATION
+        currentReservation=new CurrentReservation();// In realtà dovrebbe chiedere al server e se non c'è la crea, se c'è la setta
         String urlCurrRes="https://smartparkingpolito.altervista.org/GetCurrentReservation.php";
         new CheckCurrentReservation().execute(urlCurrRes);
         //AUTOCOMPLETAMENTO INDIRIZZI
@@ -223,7 +226,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         qrButton= findViewById(R.id.floatingQrButton);
         setQrButton(qrButton);
         //Genero una nuova Current Reservation;
-        currentReservation=new CurrentReservation();// In realtà dovrebbe chiedere al server e se non c'è la crea, se c'è la setta
+
 
     }
 
@@ -325,7 +328,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //CARICO LE STAZIONI
 
-        double lat_start= 45.070841;//fittizie: SOSTITUIRE CON QUELLE DEL DISPOSITIVO
+        double lat_start= 45.070841;//fittizie: SOSTITUIRE CON QUELLE DELLA GEOREFERENZIAZIONE
         double long_start=7.668552;//fittizie
         String city="Torino";//fittizia
         LoadStationParamsAsync parametersAsync=new LoadStationParamsAsync(lat_start,long_start,city);
@@ -383,7 +386,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    //IMPOSTO LA MAPPA
+    //IMPOSTO LA MAPPA + LOCALIZZAZIONE:---------------------------------------------------------------------
     private void setMap() {
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
@@ -452,7 +455,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //IMPOSTO IL BOTTONE PER QR ACTIVITY + PERMISSION
+    //BOTTONI FLOATING + PERMESSI+ BOTTONE PRENOTAZIONE --------------------------------------
     private void setQrButton(View qrButton) {
         qrButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -474,7 +477,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-
+    //Apre la reservation e nasconde panel
     public void onBookStation(View view) {
         if (currentReservation.getId_booking()==null){
         OpenReservationParamsAsync paramsAsync=new OpenReservationParamsAsync(mAuth.getUid(),station_selected.id_parking,"//FIttizia",0);
@@ -486,8 +489,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    public void onRefreshClick(View view) {
+        for (Marker mLocationMarker: AllMarkers) {
+            mLocationMarker.remove();
+        }
+        AllMarkers.clear();
+        double lat_start= 45.070841;//fittizie: SOSTITUIRE CON QUELLE DELLA GEOREFERENZIAZIONE
+        double long_start=7.668552;//fittizie
+        String city="Torino";//fittizia
+        LoadStationParamsAsync parametersAsync=new LoadStationParamsAsync(lat_start,long_start,city);
+        new LoadStations().execute(parametersAsync);
+    }
 
-    //TASK ASYNC:
+
+    //TASK ASYNC:---------------------------------------------------------------------------------
 
     //1- LOAD STATION, permette di acquisire tutte le stazioni nell'area visualizzata durante il primo accesso alla mappa
     private class LoadStations extends AsyncTask<LoadStationParamsAsync,Void,ArrayList<Station>> {
@@ -541,6 +556,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title("Stazione N "+stat.getId_parking().toString())
                         .icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.map_ic_pin));
                 Marker marker = mMap.addMarker(markerOptions);//BitmapDescriptorFactory.fromResource(R.drawable.map_pin)
+                AllMarkers.add(marker);
                 marker.setTag(stat);
 
                 Log.i(TAG, "marker aggiunto");
@@ -694,6 +710,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    // METODI CALLBACK:----------------------------------------------------------------------------
+
     //Callback method after startActivityForResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -773,10 +791,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
-    //-----POP UP REDIRECT-------------
+    //-----POP UP REDIRECT----------------------------------------------------------------------
 
     // Aggiorna e mostra il pannello di redirect se arriva la notifica
-    private void showRdrctPopup(@Nullable String id_parking,@Nullable String distance,@Nullable String address) {
+    private void    showRdrctPopup(@Nullable String id_parking,@Nullable String distance,@Nullable String address) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
         LayoutInflater layoutInflater = getLayoutInflater();
