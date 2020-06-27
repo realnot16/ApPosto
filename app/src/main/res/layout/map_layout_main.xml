@@ -27,6 +27,34 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout="@layout/process_layout"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="0dp">
+
+            </androidx.fragment.app.FragmentContainerView>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingQrButton"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginBottom="30dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
+                android:onClick="onQrButtonClick"
+                app:backgroundTint="#3F51B5"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:rippleColor="#FFFFFF"
+                app:srcCompat="?attr/actionModeSelectAllDrawable" />
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/refreshButton"
                 android:layout_width="wrap_content"
@@ -40,16 +68,55 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@android:drawable/ic_popup_sync" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/map"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:layout="@layout/process_layout"
-                tools:layout_editor_absoluteX="70dp"
-                tools:layout_editor_absoluteY="16dp" >
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linLayoutCurrRes"
+                android:layout_width="157dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="150dp"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            </androidx.fragment.app.FragmentContainerView>
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/closeReservButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:backgroundTint="#EF0837"
+                    android:clickable="true"
+                    android:onClick="onCloseResButtonClick"
+                    android:paddingLeft="2dp"
+                    android:scaleType="center"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    app:backgroundTint="#EF0837"
+                    app:fabSize="mini"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:layout_width="142dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="17dp"
+                    android:background="#AE0426"
+                    android:orientation="horizontal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/tv_current_reserv"
+                        android:layout_width="139dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="12dp"
+                        android:autoText="false"
+                        android:background="#AE0426"
+                        android:text="@string/reservationOpened"
+                        android:textAlignment="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -80,23 +147,6 @@
                     android:imeOptions="actionSearch"
                     android:layoutDirection="rtl"></SearchView> -->
             </androidx.appcompat.widget.Toolbar>
-
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/floatingQrButton"
-                android:layout_width="56dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginBottom="30dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:focusableInTouchMode="false"
-                android:onClick="onQrButtonClick"
-                app:backgroundTint="#3F51B5"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:rippleColor="#FFFFFF"
-                app:srcCompat="?attr/actionModeSelectAllDrawable" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include layout="@layout/map_panel" />

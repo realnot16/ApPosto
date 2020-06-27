@@ -91,6 +91,9 @@
     <string name="panel_label_dist">Distance:</string>
     <string name="panel_label_address">Address:</string>
     <string name="panel_no_rdrc_text">Sorry! There aren\'t others free parking near your destination!</string>
+    <string name="reservationOpened">Booking in progress...</string>
+    <string name="alertCloseReser">Close Current Reservation</string>
+    <string name="alertCloseMessage">Are you sure to close the booking in progress? you will pay for your reservation up to this moment.</string>
 
 
 </resources>

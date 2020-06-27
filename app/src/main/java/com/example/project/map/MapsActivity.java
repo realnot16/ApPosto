@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.core.app.ActivityCompat;
@@ -15,6 +16,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -136,6 +138,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //POPUP
     private String new_parking_rdrct;
     private AlertDialog popup;
+    ConstraintLayout layoutReservation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,7 +228,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // BOTTONE PER QR CODE ACTIIVTY
         qrButton= findViewById(R.id.floatingQrButton);
         setQrButton(qrButton);
-        //Genero una nuova Current Reservation;
+        //EVIDENZIA STATO PRENOTAZIONE IN CORSO
+        layoutReservation=(ConstraintLayout) findViewById(R.id.linLayoutCurrRes);
+        if(currentReservation.id_booking!=null){
+            layoutReservation.setVisibility(View.VISIBLE);
+        }
 
 
     }
@@ -501,6 +508,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         new LoadStations().execute(parametersAsync);
     }
 
+    public void onCloseResButtonClick(View view) {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.alertCloseReser))
+                .setMessage(getString(R.string.alertCloseMessage))
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String id_user=mAuth.getUid();
+                        Integer id_parking=currentReservation.parking_id;
+                        String id_booking=currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
+                        CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,1);
+                        new CloseReservation().execute(paramsAsync);
+
+                    }
+                })
+
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
 
     //TASK ASYNC:---------------------------------------------------------------------------------
 
@@ -587,11 +618,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 JSONArray jsonArray=ServerTask.askToServer(params,url);
                 //gestisci JsonArray
                 JSONObject jsonObjectId=jsonArray.getJSONObject(0);
-                JSONObject jsonObjectControl=jsonArray.getJSONObject(1);  // index 0 booking_id, index 1 control_status
+                JSONObject jsonObjectControl=jsonArray.getJSONObject(1);// index 0 booking_id, index 1 control_status
                 control=jsonObjectControl.getString("control");
+
                 Log.i("cntr0",control);
                 if (control.equals("OK")){   // non esegue l'if
                     currentReservation.id_booking=jsonObjectId.getString("booking_id");
+                    currentReservation.parking_id=parametersAsyncs[0].id_parking;
+
                 }
                  //avverti l'utente che il posto è stato occupato o non ha soldi
 
@@ -610,6 +644,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             switch (result){
                 case "OK":
                     Toast.makeText(MapsActivity.this,getString(R.string.reserv_success),Toast.LENGTH_LONG).show();
+                    layoutReservation.setVisibility(View.VISIBLE);
                     break;
                 case "OCCUPIED":
                     Toast.makeText(MapsActivity.this,getString(R.string.occupied),Toast.LENGTH_LONG).show();
@@ -666,6 +701,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             switch (result){
                 case "OK":          currentReservation.id_booking=null;
                     Toast.makeText(MapsActivity.this,getString(R.string.ok),Toast.LENGTH_LONG).show();
+                    layoutReservation.setVisibility(View.INVISIBLE);
                     break;
                 case "WRONG_PARKING":Toast.makeText(MapsActivity.this,getString(R.string.sorry),Toast.LENGTH_LONG).show();
                     break;
@@ -705,7 +741,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } catch (Exception e) {
                 Log.e("log_tag", "Error " + e.toString());
             }
-            return true;
+            if (currentReservation.id_booking!=null) return true;
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result){
+            Log.i("icona",result.toString());
+            if (result==true) layoutReservation.setVisibility(View.VISIBLE);
+
         }
 
     }
