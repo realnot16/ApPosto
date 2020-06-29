@@ -52,7 +52,7 @@
     <string name="scanner_info">Cattura il QR code associato alla colonnina</string>
     <string name="scanner_problem">Non riesci a catturare il QR? clicca qui!</string>
     <!-- Place autoComplete API, hardcode, take care -->
-    <string name="placeAutocomplete">AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE</string>
+
     <string name="qr_snackbar">\"No Current Reservation\"</string>
 
     <!--   String NavigationToolbar -->

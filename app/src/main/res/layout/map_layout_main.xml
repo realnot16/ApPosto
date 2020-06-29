@@ -84,6 +84,7 @@
                     android:layout_height="40dp"
                     android:backgroundTint="#EF0837"
                     android:clickable="true"
+                    android:focusable="true"
                     android:onClick="onCloseResButtonClick"
                     android:paddingLeft="2dp"
                     android:scaleType="center"
@@ -127,6 +128,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/map_searchview_shape"
                 android:minHeight="?attr/actionBarSize"
+
                 android:theme="?attr/actionBarTheme"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/map"
@@ -137,15 +139,6 @@
                     android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-                <!--
-                <SearchView
-                    android:id="@+id/searchview_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:elevation="14.5sp"
-                    android:gravity="center_horizontal"
-                    android:imeOptions="actionSearch"
-                    android:layoutDirection="rtl"></SearchView> -->
             </androidx.appcompat.widget.Toolbar>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -19,18 +19,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,9 +51,15 @@ import com.example.project.reservation.ReservationsActivity;
 import com.example.project.userManagement.LoginActivity;
 import com.example.project.userManagement.Profilo;
 import com.example.project.userManagement.ProfileActivity;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -60,7 +73,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
@@ -91,31 +109,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private static final String TAG = "Mappa";
 
-    //MAPPA
+    //LAYOUT
+
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
-    private PlacesClient mPlacesClient;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private List<Marker> AllMarkers;
     private View markPanel;
     private SlidingUpPanelLayout panel;
-    private SlidingUpPanelLayout redirectPanel;
+    private ConstraintLayout filterLayout;
+    private ConstraintLayout stationLayout;
+
     private Station station_selected;
 
+    // Keys for storing map activity state.
+    private static final String KEY_CAMERA_POSITION = "camera_position";
+    private static final String KEY_LOCATION = "location";
+
+
+    //GEOLOCALIZZAZIONE
+    private Location mLastKnownLocation;
     private final LatLng mDefaultLocation = new LatLng(45.070841, 7.668552);
     private static final int DEFAULT_ZOOM = 15;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private boolean mLocationPermissionGranted;
-    private boolean permissionChoose=false;
+    private boolean mLocationPermissionGranted=false;
 
-    // The geographical location where the device is currently located. That is, the last-known
-    // location retrieved by the Fused Location Provider.
-    private Location mLastKnownLocation;
 
-    // Keys for storing activity state.
-    private static final String KEY_CAMERA_POSITION = "camera_position";
-    private static final String KEY_LOCATION = "location";
 
 
     //SCANNER
@@ -145,13 +165,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout_main);
+
         //SLIDER STAZIONI
 
        panel = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-       //panel.setPanelHeight(findViewById(R.id.floatingQrButton).getLayoutParams().height);
        panel.setPanelState(PanelState.HIDDEN);
+
+       filterLayout = findViewById(R.id.panel_filter_layout_id);
+       stationLayout = findViewById(R.id.panel_station_layout_id);
+
+
+
        //AUTENTICAZIONE
         mAuth = FirebaseAuth.getInstance();
+
         // SETTO LISTA MARKERS
         AllMarkers = new ArrayList<Marker>();
 
@@ -159,51 +186,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toolbar toolbar = findViewById(R.id.toolbar);
         setToolbar(toolbar);
 
-
-
         // MAPPA : Obtain the SupportMapFragment and get notified when the map is ready to be used.
         if (savedInstanceState != null) {  //Recupero informazioni sull'ultima posizione rilevata
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
+        createMap();
 
-        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        assert mapFragment != null;
-        mapFragment.getMapAsync(this);
-
-        Places.initialize(getApplicationContext(),getResources().getString(R.string.google_maps_key));
-        mPlacesClient = Places.createClient(this);
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         // CONTROLLA CURRENT RESERVATION
         currentReservation=new CurrentReservation();// In realtà dovrebbe chiedere al server e se non c'è la crea, se c'è la setta
         String urlCurrRes="https://smartparkingpolito.altervista.org/GetCurrentReservation.php";
         new CheckCurrentReservation().execute(urlCurrRes);
-        //AUTOCOMPLETAMENTO INDIRIZZI
 
-
-        // Initialize the AutocompleteSupportFragment.
-        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-
-        // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
-        // Set up a PlaceSelectionListener to handle the response.
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
 
         // MESSAGE BROADCAST RECEIVER per catturare i messaggi provenienti dal Notification Service
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -237,6 +232,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    private void createMap() {
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(this);
+    }
+
     //When initializing your Activity, check to see if the user is currently signed in.
     @Override
     public void onStart() {
@@ -258,6 +260,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    //IMPOSTO LA TOOLBAR:---------------------------------------------------------------------
+
     //IMPOSTO LA TOOLBAR
     private void setToolbar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
@@ -268,6 +272,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setNavigationDrawer(toolbar);
         Drawable filterIcon = getDrawable(R.drawable.map_ic_filter_list_black_24dp);
         toolbar.setOverflowIcon(filterIcon);
+        setAutocomplete();
+
+       /* MenuItem filter = findViewById(R.id.action_filter);
+        filter.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                filterLayout.setVisibility(View.VISIBLE);
+                stationLayout.setVisibility(View.GONE);
+                panel.setPanelState(PanelState.EXPANDED);
+                return false;
+            }
+        });*/
     }
 
     //COLLEGO IL NAVIGATION LAYOUT ALLA TOOLBAR
@@ -319,6 +336,49 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    private void setAutocomplete(){
+        //AUTOCOMPLETAMENTO INDIRIZZI
+
+        String apiKey = getString(R.string.place_autocomplete_key);
+
+        /**
+         * Initialize Places. For simplicity, the API key is hard-coded. In a production
+         * environment we recommend using a secure mechanism to manage API keys.
+         */
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), apiKey);
+        }
+
+        // Create a new Places client instance.
+        PlacesClient placesClient = Places.createClient(this);
+
+        // Initialize the AutocompleteSupportFragment.
+        final AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        ImageView searchIcon = (ImageView)((LinearLayout)autocompleteFragment.getView()).getChildAt(0);
+        searchIcon.setVisibility(View.GONE);
+
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.LAT_LNG,Place.Field.ID, Place.Field.NAME));
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId()+" - "+place.getLatLng());
+                //LatLng newPosition = new LatLng(place.getLatLng().latitude,place.getLatLng().longitude);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), DEFAULT_ZOOM));
+
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
+
+    }
+
+
     //IMPLEMENTO I FILTRI
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -328,19 +388,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_filter:
+                // User chose the "Settings" item, show the app settings UI...
+                Log.i(TAG,"Apro Filtri");
+
+                filterLayout.setVisibility(View.VISIBLE);
+                stationLayout.setVisibility(View.GONE);
+                panel.setPanelState(PanelState.EXPANDED);
+
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+
+
+    //IMPOSTO LA MAPPA + LOCALIZZAZIONE:---------------------------------------------------------------------
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i(TAG,"mappa Pronta");
         mMap = googleMap;
         setMap();
 
         //CARICO LE STAZIONI
+        askStations();
 
-        double lat_start= 45.070841;//fittizie: SOSTITUIRE CON QUELLE DELLA GEOREFERENZIAZIONE
-        double long_start=7.668552;//fittizie
-        String city="Torino";//fittizia
-        LoadStationParamsAsync parametersAsync=new LoadStationParamsAsync(lat_start,long_start,city);
-        new LoadStations().execute(parametersAsync);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Log.i(TAG,"markerClick");
@@ -349,31 +429,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 TextView stationId = findViewById(R.id.panel_station_id);
                 TextView streetId = findViewById(R.id.panel_street_id);
 
+                Log.i(TAG,"Apro marker");
                 stationId.setText(station_selected.getId_parking().toString());
                 streetId.setText(station_selected.getStreet());
-                /*
 
-                // Getting the position from the marker
-                LatLng latLng = marker.getPosition();
-
-                // Getting reference to the TextView to set latitude
-                TextView tvLat = (TextView) findViewById(R.id.lati);
-
-                // Getting reference to the TextView to set longitude
-                TextView tvLng = (TextView) findViewById(R.id.longi);
-
-                // Setting the latitude
-                tvLat.setText("Latitude:" + latLng.latitude);
-
-                // Setting the longitude
-                tvLng.setText("Longitude:"+ latLng.longitude);*/
-
+                stationLayout.setVisibility(View.VISIBLE);
+                filterLayout.setVisibility(View.GONE);
                 panel.setPanelState(PanelState.EXPANDED);
+                Log.i(TAG,"marker aperto");
 
-
-
-                //panel.setAnchorPoint(findViewById(R.id.floatingQrButton).getHeight());
-                //panel.setPanelState(PanelState.ANCHORED);
                 return false;
             }
         });
@@ -383,9 +447,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 panel.setPanelState(PanelState.HIDDEN);
             }
         });
+
         Log.i(TAG,"Stazioni caricate");
-        Toast prova = Toast.makeText(this, "estrazione finita",Toast.LENGTH_SHORT);
-        prova.show();
+        Toast.makeText(this, "estrazione finita",Toast.LENGTH_SHORT);
+
 
 
 
@@ -393,69 +458,167 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    //IMPOSTO LA MAPPA + LOCALIZZAZIONE:---------------------------------------------------------------------
     private void setMap() {
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+
+        //Riposiziono il bottone di geolocalizzazione
+        View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        // position on right bottom
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+        rlp.setMargins(0, 180, 180, 0);
         
         // Posizione di default
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
 
+        Places.initialize(getApplicationContext(),getResources().getString(R.string.google_maps_key));
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         //Acquisisco i permessi e  riposiziono la vista
-        getLocationPermission();
+        checkLocationPermission();
+        setDeviceLocation();
 
         return;
     }
 
-    //Acquisisco la posizione del dispositivo e riposiziono la vista
-    private void getDeviceLocation() {
+    //IMPOSTO POSIZIONE DISPOSITIVO
+    private void setDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
          */
-        Log.i(TAG, "Acquisisco posizioneDevice");
+        Log.i(TAG, "GEOLOCALIZZAZIONE-3: Procedo ad impostare posizione device");
         try {
             if (mLocationPermissionGranted) {
-                Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                Log.i(TAG, "GEOLOCALIZZAZIONE-4: Permessi -->"+mLocationPermissionGranted);
+                Log.i(TAG, "GEOLOCALIZZAZIONE-5: Imposto bottone geolocalizzazione");
+
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            mLastKnownLocation = task.getResult();
-                            if (mLastKnownLocation != null) {
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(mLastKnownLocation.getLatitude(),
-                                                mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                            }
-                            Log.i(TAG, "Posizione Acquisita");
-                        } else {
-                            Log.d(TAG, "Current location is null. Using defaults.");
-                            Log.e(TAG, "Exception: %s", task.getException());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
-                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                        }
+                    public boolean onMyLocationButtonClick() {
+                        if(mLocationPermissionGranted)
+                            askForGPS();
+                        else
+                            Toast.makeText(MapsActivity.this,"Permessi disattivati",Toast.LENGTH_SHORT);
+                        return false;
                     }
                 });
+
+                Log.i(TAG, "GEOLOCALIZZAZIONE-6: Verifico attivazione GPS");
+                askForGPS();
+
+                Log.i(TAG, "GEOLOCALIZZAZIONE-7: Acquisisco ed imposto posizione");
+                setMyLocation();
+
+            }
+            else{
+                Log.i(TAG, "GEOLOCALIZZAZIONE-4: Permessi -->"+mLocationPermissionGranted+" , Imposto posizione default");
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
         }
     }
 
+    //ACQUISISCO POSIZIONE DISPOSITIVO
+    private void setMyLocation(){
+        Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
+        locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (task.isSuccessful()) {
+                    // Set the map's camera position to the current location of the device.
+                    mLastKnownLocation = task.getResult();
+                    Log.i(TAG, "GEOLOCALIZZAZIONE-7a: Task terminato, Posizione Acquisita --> "+mLastKnownLocation);
+                    if (mLastKnownLocation != null) {
+                        Log.i(TAG, "GEOLOCALIZZAZIONE-7b: Imposto posizione nella mappa");
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(mLastKnownLocation.getLatitude(),
+                                        mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                    }
+                    else{
+                        Log.i(TAG, "GEOLOCALIZZAZIONE-7b: Posizione nulla, Imposto default");
+                        Log.e(TAG, "Exception: %s", task.getException());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+                    }
+
+                } else {
+                    Log.i(TAG, "GEOLOCALIZZAZIONE-7a: Task senza susccesso, Imposto default");
+                    Log.e(TAG, "Exception: %s", task.getException());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+
+                }
+            }
+        });
+    }
+
+    //VERIFICO GPS ATTIVO
+    private void askForGPS(){
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+
+        Task<LocationSettingsResponse> result =
+                LocationServices.getSettingsClient(this).checkLocationSettings(builder.build());
+
+        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+            @Override
+            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
+                try {
+                    LocationSettingsResponse response = task.getResult(ApiException.class);
+                    Log.i(TAG, "GEOLOCALIZZAZIONE-6a: GPS attivo, si procede all'attivazione");
+                    // All location settings are satisfied. The client can initialize location
+                    // requests here.
+                } catch (ApiException exception) {
+                    switch (exception.getStatusCode()) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            Log.i(TAG, "GEOLOCALIZZAZIONE-6a: GPS non attivo, richiedo attivazione");
+                            // Location settings are not satisfied. But could be fixed by showing the
+                            // user a dialog.
+                            try {
+                                // Cast to a resolvable exception.
+                                ResolvableApiException resolvable = (ResolvableApiException) exception;
+                                // Show the dialog by calling startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                resolvable.startResolutionForResult(MapsActivity.this,
+                                        LocationRequest.PRIORITY_HIGH_ACCURACY);
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            } catch (ClassCastException e) {
+                                // Ignore, should be an impossible error.
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            // Location settings are not satisfied. However, we have no way to fix the
+                            // settings so we won't show the dialog.
+                            break;
+                    }
+                }
+            }
+        });
+
+    }
+
     //RICHIESTA PERMESSI GEOLOCALIZZAZIONE
-    private void getLocationPermission() {
+    private void checkLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
          * device. The result of the permission request is handled by a callback,
          * onRequestPermissionsResult.
          */
-        Log.i(TAG,"Richiedo Permesso");
+        Log.i(TAG, "GEOLOCALIZZAZIONE-1: Verifico permessi");
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "GEOLOCALIZZAZIONE-2: permessi già accordati");
             mLocationPermissionGranted = true;
         } else {
+            Log.i(TAG, "GEOLOCALIZZAZIONE-2: permessi NON accordati, richiedo...");
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -484,6 +647,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
+    private void askStations(){
+        LatLng currentPosition = mMap.getCameraPosition().target;
+        String city="Torino";//fittizia
+        LoadStationParamsAsync parametersAsync=new LoadStationParamsAsync(currentPosition.latitude,currentPosition.longitude,city);
+        new LoadStations().execute(parametersAsync);
+    }
     //Apre la reservation e nasconde panel
     public void onBookStation(View view) {
         if (currentReservation.getId_booking()==null){
@@ -501,11 +671,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mLocationMarker.remove();
         }
         AllMarkers.clear();
-        double lat_start= 45.070841;//fittizie: SOSTITUIRE CON QUELLE DELLA GEOREFERENZIAZIONE
-        double long_start=7.668552;//fittizie
-        String city="Torino";//fittizia
-        LoadStationParamsAsync parametersAsync=new LoadStationParamsAsync(lat_start,long_start,city);
-        new LoadStations().execute(parametersAsync);
+        askStations();
     }
 
     public void onCloseResButtonClick(View view) {
@@ -760,19 +926,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
-        //GESTIONE EVENTI SCANNER
-        if(requestCode==SCANNER_REQUEST_CODE && resultCode==Activity.RESULT_OK) {
-            Integer result = Integer.parseInt(data.getStringExtra("parking_code"));
-            Toast.makeText(MapsActivity.this, result.toString(), Toast.LENGTH_SHORT).show();
-            String id_user=mAuth.getUid();
-            Integer id_parking=result;
-            String id_booking=currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
-            CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,1);
-            new CloseReservation().execute(paramsAsync);
-        }
-        //GESTIONE DATI PROFILO
-        if(requestCode==PROFILE_REQUEST_CODE && resultCode==Activity.RESULT_OK){
 
+        switch (requestCode) {
+            case SCANNER_REQUEST_CODE:  //GESTIONE EVENTI SCANNER
+                if(resultCode==Activity.RESULT_OK){
+                    Integer result = Integer.parseInt(data.getStringExtra("parking_code"));
+                    Toast.makeText(MapsActivity.this, result.toString(), Toast.LENGTH_SHORT).show();
+                    String id_user=mAuth.getUid();
+                    Integer id_parking=result;
+                    String id_booking=currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
+                    CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,1);
+                    new CloseReservation().execute(paramsAsync);
+                }
+                break;
+            case PROFILE_REQUEST_CODE:  //GESTIONE DATI PROFILO
+                if(resultCode==Activity.RESULT_OK){
+
+                }
+                break;
+            case LocationRequest.PRIORITY_HIGH_ACCURACY:  //GESTIONE EVENTI LOCATION
+                switch (resultCode) {
+                    case Activity.RESULT_OK:    // BUG ANDROID, PROBLEMI CON HIGH ACCURACY
+                        // All required changes were successfully made
+                        Log.i(TAG, "GEOLOCALIZZAZIONE-5b: GPS attivato dall'utente");
+                        setDeviceLocation();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // The user was asked to change settings, but chose not to
+                        Log.i(TAG, "GEOLOCALIZZAZIONE-5b: Richiesta attivazione GPS respinta ");
+                        break;
+                    default:
+                        break;
+                }
+                break;
         }
     }
 
@@ -795,31 +981,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     // functionality that depends on this permission.
                 }
             }
+            // VERIFICO PERMESSI ED IMPOSTO POSIZIONE
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
-                mLocationPermissionGranted = false;
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
                 }
-                Log.i(TAG,"Esito permessi geoL: "+mLocationPermissionGranted);
-
-                Log.i(TAG,"Mi preparo: "+mLocationPermissionGranted); //Perché a runtime avviene prima di getLocalPermission?
-                if (mLocationPermissionGranted) {
-                    // Get the current location of the device and set the position of the map.
-                    Log.i(TAG, "Imposto posizioneAcquisita");
-                    getDeviceLocation();
-                    mMap.setMyLocationEnabled(true);
-                    mMap.getUiSettings().setMyLocationButtonEnabled(true);
-                }
-                else {
-                    Log.i(TAG, "Imposto posizioneDefault, Peremssi non accordati");
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
-                    mMap.setMyLocationEnabled(false);
-                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                    mLastKnownLocation = null;
-                }
-
+                Log.i(TAG,"GEOLOCALIZZAZIONE-2a: esito richiesta --> "+mLocationPermissionGranted);
             }
 
             // other 'case' lines to check for other
@@ -827,6 +996,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    //Converte svg in bitmap (per icone mappa)
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
