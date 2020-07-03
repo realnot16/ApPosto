@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
 import com.example.project.map.MapsActivity;
+import com.example.project.walletManagement.PaymentActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -134,7 +135,8 @@ public class SignupActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser currentUser) {
         if(currentUser!=null) {
-            Intent intent = new Intent(SignupActivity.this, MapsActivity.class);
+            Toast.makeText(SignupActivity.this, "Prima di proseguire, ricarica il tuo wallet!", Toast.LENGTH_LONG);
+            Intent intent = new Intent(SignupActivity.this, PaymentActivity.class);
             startActivity(intent);
         }
     }

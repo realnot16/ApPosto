@@ -23,8 +23,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".walletManagement.PaymentDetail"></activity>
 
-        <service android:name=".NotificationService"
+        <service
+            android:name=".NotificationService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -46,16 +48,14 @@
             android:networkSecurityConfig="@xml/network_security_config"
             android:value="@string/google_maps_key" />
 
-
         <activity
             android:name=".map.MapsActivity"
             android:launchMode="singleTask">
             <intent-filter>
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
         </activity>
+
         <activity android:name=".userManagement.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -63,11 +63,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".userManagement.SignupActivity"/>
+
+        <activity android:name=".userManagement.SignupActivity"></activity>
         <activity android:name=".userManagement.MainActivity" />
         <activity android:name=".reservation.ReservationsActivity" />
         <activity android:name=".reservation.DetailedReservationActivity" />
         <activity android:name=".userManagement.ProfileActivity" />
+        <activity android:name=".walletManagement.PaymentActivity"/>
     </application>
 
 </manifest>

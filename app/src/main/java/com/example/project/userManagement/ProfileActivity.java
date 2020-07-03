@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
+import com.example.project.walletManagement.PaymentActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -44,6 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView wallet;
     private TextView email;
     private TextView phone;
+    private Button walletTopUp;
 
     FirebaseAuth mAuth;
     Profilo profilo;
@@ -60,12 +62,22 @@ public class ProfileActivity extends AppCompatActivity {
         wallet = (TextView) findViewById(R.id.label_wallet);
         email = (TextView) findViewById(R.id.label_mail);
         phone = (TextView) findViewById(R.id.label_phone);
+        walletTopUp= (Button) findViewById(R.id.button_ricarica);
 
         mAuth = FirebaseAuth.getInstance();
 
 
         //Mostra i dati dell'utente prendendoli dal db
         new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
+
+        //Collego il button per effettuare la ricarica all'activity paypal
+        walletTopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(getApplicationContext(), PaymentActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -79,9 +91,6 @@ public class ProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //onClick su bottone Ricarica - per ricarica wallet
-    public void walletTopUp(View view) {
-    }
 
     //onClick su bottone Cambia password - per cambiare la password
     public void changePassword(View view) {
@@ -109,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    private class LoadProfile extends AsyncTask<String, Void, Boolean> {
+    public class LoadProfile extends AsyncTask<String, Void, Boolean> {
 
         @Override
         protected Boolean doInBackground(String... strings) {
