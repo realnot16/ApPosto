@@ -509,6 +509,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //while(!mLocationPermissionGranted){ }
         setDeviceLocation();
 
+        return;
     }
 
     //IMPOSTO POSIZIONE DISPOSITIVO
@@ -989,6 +990,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     case Activity.RESULT_OK:    // BUG ANDROID, PROBLEMI CON HIGH ACCURACY
                         // All required changes were successfully made
                         Log.i(TAG, "GEOLOCALIZZAZIONE-5b: GPS attivato dall'utente");
+                        setDeviceLocation();
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
@@ -1026,7 +1028,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
-                    setDeviceLocation();
                 }
                 Log.i(TAG,"GEOLOCALIZZAZIONE-2a: esito richiesta --> "+mLocationPermissionGranted);
             }
