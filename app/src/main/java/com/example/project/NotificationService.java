@@ -42,7 +42,7 @@ public class NotificationService extends FirebaseMessagingService {
     private static final String TAG = "MyService";
     private static final String CHANNEL_1_ID = "channel_1";
     int idNotification = 0;
-    public static final Integer NOTIFICATION_REQUEST_CODE=101;
+    public static final Integer NOTIFICATION_REQUESTCODE=101;
 
     public NotificationService() {
     }
@@ -120,9 +120,9 @@ public class NotificationService extends FirebaseMessagingService {
             resultIntent.putExtra("distance",distance);
             resultIntent.putExtra("address",address);
             }
-            resultIntent.putExtra("requestCode",NOTIFICATION_REQUEST_CODE);
+            resultIntent.putExtra("requestCode",NOTIFICATION_REQUESTCODE);
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, NOTIFICATION_REQUEST_CODE, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, NOTIFICATION_REQUESTCODE, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             builder.setContentIntent(pendingIntent);
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);

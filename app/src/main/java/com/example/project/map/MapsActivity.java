@@ -152,7 +152,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     //SCANNER
-    private final static int  NOTIFICATION_REQUEST_CODE=101;
+    private final static int  NOTIFICATION_REQUESTCODE=101;
     private final static int  SCANNER_REQUEST_CODE=2;
     private final static int  PROFILE_REQUEST_CODE=1;
     private final static int MY_CAMERA_REQUEST_CODE=100;
@@ -259,7 +259,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         super.onResume();
         Intent notificationIntent = getIntent();
-        if(notificationIntent.getIntExtra("requestCode", 0) == NOTIFICATION_REQUEST_CODE){
+        if(notificationIntent.getIntExtra("requestCode", 0) == NOTIFICATION_REQUESTCODE){
             if(notificationIntent.hasExtra("id_parking")){
             String id_park=(String) notificationIntent.getExtras().get("id_parking");
             String dist=(String) notificationIntent.getExtras().get("distance");
