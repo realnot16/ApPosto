@@ -119,5 +119,7 @@
     <!-- Navigatore -->
     <string name="alertNoPermissionGranted">Navigator needs permission!</string>
     <string name="alertNoNavigator">Can\'t start navigation to your destination because you have denied location permission.</string>
+    <string name="progressDialogTitle">Avvio navigatore</string>
+    <string name="progressDialogText">Calcolo del percorso in corso..</string>
 
 </resources>
