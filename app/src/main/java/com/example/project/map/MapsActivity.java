@@ -152,7 +152,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     //SCANNER
-    private final static int  NOTIFICATION_REQUEST_CODE=3;
+    private final static int  NOTIFICATION_REQUEST_CODE=101;
     private final static int  SCANNER_REQUEST_CODE=2;
     private final static int  PROFILE_REQUEST_CODE=1;
     private final static int MY_CAMERA_REQUEST_CODE=100;
@@ -248,13 +248,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
-
-    private void createMap() {
-        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        assert mapFragment != null;
-        mapFragment.getMapAsync(this);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+        Intent notificationIntent = getIntent();
+        if(notificationIntent.getIntExtra("requestCode", 0) == NOTIFICATION_REQUEST_CODE){
+            if(notificationIntent.hasExtra("id_parking")){
+            String id_park=(String) notificationIntent.getExtras().get("id_parking");
+            String dist=(String) notificationIntent.getExtras().get("distance");
+            String address=(String) notificationIntent.getExtras().get("address");
+            Log.i("address",address);
+            showRdrctPopup(id_park,dist,address);
+            }
+            else showRdrctPopup(null,null,null);
+        }
+
+    }
+
+
 
     //When initializing your Activity, check to see if the user is currently signed in.
     @Override
@@ -396,7 +414,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    //IMPLEMENTO I FILTRI
+    //IMPLEMENTO I FILTRI--------------------------------------------------------------------------
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -427,6 +445,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     //IMPOSTO LA MAPPA + LOCALIZZAZIONE:---------------------------------------------------------------------
+
+    private void createMap() {
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(this);
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i(TAG,"mappa Pronta");
