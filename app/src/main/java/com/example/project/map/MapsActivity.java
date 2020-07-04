@@ -512,6 +512,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(posizioneUtente, 15));
 
                 if(polylinesPoints != null && polylinesPoints.size()>0) {
+                    /* Per maggiore precisione, si può ricalcolare il percorso ad ogni spostamento dell'utente
+                    polyline.remove();
+                    polylinesPoints.clear();
+                    new DownloadTask().execute("https://maps.googleapis.com/maps/api/directions/json?origin=" +
+                            posizioneUtente.latitude + "," + posizioneUtente.longitude +
+                            "&destination=" +
+                            destinazione.latitude + "," + destinazione.longitude +
+                            "&key=AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE");
+                     */
+
                     polylinesPoints.remove(0);
                     polylinesPoints.add(0, posizioneUtente);
                     drawPolylines();
@@ -1126,10 +1136,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    //--------NAVIGATORE---------------------------------------
-     /*
-    CALCOLO PERCORSO
-     */
+    //--------NAVIGATORE--------------------------------------
+
+    //Calcolo percorso
     public void calcolaPercorso(LatLng destinazione){
         if(mLocationPermissionGranted) {
             LatLng posizioneUtente = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
@@ -1158,9 +1167,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    /*
-    TASK ASINCRONO DI DOWNLOAD COORDINATE
-     */
+
+    //Task asincrono di Download coordinate
     private class DownloadTask extends AsyncTask<String, Void, String>{
 
         ProgressDialog progressDialog = null;
@@ -1239,6 +1247,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    //Disegno linee su mappa
     public void drawPolylines(){
         if(polyline!=null){
             polyline.remove();
@@ -1254,6 +1263,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    //Rimozione linee su mappa
     private void removeRoute() {
         if(polyline!=null) {
             polyline.remove();
