@@ -62,4 +62,14 @@
         android:layout_marginEnd="5dp"
         android:text="TextView"
         android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/bt_go_to_map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bt_go_to_map"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
+        android:onClick="goToMap"/>
 </LinearLayout>

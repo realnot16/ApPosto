@@ -135,7 +135,6 @@ public class SignupActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser currentUser) {
         if(currentUser!=null) {
-            Toast.makeText(SignupActivity.this, "Prima di proseguire, ricarica il tuo wallet!", Toast.LENGTH_LONG);
             Intent intent = new Intent(SignupActivity.this, PaymentActivity.class);
             startActivity(intent);
         }
