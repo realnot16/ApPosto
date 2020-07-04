@@ -1,5 +1,10 @@
 package com.example.project.map;
 
+import android.icu.util.ValueIterator;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class CurrentReservation {
 
     public String id_booking;
@@ -7,15 +12,36 @@ public class CurrentReservation {
     public Integer successful;
     public String address_start;
     public Integer  bonus;
+    public Float  latitude;
+    public Float longitude;
+
 
     public CurrentReservation(){}
-    public CurrentReservation(String address_start, Integer bonus, String id_booking, Integer parking_id, Integer successful) {
-        this.address_start = address_start;
-        this.bonus = bonus;
+
+    public CurrentReservation(String id_booking, Integer parking_id, Integer successful, String address_start, Integer bonus, Float latitude, Float longitude) {
         this.id_booking = id_booking;
         this.parking_id = parking_id;
         this.successful = successful;
+        this.address_start = address_start;
+        this.bonus = bonus;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
+    public Float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
+    }
+
+    public Float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Float longitude) {
+        this.longitude = longitude;
     }
 
     public String getId_booking() {
@@ -57,4 +83,17 @@ public class CurrentReservation {
     public void setBonus(Integer bonus) {
         this.bonus = bonus;
     }
+
+    public void reset(){
+
+        this.id_booking = null;
+        this.parking_id = null;
+        this.successful = null;
+        this.address_start = null;
+        this.bonus = null;
+        this.latitude = null;
+        this.longitude = null;
+
+    }
+
 }

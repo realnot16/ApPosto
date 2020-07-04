@@ -811,7 +811,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (control.equals("OK")){   // non esegue l'if
                     currentReservation.id_booking=jsonObjectId.getString("booking_id");
                     currentReservation.parking_id=parametersAsyncs[0].id_parking;
-
+                    currentReservation.latitude= Float.valueOf(jsonObjectId.getString("lat"));
+                    currentReservation.longitude=Float.valueOf(jsonObjectId.getString("long"));
                 }
                  //avverti l'utente che il posto è stato occupato o non ha soldi
 
@@ -887,7 +888,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         protected void onPostExecute(String result){
             switch (result){
-                case "OK":          currentReservation.id_booking=null;
+                case "OK":          currentReservation.reset();
                     Toast.makeText(MapsActivity.this,getString(R.string.ok),Toast.LENGTH_LONG).show();
                     layoutReservation.setVisibility(View.INVISIBLE);
                     //Chiudi Navigatore (Cancella percorso)
@@ -1021,7 +1022,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //Converte svg in bitmap (per icone mappa)
+    //Converte svg in bitmap (per icone mappa)-----------------------------------------------------
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
