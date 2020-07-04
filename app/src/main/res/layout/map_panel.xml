@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/panel_view_id"
     android:layout_width="match_parent"
-    android:layout_height="100dp">
+    android:layout_height="wrap_content">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/panel_filter_layout_id"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:visibility="gone"
         android:background="@drawable/map_panel_prenotazione_background"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="0dp">
 
@@ -58,7 +58,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/panel_station_layout_id"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/map_panel_prenotazione_background"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent">

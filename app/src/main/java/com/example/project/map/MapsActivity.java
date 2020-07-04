@@ -22,18 +22,22 @@ import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -70,6 +74,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -91,10 +97,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -103,6 +114,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -159,6 +172,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String new_parking_rdrct;
     private AlertDialog popup;
     ConstraintLayout layoutReservation;
+
+    //NAVIGATORE
+    private LinkedList<LatLng> polylinesPoints;
+    private Polyline polyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -660,6 +677,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         OpenReservationParamsAsync paramsAsync=new OpenReservationParamsAsync(mAuth.getUid(),station_selected.id_parking,"//FIttizia",0);
         new OpenReservation().execute(paramsAsync);
         panel.setPanelState(PanelState.HIDDEN);
+
+
+
         }
         else Toast.makeText(this,R.string.alreadybooked,Toast.LENGTH_LONG).show();
 
@@ -811,6 +831,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 case "OK":
                     Toast.makeText(MapsActivity.this,getString(R.string.reserv_success),Toast.LENGTH_LONG).show();
                     layoutReservation.setVisibility(View.VISIBLE);
+                    //Percorso per NAVIGATORE
+                    calcolaPercorso(new LatLng(station_selected.latitude, station_selected.longitude));
                     break;
                 case "OCCUPIED":
                     Toast.makeText(MapsActivity.this,getString(R.string.occupied),Toast.LENGTH_LONG).show();
@@ -868,6 +890,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 case "OK":          currentReservation.id_booking=null;
                     Toast.makeText(MapsActivity.this,getString(R.string.ok),Toast.LENGTH_LONG).show();
                     layoutReservation.setVisibility(View.INVISIBLE);
+                    //Chiudi Navigatore (Cancella percorso)
+                    removeRoute();
                     break;
                 case "WRONG_PARKING":Toast.makeText(MapsActivity.this,getString(R.string.sorry),Toast.LENGTH_LONG).show();
                     break;
@@ -878,6 +902,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
     }
+
 
     //4-CHECK CURRENT RESERVATION, controlla se sul server è settata una map_icona_panel_prenotazione per l'user corrente, evita di perdere
     // la map_icona_panel_prenotazione se l'app viene chiusa
@@ -1056,6 +1081,108 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         popup.cancel();
 
+    }
+
+    //--------NAVIGATORE---------------------------------------
+     /*
+    CALCOLO PERCORSO
+     */
+    public void calcolaPercorso(LatLng destinazione){
+        LatLng posizioneUtente = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+        polylinesPoints = new LinkedList<>();
+        polylinesPoints.clear();
+        polylinesPoints.add(posizioneUtente); //Parte dall'inizio
+
+        new DownloadTask().execute("https://maps.googleapis.com/maps/api/directions/json?origin=" +
+                posizioneUtente.latitude+","+posizioneUtente.longitude +
+                "&destination=" +
+                destinazione.latitude+","+destinazione.longitude +
+                "&key=AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE");
+    }
+
+
+    /*
+    TASK ASINCRONO DI DOWNLOAD COORDINATE
+     */
+    private class DownloadTask extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String result = "";
+            URL url;
+            HttpsURLConnection urlConnection;
+
+            try {
+                url = new URL(strings[0]);
+                urlConnection = (HttpsURLConnection) url.openConnection();
+
+                InputStream in = urlConnection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+
+                int data = reader.read();
+                while(data != -1){
+                    char cur = (char) data;
+                    result += cur;
+                    data = reader.read();
+                }
+
+                Log.i("mylog", result);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+                String routes = jsonObject.getString("routes");
+                JSONArray arrayRoutes = new JSONArray(routes);
+                JSONObject primaRoute = arrayRoutes.getJSONObject(0);
+
+                String legs = primaRoute.getString("legs");
+                JSONArray arrayLegs = new JSONArray(legs);
+                JSONObject primaLeg = arrayLegs.getJSONObject(0);
+
+                String steps = primaLeg.getString("steps");
+                JSONArray arraySteps = new JSONArray(steps);
+
+                for(int i=0; i<arraySteps.length(); i++){
+                    JSONObject step = arraySteps.getJSONObject(i);
+                    String lat = step.getJSONObject("end_location").getString("lat");
+                    String lon = step.getJSONObject("end_location").getString("lng");
+                    Log.i("mylog", lat+" "+lon);
+
+                    polylinesPoints.add(new LatLng(Double.parseDouble(lat), Double.parseDouble(lon)));
+
+                }
+
+                drawPolylines();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void drawPolylines(){
+        PolylineOptions plo = new PolylineOptions();
+        for(LatLng point : polylinesPoints){
+            plo.add(point);
+            plo.color(Color.CYAN);
+            plo.width(20);
+        }
+
+        polyline = mMap.addPolyline(plo);
+
+    }
+
+    private void removeRoute() {
+        polyline.remove();
+        polylinesPoints.clear();
     }
 
 }
