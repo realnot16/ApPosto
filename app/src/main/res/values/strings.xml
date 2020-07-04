@@ -116,4 +116,8 @@
     <string name="tv_payment_detail">Operazione effettuata con successo!\nEcco i dettagli del pagamento:</string>
     <string name="bt_go_to_map">Visualizza mappa</string>
 
+    <!-- Navigatore -->
+    <string name="alertNoPermissionGranted">Navigator needs permission!</string>
+    <string name="alertNoNavigator">Can\'t start navigation to your destination because you have denied location permission.</string>
+
 </resources>

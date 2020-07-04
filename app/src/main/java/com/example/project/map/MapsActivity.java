@@ -22,23 +22,16 @@ import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -53,7 +46,6 @@ import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
 import com.example.project.reservation.ReservationsActivity;
 import com.example.project.userManagement.LoginActivity;
-import com.example.project.userManagement.Profilo;
 import com.example.project.userManagement.ProfileActivity;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -79,12 +71,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
@@ -110,8 +97,6 @@ import java.util.List;
 import java.util.Objects;
 
 
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
@@ -504,6 +489,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void setMap() {
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
 
         //Riposiziono il bottone di geolocalizzazione
         View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
@@ -520,9 +506,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         //Acquisisco i permessi e  riposiziono la vista
         checkLocationPermission();
+        //while(!mLocationPermissionGranted){ }
         setDeviceLocation();
 
-        return;
     }
 
     //IMPOSTO POSIZIONE DISPOSITIVO
@@ -660,11 +646,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 == PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "GEOLOCALIZZAZIONE-2: permessi già accordati");
             mLocationPermissionGranted = true;
+
         } else {
             Log.i(TAG, "GEOLOCALIZZAZIONE-2: permessi NON accordati, richiedo...");
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
         }
     }
 
@@ -859,7 +847,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Toast.makeText(MapsActivity.this,getString(R.string.reserv_success),Toast.LENGTH_LONG).show();
                     layoutReservation.setVisibility(View.VISIBLE);
                     //Percorso per NAVIGATORE
-                    calcolaPercorso(new LatLng(station_selected.latitude, station_selected.longitude));
+                    calcolaPercorso(new LatLng(currentReservation.latitude, currentReservation.longitude));
                     break;
                 case "OCCUPIED":
                     Toast.makeText(MapsActivity.this,getString(R.string.occupied),Toast.LENGTH_LONG).show();
@@ -1001,7 +989,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     case Activity.RESULT_OK:    // BUG ANDROID, PROBLEMI CON HIGH ACCURACY
                         // All required changes were successfully made
                         Log.i(TAG, "GEOLOCALIZZAZIONE-5b: GPS attivato dall'utente");
-                        setDeviceLocation();
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
@@ -1039,6 +1026,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
+                    setDeviceLocation();
                 }
                 Log.i(TAG,"GEOLOCALIZZAZIONE-2a: esito richiesta --> "+mLocationPermissionGranted);
             }
@@ -1115,16 +1103,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     CALCOLO PERCORSO
      */
     public void calcolaPercorso(LatLng destinazione){
-        LatLng posizioneUtente = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-        polylinesPoints = new LinkedList<>();
-        polylinesPoints.clear();
-        polylinesPoints.add(posizioneUtente); //Parte dall'inizio
+        if(mLocationPermissionGranted) {
+            LatLng posizioneUtente = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+            polylinesPoints = new LinkedList<>();
+            polylinesPoints.clear();
+            polylinesPoints.add(posizioneUtente); //Parte dall'inizio
 
-        new DownloadTask().execute("https://maps.googleapis.com/maps/api/directions/json?origin=" +
-                posizioneUtente.latitude+","+posizioneUtente.longitude +
-                "&destination=" +
-                destinazione.latitude+","+destinazione.longitude +
-                "&key=AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE");
+            new DownloadTask().execute("https://maps.googleapis.com/maps/api/directions/json?origin=" +
+                    posizioneUtente.latitude + "," + posizioneUtente.longitude +
+                    "&destination=" +
+                    destinazione.latitude + "," + destinazione.longitude +
+                    "&key=AIzaSyBdcgZSbXkUcPAdylZgfAuK347e7J093WE");
+        }else{
+            //Impossibile avviare navigatore senza permessi sulla location dell'utente
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.alertNoPermissionGranted))
+                    .setMessage(getString(R.string.alertNoNavigator))
+
+                    // A null listener allows the button to dismiss the dialog and take no further action.
+                    .setPositiveButton(android.R.string.yes, null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
     }
 
 
@@ -1189,6 +1190,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 drawPolylines();
 
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -1199,17 +1201,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         PolylineOptions plo = new PolylineOptions();
         for(LatLng point : polylinesPoints){
             plo.add(point);
-            plo.color(Color.CYAN);
+            plo.color(R.color.bluMain);
             plo.width(20);
         }
 
         polyline = mMap.addPolyline(plo);
 
+
     }
 
     private void removeRoute() {
-        polyline.remove();
-        polylinesPoints.clear();
+        if(polyline!=null) {
+            polyline.remove();
+            polylinesPoints.clear();
+        }
     }
 
 }
