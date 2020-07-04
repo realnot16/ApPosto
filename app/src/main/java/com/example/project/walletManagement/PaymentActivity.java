@@ -159,6 +159,7 @@ public class PaymentActivity extends AppCompatActivity {
 
 
     private class UpdateWallet extends AsyncTask<String, Void, Boolean> {
+
         FirebaseUser user = mAuth.getCurrentUser();
 
         @Override

@@ -114,5 +114,6 @@
     <string name="rb_activity_payment_50">50</string>
     <string name="bt_activity_payment_">Paga</string>
     <string name="tv_payment_detail">Operazione effettuata con successo!\nEcco i dettagli del pagamento:</string>
+    <string name="bt_go_to_map">Visualizza mappa</string>
 
 </resources>
