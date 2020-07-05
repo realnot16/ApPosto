@@ -1268,8 +1268,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         else customView = layoutInflater.inflate(R.layout.map_no_redir_popup, null);
         builder.setView(customView);
         builder.setCancelable(false);
+        if(popup==null){
         popup=builder.create();
         popup.show();
+        }
 
     }
 
@@ -1281,6 +1283,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,0);
         new CloseReservation().execute(paramsAsync);
         popup.cancel();
+        popup=null;
 
     }
     public void onRedirect(View view){
@@ -1294,9 +1297,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Integer id_new_parking=Integer.valueOf(new_parking_rdrct);
         OpenReservationParamsAsync paramsAsyncOpen=new OpenReservationParamsAsync(mAuth.getUid(),id_new_parking,"//FIttizia",1);
         new OpenReservation().execute(paramsAsyncOpen);
-        //TO DO:Chiama metodo per reindirizzare navigatore
         }
         popup.cancel();
+        popup=null;
 
     }
 

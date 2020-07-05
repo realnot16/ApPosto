@@ -198,7 +198,7 @@ public class NotificationService extends FirebaseMessagingService {
                 String control=jsonObjectControl.getString("control");
                 Log.i("cntr0",control);
                 if (control.equals("OK")){   // non esegue l'if
-                    //UTENTE REGISTRATO CORRETTAMENTE
+                    //Token REGISTRATO CORRETTAMENTE
                     Log.i(TAG, "Device Token aggiornato correttamente");
                     return true;
                 }
