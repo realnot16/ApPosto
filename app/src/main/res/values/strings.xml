@@ -73,7 +73,7 @@
 
     <!--    String mapPanel-->
     <string name="panel_station">Stazione selezionata</string>
-    <string name="panel_street">Indirizzo</string>
+    <string name="panel_durata">Durata Prenotazione</string>
     <string name="panel_distance">Distanza</string>
     <string name="panel_tariffa">Tariffa</string>
     <string name="panel_button">Prenota!</string>

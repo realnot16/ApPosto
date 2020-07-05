@@ -167,6 +167,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double tariffaValue;
     private Station areaValue;
 
+    //TIMER
+    private String timerPickerValues[] = {"05 ", "10 ", "15 ","20 ","25 ","30 ","35 ","40 ","45 ","50 ","55 ","60 "};
+
     //PREFERITI
     private CheckBox checkBoxPreferiti;
     private Spinner spinnerFiltroPreferiti;
@@ -245,7 +248,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         createMap();
 
         //IMPOSTO FILTRI
-        filter();
+        pickers();
 
 
         // CONTROLLA CURRENT RESERVATION
@@ -479,12 +482,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //INIZIALIZZO FILTRI
-    private void filter(){
+    private void pickers(){
 
         NumberPicker pickerRaggio =  findViewById(R.id.panel_filter_npick_raggio_id);
         NumberPicker pickerTariffa = findViewById(R.id.panel_filter_npick_tariffa_id);
+        NumberPicker pickerTimer = findViewById(R.id.panel_station_npick_tempo_id);
         setNumberPicker(pickerRaggio,raggioPickerValues);
         setNumberPicker(pickerTariffa,tariffaPickerValues);
+        setNumberPicker(pickerTimer,timerPickerValues);
     }
 
     //IMPOSTO VALORI PICKER
@@ -587,14 +592,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 station_selected = (Station) marker.getTag();
                 TextView stationId = findViewById(R.id.panel_station_description_id);
-                TextView streetTextId = findViewById(R.id.panel_station_street_id);
                 TextView tariffaTextId = findViewById(R.id.panel_station_tariffa_text_id);
                 TextView distanceTextId = findViewById(R.id.panel_station_distance_text_id);
 
                 Log.i(TAG, "Imposto panel ed apro");
 
-                stationId.setText(station_selected.getId_parking().toString());
-                streetTextId.setText(station_selected.getStreet());
+                stationId.setText(station_selected.getId_parking().toString()+" - "+station_selected.getStreet());
                 tariffaTextId.setText(String.valueOf(station_selected.getCost_minute())+"€/minute");
 
 

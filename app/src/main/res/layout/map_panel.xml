@@ -138,12 +138,26 @@
             app:layout_constraintTop_toBottomOf="@+id/panel_station_distance_text_id" />
 
         <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/panel_durata"
+            android:textColor="@color/nero"
+            app:layout_constraintBottom_toTopOf="@+id/panel_station_button_reservation_id"
+            app:layout_constraintStart_toStartOf="@+id/panel_station_tariffa_id" />
+
+        <TextView
             android:id="@+id/panel_station_description_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="@drawable/confirm_button"
             android:backgroundTint="@color/bluMain"
+            android:paddingStart="10dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="2dp"
             android:text="@string/panel_station"
             android:textColor="@color/bianco"
             app:layout_constraintEnd_toEndOf="parent"
@@ -151,26 +165,15 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/panel_station_street_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/panel_street"
-            android:textColor="@color/nero"
-            app:layout_constraintStart_toEndOf="@+id/panel_station_image_park_id"
-            app:layout_constraintTop_toBottomOf="@+id/panel_station_description_id" />
-
-        <TextView
             android:id="@+id/panel_station_distance_id"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/panel_distance"
             android:textColor="@color/nero"
             app:layout_constraintStart_toEndOf="@+id/panel_station_image_park_id"
-            app:layout_constraintTop_toBottomOf="@+id/panel_station_street_id" />
+            app:layout_constraintTop_toBottomOf="@+id/panel_station_description_id" />
 
         <TextView
             android:id="@+id/panel_station_tariffa_id"
@@ -183,13 +186,24 @@
             app:layout_constraintStart_toEndOf="@+id/panel_station_image_park_id"
             app:layout_constraintTop_toBottomOf="@+id/panel_station_distance_id" />
 
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/panel_station_npick_tempo_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView5"
+            app:layout_constraintStart_toEndOf="@+id/textView5"
+            app:layout_constraintTop_toTopOf="@+id/textView5"
+            app:np_dividerDistance="64dp"
+            app:np_height="80dp" />
+
         <ImageView
             android:id="@+id/panel_station_image_park_id"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="64dp"
+            android:layout_marginEnd="128dp"
             android:contentDescription="@string/panel_image"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/textView5"
             app:layout_constraintEnd_toEndOf="@+id/panel_station_description_id"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/panel_station_description_id"
@@ -198,21 +212,17 @@
 
         <Button
             android:id="@+id/panel_station_button_reservation_id"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="32dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/confirm_button"
             android:onClick="onBookStation"
             android:text="@string/panel_button"
             android:textColor="@color/bianco"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/panel_station_image_park_id"
-            app:layout_constraintTop_toBottomOf="@+id/panel_station_tariffa_id"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintEnd_toEndOf="@+id/textView5"
+            app:layout_constraintStart_toEndOf="@+id/panel_station_image_park_id" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
