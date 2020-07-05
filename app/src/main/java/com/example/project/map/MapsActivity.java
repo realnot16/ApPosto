@@ -122,6 +122,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ConstraintLayout stationLayout;
 
     private Station station_selected;
+    private Place place_searched;
 
     // Keys for storing map activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -384,8 +385,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onPlaceSelected(Place place) {
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + " - " + place.getLatLng());
-                //LatLng newPosition = new LatLng(place.getLatLng().latitude,place.getLatLng().longitude);
+                LatLng newPosition = new LatLng(place.getLatLng().latitude,place.getLatLng().longitude);
+                place_searched=place;
+                MarkerOptions markerSearch = new MarkerOptions().position(newPosition)
+                        .title(String.valueOf(place.getLatLng().latitude)+","+String.valueOf(place.getLatLng().longitude));
+                for (Marker mark: AllMarkers){
+                    if (mark.getTag()==null) mark.remove();
+                }
+                mMap.addMarker(markerSearch);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), DEFAULT_ZOOM));
+                refresh();
+                askStations(place.getLatLng().latitude,place.getLatLng().longitude);
+
+
+
+
 
             }
 
@@ -450,6 +464,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public boolean onMarkerClick(Marker marker) {
+                if (marker.getTag()==null) return false;
                 Log.i(TAG, "markerClick");
 
                 station_selected = (Station) marker.getTag();
@@ -721,6 +736,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LoadStationParamsAsync parametersAsync = new LoadStationParamsAsync(currentPosition.latitude, currentPosition.longitude, city);
         new LoadStations().execute(parametersAsync);
     }
+    private void askStations(Double latitude, Double longitude) {
+        String city = "Torino";//fittizia
+        LoadStationParamsAsync parametersAsync = new LoadStationParamsAsync(latitude, longitude, city);
+        new LoadStations().execute(parametersAsync);
+    }
 
     //Apre la reservation e nasconde panel
     public void onBookStation(View view) {
@@ -734,8 +754,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
-
+    //refresh di all markers
     public void onRefreshClick(View view) {
+        refresh();
+    }
+    public void refresh(){
         for (Marker mLocationMarker : AllMarkers) {
             mLocationMarker.remove();
         }
