@@ -58,4 +58,7 @@ dependencies {
     //PAYPAL
     implementation 'com.paypal.sdk:paypal-android-sdk:2.15.3'
 
+    //PICKER
+    implementation 'com.shawnlin:number-picker:2.4.6'
+
 }

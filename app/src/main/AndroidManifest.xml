@@ -23,7 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".walletManagement.PaymentDetail"></activity>
+
+
+
 
         <service
             android:name=".NotificationService"
@@ -34,7 +36,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".map.ScannerActivity" />
+
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -70,6 +73,8 @@
         <activity android:name=".reservation.DetailedReservationActivity" />
         <activity android:name=".userManagement.ProfileActivity" />
         <activity android:name=".walletManagement.PaymentActivity"/>
+        <activity android:name=".walletManagement.PaymentDetail"></activity>
+        <activity android:name=".map.ScannerActivity" />
     </application>
 
 </manifest>

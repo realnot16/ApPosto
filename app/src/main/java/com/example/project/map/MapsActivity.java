@@ -35,9 +35,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +86,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.shawnlin.numberpicker.NumberPicker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -116,7 +121,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private CameraPosition mCameraPosition;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private List<Marker> AllMarkers;
-    private View markPanel;
     private SlidingUpPanelLayout panel;
     private ConstraintLayout filterLayout;
     private ConstraintLayout stationLayout;
@@ -137,6 +141,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted = false;
+    private boolean mLocationFound=false;
 
 
     //SCANNER
@@ -153,9 +158,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //CURRENT RESERVATION INSTANCE
     private CurrentReservation currentReservation;
 
+    //FILTRI
+    private final static float RAGGIO_AREA= 1500;
+    private String raggioPickerValues[] = { "0.5 ", "1 ","1.5 ", "2 "};
+    private String tariffaPickerValues[] = { "0.02 ", "0.03 ","0.05 "};
+
+    private float raggioValue;
+    private double tariffaValue;
+    private Station areaValue;
+
+    //PREFERITI
+    private CheckBox checkBoxPreferiti;
+    private Spinner spinnerFiltroPreferiti;
+
     //VARIE
     private DrawerLayout drawerLayout;
-    private Integer filter_destination_meter = 1200;  //FILTRO STAZIONI CARICATE
+
     //POPUP
     private String new_parking_rdrct;
     private AlertDialog popup;
@@ -181,6 +199,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         filterLayout = findViewById(R.id.panel_filter_layout_id);
         stationLayout = findViewById(R.id.panel_station_layout_id);
 
+        //STAZIONI PREFERITE
+        checkBoxPreferiti = findViewById(R.id.panel_station_favorite_id);
+        spinnerFiltroPreferiti = findViewById(R.id.panel_filter_spinner_area_id);
+        checkBoxPreferiti.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    //FLAVIA, MEMORIZZO LA STAZIONE SELEZIONATA NEL FILE
+                    // usa station_seleceted per avere i dettagli sulla stazione
+
+                    //FLAVIA, aggiungo adapter allo spinner
+
+                }
+                else{
+                    //FLAVIA, RIMUOVI LA STAZIONE SELEZIONATA DAL FILE
+                    // usa station_seleceted per avere i dettagli sulla stazione
+                }
+            }
+        });
+
+        //FLAVIA, spinnerFiltroPreferiti.setAdapter();
+        //Da capire gestione dell'adapter--> l'obiettivo è che ogni volta che si aggiunge o si toglie
+            //un preferito venga aggiornato anche lo spinner.
+            //puoi pensare di mettere spinnerFiltroPreferiti.setAdapter(); all'interno del listener della stellina
+            //ed effettuare lettura da file o boh, vedi se ti riesci easy
+
 
         //AUTENTICAZIONE
         mAuth = FirebaseAuth.getInstance();
@@ -199,6 +243,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
         createMap();
+
+        //IMPOSTO FILTRI
+        filter();
 
 
         // CONTROLLA CURRENT RESERVATION
@@ -295,18 +342,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Drawable filterIcon = getDrawable(R.drawable.map_ic_filter_list_black_24dp);
         toolbar.setOverflowIcon(filterIcon);
         setAutocomplete();
-
-       /* MenuItem filter = findViewById(R.id.action_filter);
-        filter.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                filterLayout.setVisibility(View.VISIBLE);
-                stationLayout.setVisibility(View.GONE);
-                panel.setPanelState(PanelState.EXPANDED);
-                return false;
-            }
-        });*/
     }
 
     //COLLEGO IL NAVIGATION LAYOUT ALLA TOOLBAR
@@ -359,7 +394,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private void setAutocomplete() {
+    //RICERCA LUOGO
+    private void setAutocomplete(){
         //AUTOCOMPLETAMENTO INDIRIZZI
 
         String apiKey = getString(R.string.place_autocomplete_key);
@@ -414,6 +450,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     //IMPLEMENTO I FILTRI--------------------------------------------------------------------------
+
+    //REDIRECT A PANNELLO FILTRI
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -426,10 +464,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.action_filter:
                 // User chose the "Settings" item, show the app settings UI...
-                Log.i(TAG, "Apro Filtri");
-
-                filterLayout.setVisibility(View.VISIBLE);
+                Log.i(TAG,"Apro Filtri");
                 stationLayout.setVisibility(View.GONE);
+                filterLayout.setVisibility(View.VISIBLE);
                 panel.setPanelState(PanelState.EXPANDED);
 
                 return true;
@@ -441,6 +478,87 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    //INIZIALIZZO FILTRI
+    private void filter(){
+
+        NumberPicker pickerRaggio =  findViewById(R.id.panel_filter_npick_raggio_id);
+        NumberPicker pickerTariffa = findViewById(R.id.panel_filter_npick_tariffa_id);
+        setNumberPicker(pickerRaggio,raggioPickerValues);
+        setNumberPicker(pickerTariffa,tariffaPickerValues);
+    }
+
+    //IMPOSTO VALORI PICKER
+    private void setNumberPicker(NumberPicker nubmerPicker, String [] numbers ){
+        nubmerPicker.setMinValue(1);
+        nubmerPicker.setMaxValue(numbers.length);
+        nubmerPicker.setDisplayedValues(numbers);
+        nubmerPicker.setValue(numbers.length/2);
+    }
+
+    //GESTIONE APPLICAZIONE FILTRI
+    public void onApplyFilter(View view){
+        NumberPicker raggioPicker = findViewById(R.id.panel_filter_npick_raggio_id);
+        raggioValue = Float.parseFloat(raggioPickerValues[raggioPicker.getValue()-1]);
+        areaValue = (Station) spinnerFiltroPreferiti.getSelectedItem();
+
+        NumberPicker tariffaPicker = findViewById(R.id.panel_filter_npick_tariffa_id);
+        tariffaValue = Double.parseDouble(tariffaPickerValues[tariffaPicker.getValue()-1]);
+
+
+        Log.i(TAG,"Filtro-1: ValoreArea-> "+areaValue);
+        Log.i(TAG,"Filtro-2: ValoreRaggio-> "+raggioValue);
+        Log.i(TAG,"Filtro-3: ValoreTariffa-> "+tariffaValue);
+        for (Marker marker: AllMarkers) {
+            checkFilterMarker(marker);
+        }
+    }
+
+    //CHECKFILTERS
+    private void checkFilterMarker(Marker marker){
+        Switch areaSwitch = findViewById(R.id.panel_filter_switch_area_id);
+        Switch raggioSwitch = findViewById(R.id.panel_filter_switch_raggio_id);
+        Switch tariffaSwitch = findViewById(R.id.panel_filter_switch_tariffa_id);
+        Station station = (Station) marker.getTag();
+        boolean check=true;
+        //FILTRO AREA
+        if(areaSwitch.isChecked()&&check){
+
+            if(areaValue==null){
+                Toast.makeText(MapsActivity.this,R.string.panel_filter_toast_no_selected_area,Toast.LENGTH_SHORT).show();
+            }
+            else{
+                float[] results = new float[1];
+                Location.distanceBetween(areaValue.getLatitude(), areaValue.getLongitude(), station.getLatitude(), station.getLongitude(), results);
+                float distanceInMeters = results[0];
+                check = distanceInMeters < RAGGIO_AREA;
+            }
+        }
+        //FILTRO RAGGIO
+        if(raggioSwitch.isChecked()&&check){
+            if(place_searched==null){
+                Toast.makeText(MapsActivity.this,R.string.panel_filter_toast_no_selected_place,Toast.LENGTH_SHORT).show();
+            }
+            else{
+                float[] results = new float[1];
+                Location.distanceBetween(place_searched.getLatLng().latitude, place_searched.getLatLng().longitude, station.getLatitude(), station.getLongitude(), results);
+                float distanceInMeters = results[0];
+                check = distanceInMeters < raggioValue*1000;
+            }
+
+        }
+        //FILTRO TARIFFA
+        if(tariffaSwitch.isChecked()&&check){
+            check =  tariffaValue == station.getCost_minute();
+        }
+
+        if(check){
+            marker.setVisible(true);
+        }
+        else{
+            marker.setVisible(false);
+        }
+
+    }
 
     //IMPOSTO LA MAPPA + LOCALIZZAZIONE:---------------------------------------------------------------------
 
@@ -468,15 +586,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.i(TAG, "markerClick");
 
                 station_selected = (Station) marker.getTag();
-                TextView stationId = findViewById(R.id.panel_station_id);
-                TextView streetId = findViewById(R.id.panel_street_id);
+                TextView stationId = findViewById(R.id.panel_station_description_id);
+                TextView streetTextId = findViewById(R.id.panel_station_street_id);
+                TextView tariffaTextId = findViewById(R.id.panel_station_tariffa_text_id);
+                TextView distanceTextId = findViewById(R.id.panel_station_distance_text_id);
 
-                Log.i(TAG, "Apro marker");
+                Log.i(TAG, "Imposto panel ed apro");
+
                 stationId.setText(station_selected.getId_parking().toString());
-                streetId.setText(station_selected.getStreet());
+                streetTextId.setText(station_selected.getStreet());
+                tariffaTextId.setText(String.valueOf(station_selected.getCost_minute())+"€/minute");
 
-                stationLayout.setVisibility(View.VISIBLE);
+
+                if(mLocationPermissionGranted&&mLastKnownLocation!=null&&mLocationFound){
+                    float[] results = new float[1];
+                    Location.distanceBetween(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), station_selected.getLatitude(), station_selected.getLongitude(), results);
+                    float distanceInKm = results[0]/1000;
+                    String dst= String.format("%.2f", distanceInKm);
+                    distanceTextId.setText(dst+" km");
+                }
+
                 filterLayout.setVisibility(View.GONE);
+                stationLayout.setVisibility(View.VISIBLE);
                 panel.setPanelState(PanelState.EXPANDED);
                 Log.i(TAG, "marker aperto");
 
@@ -496,7 +627,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-
+    //IMPOSTAZIONI MAPPA
     private void setMap() {
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
@@ -562,6 +693,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return;
     }
 
+
+
+
+
     //IMPOSTO POSIZIONE DISPOSITIVO
     private void setDeviceLocation() {
         /*
@@ -614,6 +749,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.i(TAG, "GEOLOCALIZZAZIONE-7a: Task terminato, Posizione Acquisita --> " + mLastKnownLocation);
                     if (mLastKnownLocation != null) {
                         Log.i(TAG, "GEOLOCALIZZAZIONE-7b: Imposto posizione nella mappa");
+                        mLocationFound=true;
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                 new LatLng(mLastKnownLocation.getLatitude(),
                                         mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
@@ -708,6 +844,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
     //BOTTONI FLOATING + PERMESSI+ BOTTONE PRENOTAZIONE --------------------------------------
     private void setQrButton(View qrButton) {
         qrButton.setOnClickListener(new View.OnClickListener() {
@@ -745,7 +882,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Apre la reservation e nasconde panel
     public void onBookStation(View view) {
         if (currentReservation.getId_booking() == null) {
-            OpenReservationParamsAsync paramsAsync = new OpenReservationParamsAsync(mAuth.getUid(), station_selected.id_parking, "//FIttizia", 0);
+            OpenReservationParamsAsync paramsAsync = new OpenReservationParamsAsync(mAuth.getUid(), station_selected.getId_parking(), "//FIttizia", 0);
             new OpenReservation().execute(paramsAsync);
             panel.setPanelState(PanelState.HIDDEN);
 
@@ -764,6 +901,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         AllMarkers.clear();
         askStations();
+        //controllo sui filtri
+        for (Marker marker: AllMarkers) {
+            checkFilterMarker(marker);
+        }
     }
 
     public void onCloseResButtonClick(View view) {
@@ -1159,9 +1300,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    //--------NAVIGATORE--------------------------------------
-
-    //Calcolo percorso
+    //--------NAVIGATORE---------------------------------------
+     /*
+    CALCOLO PERCORSO
+     */
     public void calcolaPercorso(LatLng destinazione){
         if(mLocationPermissionGranted) {
             LatLng posizioneUtente = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
@@ -1188,8 +1330,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
     }
-
-
 
     //Task asincrono di Download coordinate
     private class DownloadTask extends AsyncTask<String, Void, String>{

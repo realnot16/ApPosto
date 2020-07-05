@@ -6,12 +6,12 @@ package com.example.project.map;
 
 public class Station {
 
-    double latitude;
-    double longitude;
-    String city;
-    String street;
-    Integer id_parking;
-    double cost_minute;
+    private double latitude;
+    private double longitude;
+    private String city;
+    private String street;
+    private Integer id_parking;
+    private double cost_minute;
 
     public Station(double latitude, double longitude, String city, String street, Integer id_parking, double cost_minute) {
         this.latitude = latitude;
@@ -20,6 +20,7 @@ public class Station {
         this.street = street;
         this.id_parking = id_parking;
         this.cost_minute = cost_minute;
+
     }
 
     public double getLatitude() {

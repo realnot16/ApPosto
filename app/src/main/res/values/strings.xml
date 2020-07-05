@@ -75,9 +75,11 @@
     <string name="panel_station">Stazione selezionata</string>
     <string name="panel_street">Indirizzo</string>
     <string name="panel_distance">Distanza</string>
-    <string name="panel_price">Tariffa</string>
+    <string name="panel_tariffa">Tariffa</string>
     <string name="panel_button">Prenota!</string>
     <string name="panel_image">Immagine Parcheggio</string>
+    <string name="panel_distance_value">-</string>
+    <string name="panel_tariffa_value">tariffaValue</string>
     <!--    Server Result-->
     <string name="sorry">Spiacente, non è il tuo parcheggio.</string>
     <string name="zero_wallet">Attenzione! Non hai abbastanza credito, ricarica!</string>
@@ -134,6 +136,15 @@
     <string name="alertCloseReser">Chiudi Prenotazione Attiva</string>
     <string name="alertCloseMessage">Sei sicuro di voler terminare la prenotazione in corso? Ti verrà addebitata la somma spesa fino ad ora.</string>
 
+
+    <!-- String filtri-->
+    <string name="panel_filter_switch_area_text">Aree preferite</string>
+    <string name="panel_filter_switch_raggio_text">Raggio in km</string>
+    <string name="panel_filter_switch_tariffa_text">Tariffa</string>
+    <string name="panel_filter_button_text">Applica Filtri</string>
+
+    <string name="panel_filter_toast_no_selected_place">Filtro sul raggio non applicabile, cercare prima una destinazione!</string>
+    <string name="panel_filter_toast_no_selected_area">Filtro su area non applicabile, selezionare una stazione preferita!</string>
 
 
 </resources>

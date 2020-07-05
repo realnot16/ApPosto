@@ -4,70 +4,144 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/panel_view_id"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="190dp">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/panel_filter_layout_id"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="match_parent"
         android:background="@drawable/map_panel_prenotazione_background"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="0dp">
+
+        <Button
+            android:id="@+id/panel_filter_button_id"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="76dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="76dp"
+            android:layout_weight="1"
+            android:background="@drawable/confirm_button"
+            android:onClick="onApplyFilter"
+            android:text="@string/panel_filter_button_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Switch
+            android:id="@+id/panel_filter_switch_area_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="152dp"
+            android:text="@string/panel_filter_switch_area_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/panel_filter_button_id" />
+
+        <Switch
+            android:id="@+id/panel_filter_switch_raggio_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/panel_filter_switch_raggio_text"
+            app:layout_constraintEnd_toEndOf="@+id/panel_filter_switch_area_id"
+            app:layout_constraintTop_toBottomOf="@+id/panel_filter_switch_area_id" />
 
         <Switch
             android:id="@+id/panel_filter_switch_tariffa_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="128dp"
-            android:text="Tariffa"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="@string/panel_filter_switch_tariffa_text"
+            app:layout_constraintEnd_toEndOf="@+id/panel_filter_switch_area_id"
+            app:layout_constraintTop_toBottomOf="@+id/panel_filter_switch_raggio_id" />
 
-        <Switch
-            android:id="@+id/panel_filter_switch_raggio_id"
+        <Spinner
+            android:id="@+id/panel_filter_spinner_area_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Raggio"
-            app:layout_constraintStart_toStartOf="@+id/panel_filter_switch_tariffa_id"
-            app:layout_constraintTop_toBottomOf="@+id/panel_filter_switch_tariffa_id" />
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/panel_filter_switch_area_id"
+            app:layout_constraintStart_toEndOf="@+id/panel_filter_switch_area_id"
+            app:layout_constraintTop_toTopOf="@+id/panel_filter_switch_area_id" />
 
-        <NumberPicker
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/panel_filter_npick_raggio_id"
+            style="@style/MyNumberPickerTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/panel_filter_switch_raggio_id"
+            app:layout_constraintStart_toStartOf="@+id/panel_filter_spinner_area_id"
+            app:layout_constraintTop_toTopOf="@+id/panel_filter_switch_raggio_id"
+            app:np_dividerColor="@color/bluMain"
+            app:np_dividerDistance="76dp"
+            app:np_height="48dp"
+            app:np_orientation="horizontal"></com.shawnlin.numberpicker.NumberPicker>
+
+
+        <com.shawnlin.numberpicker.NumberPicker
             android:id="@+id/panel_filter_npick_tariffa_id"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="@+id/panel_filter_switch_tariffa_id"
-            app:layout_constraintStart_toEndOf="@+id/panel_filter_switch_tariffa_id"
-            app:layout_constraintTop_toTopOf="@+id/panel_filter_switch_tariffa_id" />
-
-        <NumberPicker
-            android:id="@+id/panel_filter_npick_raggio_id"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/panel_filter_switch_raggio_id"
-            app:layout_constraintStart_toEndOf="@+id/panel_filter_switch_raggio_id"
-            app:layout_constraintTop_toTopOf="@+id/panel_filter_switch_raggio_id" />
+            app:layout_constraintStart_toStartOf="@+id/panel_filter_npick_raggio_id"
+            app:layout_constraintTop_toTopOf="@+id/panel_filter_switch_tariffa_id"
+            app:np_dividerDistance="64dp"
+            app:np_height="48dp"
+            app:np_orientation="horizontal"
+            tools:layout_editor_absoluteX="191dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/panel_station_layout_id"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/map_panel_prenotazione_background"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:visibility="visible">
+
+        <CheckBox
+            android:id="@+id/panel_station_favorite_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:button="@android:drawable/btn_star"
+            app:layout_constraintBottom_toBottomOf="@+id/panel_station_description_id"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/panel_station_description_id"
+            app:layout_constraintTop_toTopOf="@+id/panel_station_description_id" />
+
 
         <TextView
-            android:id="@+id/panel_station_id"
+            android:id="@+id/panel_station_distance_text_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/panel_distance_value"
+            android:textColor="@color/nero"
+            app:layout_constraintBottom_toBottomOf="@+id/panel_station_distance_id"
+            app:layout_constraintStart_toEndOf="@+id/panel_station_distance_id"
+            app:layout_constraintTop_toTopOf="@+id/panel_station_distance_id" />
+
+        <TextView
+            android:id="@+id/panel_station_tariffa_text_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:text="@string/panel_tariffa_value"
+            android:textColor="@color/nero"
+            app:layout_constraintStart_toStartOf="@+id/panel_station_distance_text_id"
+            app:layout_constraintTop_toBottomOf="@+id/panel_station_distance_text_id" />
+
+        <TextView
+            android:id="@+id/panel_station_description_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:background="@drawable/confirm_button"
             android:backgroundTint="@color/bluMain"
             android:text="@string/panel_station"
@@ -77,53 +151,53 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/panel_street_id"
+            android:id="@+id/panel_station_street_id"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/panel_street"
             android:textColor="@color/nero"
-            app:layout_constraintStart_toEndOf="@+id/panel_image_park_id"
-            app:layout_constraintTop_toBottomOf="@+id/panel_station_id" />
+            app:layout_constraintStart_toEndOf="@+id/panel_station_image_park_id"
+            app:layout_constraintTop_toBottomOf="@+id/panel_station_description_id" />
 
         <TextView
-            android:id="@+id/panel_distance_id"
+            android:id="@+id/panel_station_distance_id"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="@string/panel_distance"
             android:textColor="@color/nero"
-            app:layout_constraintStart_toEndOf="@+id/panel_image_park_id"
-            app:layout_constraintTop_toBottomOf="@+id/panel_street_id" />
+            app:layout_constraintStart_toEndOf="@+id/panel_station_image_park_id"
+            app:layout_constraintTop_toBottomOf="@+id/panel_station_street_id" />
 
         <TextView
-            android:id="@+id/panel_price_id"
+            android:id="@+id/panel_station_tariffa_id"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="@string/panel_price"
+            android:text="@string/panel_tariffa"
             android:textColor="@color/nero"
-            app:layout_constraintStart_toEndOf="@+id/panel_image_park_id"
-            app:layout_constraintTop_toBottomOf="@+id/panel_distance_id" />
+            app:layout_constraintStart_toEndOf="@+id/panel_station_image_park_id"
+            app:layout_constraintTop_toBottomOf="@+id/panel_station_distance_id" />
 
         <ImageView
-            android:id="@+id/panel_image_park_id"
+            android:id="@+id/panel_station_image_park_id"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="64dp"
             android:contentDescription="@string/panel_image"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/panel_station_id"
+            app:layout_constraintEnd_toEndOf="@+id/panel_station_description_id"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/panel_station_id"
+            app:layout_constraintTop_toBottomOf="@+id/panel_station_description_id"
             app:layout_constraintVertical_bias="1.0"
             app:srcCompat="@drawable/map_ic_panel_prenotazione" />
 
         <Button
-            android:id="@+id/panel_button_reservation_id"
+            android:id="@+id/panel_station_button_reservation_id"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginStart="16dp"
@@ -136,8 +210,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/panel_image_park_id"
-            app:layout_constraintTop_toBottomOf="@+id/panel_price_id"
+            app:layout_constraintStart_toEndOf="@+id/panel_station_image_park_id"
+            app:layout_constraintTop_toBottomOf="@+id/panel_station_tariffa_id"
             app:layout_constraintVertical_bias="0.0" />
 
 
