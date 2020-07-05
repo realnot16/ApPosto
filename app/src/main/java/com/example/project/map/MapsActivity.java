@@ -1201,7 +1201,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             progressDialog=new
                     ProgressDialog(MapsActivity.this);
             progressDialog.setTitle(R.string.progressDialogTitle);
-            progressDialog.setMessage("Calcolo del percorso in corso...");
+            progressDialog.setMessage(getResources().getString(R.string.progressDialogText));
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.show();
         }

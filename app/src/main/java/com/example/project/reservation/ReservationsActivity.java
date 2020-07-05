@@ -2,13 +2,18 @@ package com.example.project.reservation;
 
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.media.session.PlaybackState;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project.R;
@@ -26,6 +31,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,10 +88,12 @@ public class ReservationsActivity extends ListActivity {
         @Override
         protected void onPostExecute(List<Reservation> storico) {//QUANDO FINSCO ATTIVITA' CRITICA
 
-            ArrayAdapter a= new ArrayAdapter(getApplicationContext(), R.layout.reservation_simple_row_layout, R.id.textViewList, storico);
+            CustomAdapter a= new CustomAdapter(ReservationsActivity.this, R.layout.reservation_simple_row_layout, storico);
+
             getListView().setAdapter(a);
         }
     }
+
 
     private List<Reservation> loadReservationsFromDB(String urlstring) {
 
@@ -126,12 +134,12 @@ public class ReservationsActivity extends ListActivity {
 
             String result = sb.toString();//il risultato è una stringa Json
 
-            Log.i("giacomo", "Risultato query:"+result);
+            Log.i("tag", "Risultato query:"+result);
 
             JSONArray jArray = new JSONArray(result); //decodifico la stringa Json
             //per decodificare uso la classe jsonArray-> collezione di oggetti JsonObject
             //su cui faccio un ciclo, ad ogni oggetto chiedo di darmi l'elemento corrispondente alle colonne della tabella
-            Log.i("giacomo", "Lunghezza json Array "+jArray.length());
+            Log.i("tag", "Lunghezza json Array "+jArray.length());
             String outputString = "";
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject json_data = jArray.getJSONObject(i);

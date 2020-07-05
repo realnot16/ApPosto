@@ -80,4 +80,8 @@
     <string name="payment_detail_status">Status:</string>
     <string name="payment_detail_amount">Amount:</string>
     <string name="payment_detail_current">Remaining balance on wallet:</string>
+    <string name="progressDialogSignupTitle">Profile creation</string>
+    <string name="progressDialogSignupText">Profile creation in progress...</string>
+    <string name="reservation_string1">Booking n°:</string>
+    <string name="reservation_string2">"made on date "</string>
 </resources>

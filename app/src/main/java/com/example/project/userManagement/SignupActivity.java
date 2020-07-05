@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,8 +34,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +56,7 @@ public class SignupActivity extends AppCompatActivity {
     private TextView testoAccedi;
     private Button bottone;
     private float tempWallet;
-    DatePickerDialog picker;
+
 
     private FirebaseAuth mAuth;
     private String token;
@@ -248,7 +251,7 @@ public class SignupActivity extends AppCompatActivity {
             lastname.setError("Campo obbligatorio!");
             valid = false;
         }
-        if (TextUtils.isEmpty(birthdateUser)){
+        if (birthdateUser.isEmpty()){
             birthdate.setError("Campo obbligatorio!");
             valid = false;
         }
@@ -343,20 +346,33 @@ public class SignupActivity extends AppCompatActivity {
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        picker = new DatePickerDialog(SignupActivity.this,
+        DatePickerDialog picker = new DatePickerDialog(SignupActivity.this,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         String birthdateString = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
                         birthdate.setText(birthdateString);
                     }
-                }, year, month, day);
+                }, year-18, month, day);
+        picker.getDatePicker().setMaxDate(new Date().getTime());
         picker.show();
     }
 
 
     //TASK PER CARICARE NUOVO UTENTE SUL DB
     private class UploadUser extends AsyncTask<Profilo, Void, Boolean> {
+
+        ProgressDialog progressDialog = null;
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog=new
+                    ProgressDialog(SignupActivity.this);
+            progressDialog.setTitle(R.string.progressDialogSignupTitle);
+            progressDialog.setMessage(getResources().getString(R.string.progressDialogSignupText));
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.show();
+        }
 
         @Override
         protected Boolean doInBackground(Profilo... profili) {
@@ -396,6 +412,11 @@ public class SignupActivity extends AppCompatActivity {
             return true;
         }
 
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+
+            progressDialog.hide();
+        }
     }
 
     //TASK PER AGGIORNARE UTENTE SU DB

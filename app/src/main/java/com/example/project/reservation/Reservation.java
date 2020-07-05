@@ -1,7 +1,10 @@
 package com.example.project.reservation;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.example.project.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -119,12 +122,12 @@ public class Reservation implements Parcelable {
     public Reservation() {
     }
 
-    //il risultato di toString viene mostrato nell'arra
+    //il risultato di toString viene mostrato nell'array
     @Override
     public String toString() {
         try {
-            return "Prenotazione n° " + id_booking + "\n"+
-            "effettuata in data " + getDataFormattata(time_start)+ "\n";
+            return ""+ R.string.reservation_string1 + id_booking + "\n"+
+            R.string.reservation_string2 +""+ getDataFormattata(time_start)+ "\n";
         } catch (ParseException e) {
             return e.toString();
         }

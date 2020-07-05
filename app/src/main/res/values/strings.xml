@@ -19,6 +19,8 @@
     <string name="signUp_data_text">Data di nascita</string>
     <string name="signUp_cellulare_text">Cellulare</string>
     <string name="signUp_citta_text">Città di nascita</string>
+    <string name="progressDialogSignupTitle">Creazione profilo</string>
+    <string name="progressDialogSignupText">Creazione profilo in corso...</string>
 
     <!--   String loginLayout -->
     <string name="login_emailField_text" translatable="false">Email</string>
@@ -37,6 +39,8 @@
     <string name="reservation_amount_text">Costo totale: </string>
     <string name="detailed_reservation_tv"> Dettagli della prenotazione selezionata  </string>
     <string name="reservation_omaggio"> </string>
+    <string name="reservation_string1">Prenotazione n°:</string>
+    <string name="reservation_string2">effettuata in data </string>
 
     <!-- Profile Activity -->
     <string name="profile_birthdate">Data di nascita:</string>
@@ -129,6 +133,7 @@
     <string name="reservationOpened">Prenotazione in corso...</string>
     <string name="alertCloseReser">Chiudi Prenotazione Attiva</string>
     <string name="alertCloseMessage">Sei sicuro di voler terminare la prenotazione in corso? Ti verrà addebitata la somma spesa fino ad ora.</string>
+
 
 
 </resources>
