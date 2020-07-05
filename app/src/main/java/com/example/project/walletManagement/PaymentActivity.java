@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
+import com.example.project.map.MapsActivity;
+import com.example.project.userManagement.LoginActivity;
 import com.example.project.walletManagement.config.Config;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,6 +49,7 @@ public class PaymentActivity extends AppCompatActivity {
     private static final String TAG = "PaymentActivity" ;
     private RadioGroup rgPayment;
     private Button btPaynow;
+    private TextView amountFromDb;
     private String amount;
     private String updatedWallet;
     private static final int PAYPAL_REQUEST_CODE = 123 ;
@@ -61,8 +66,11 @@ public class PaymentActivity extends AppCompatActivity {
 
         rgPayment= findViewById(R.id.rg_payment);
         btPaynow= findViewById(R.id.bt_paynow);
+        amountFromDb = findViewById(R.id.tv_wallet_amount);
         mAuth= FirebaseAuth.getInstance();
         updatedWallet="";
+
+        new WalletAmount().execute("https://smartparkingpolito.altervista.org/getWalletAmount.php");
 
         //avvio il servizio di Paypal (verificare prima di avere importato l'sdk di paypal)
         Intent intent= new Intent(this, PayPalService.class);
@@ -70,32 +78,6 @@ public class PaymentActivity extends AppCompatActivity {
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(intent);
         //a questo punto paypal è in attesa di eventuali interazioni con il cliente, che avvengono tramite btnPayNow
-
-        btPaynow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int checkedId= rgPayment.getCheckedRadioButtonId();
-                if(checkedId == -1){
-                    Toast.makeText(getApplicationContext(), "Per effettuare una ricarica devi selezionare un importo!", Toast.LENGTH_LONG);
-                }else if(checkedId == R.id.rb_5 ){
-                    amount="5";
-                }else if(checkedId == R.id.rb_15 ){
-                    amount="15";
-                }else if(checkedId == R.id.rb_10 ){
-                    amount="10";
-                }else if(checkedId == R.id.rb_20 ){
-                    amount="20";
-                }else if(checkedId == R.id.rb_50 ){
-                    amount="50";
-                }
-
-                Log.i(TAG, "Importo selezionato: €"+amount );
-
-                // a questo punto ho estratto l'importo, proseguo con la ricarica
-                processPayment();
-
-            }
-        });
 
     }
 
@@ -156,8 +138,72 @@ public class PaymentActivity extends AppCompatActivity {
 
     }
 
+    //------TASK ASINCRONI------
+    //Lettura valore Wallet dal db per mostrarlo sul layout
+    private class WalletAmount extends AsyncTask<String, Void, Boolean> {
+        FirebaseUser user = mAuth.getCurrentUser();
+        double wallet = -1.0;
 
+        @Override
+        protected Boolean doInBackground(String... strings) {
 
+            String url= strings[0];
+            //Encoding parametri:
+            try {
+                String param = "id_user="+ URLEncoder.encode(user.getUid(), "UTF-8");
+
+                JSONArray ja= ServerTask.askToServer(param, url);
+                Log.i(TAG, "JSONArray da php: "+ja.toString());
+
+                JSONObject jsonObject= ja.getJSONObject(0);
+                Log.i(TAG, "JSON Object da php: "+jsonObject.toString());
+
+                if (jsonObject!= null){
+                    wallet = Double.valueOf(jsonObject.getString("wallet"));
+                    return true;
+                }
+
+            }
+            catch (UnsupportedEncodingException | JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            amountFromDb.setText(String.valueOf(wallet));
+
+            btPaynow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int checkedId= rgPayment.getCheckedRadioButtonId();
+                    if(checkedId == -1){
+                        Toast.makeText(getApplicationContext(), "Per effettuare una ricarica devi selezionare un importo!", Toast.LENGTH_LONG);
+                    }else if(checkedId == R.id.rb_5 ){
+                        amount="5";
+                    }else if(checkedId == R.id.rb_15 ){
+                        amount="15";
+                    }else if(checkedId == R.id.rb_10 ){
+                        amount="10";
+                    }else if(checkedId == R.id.rb_20 ){
+                        amount="20";
+                    }else if(checkedId == R.id.rb_50 ){
+                        amount="50";
+                    }
+
+                    Log.i(TAG, "Importo selezionato: €"+amount );
+
+                    // a questo punto ho estratto l'importo, proseguo con la ricarica
+                    processPayment();
+
+                }
+            });
+        }
+    }
+
+    //Aggiornamento wallet dopo ricarica
     private class UpdateWallet extends AsyncTask<String, Void, Boolean> {
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -206,6 +252,8 @@ public class PaymentActivity extends AppCompatActivity {
             );
         }
     }
+
+
 
 
 

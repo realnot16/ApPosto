@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
 import com.example.project.map.MapsActivity;
+import com.example.project.walletManagement.PaymentActivity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -114,14 +115,16 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void getMyPreferences() {
-        SharedPreferences prefs = getSharedPreferences(MY_SHARED_PREF, Context.MODE_PRIVATE);
-        if(prefs.getBoolean(CBOX_DATA_KEY, false)){
-            email.setText(prefs.getString(EMAIL_DATA_KEY, ""));
-            password.setText(prefs.getString(PASSWORD_DATA_KEY, ""));
-            ricordami.setChecked(prefs.getBoolean(CBOX_DATA_KEY, false));
+
+    //Aggiornamento interfaccia, dopo login
+    private void updateUI(FirebaseUser currentUser) {
+        if(currentUser!=null) {
+            getToken();
+            new WalletAmount().execute("https://smartparkingpolito.altervista.org/getWalletAmount.php");
         }
     }
+
+    //-----LOGIN CON GOOGLE------------
 
     private void signInWithGoogle() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
@@ -175,14 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-
-    private void updateUI(FirebaseUser currentUser) {
-        if(currentUser!=null) {
-            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
-            startActivity(intent);
-        }
-    }
-
+    //------LOGIN CON USERNAME E PASSWORD-----------
     //Metodo richiamato con il click su Login
     public void login(View view){
         Log.i(TAG, "Hai cliccato su Login!");
@@ -216,6 +212,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    //---------GESTIONE PREFERENZE-------------
     private void savePreference(boolean checkRicordami, String mailUtente, String passwordUtente) {
         SharedPreferences prefs = this.getSharedPreferences(MY_SHARED_PREF, Context.MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor= prefs.edit();;
@@ -230,6 +227,16 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void getMyPreferences() {
+        SharedPreferences prefs = getSharedPreferences(MY_SHARED_PREF, Context.MODE_PRIVATE);
+        if(prefs.getBoolean(CBOX_DATA_KEY, false)){
+            email.setText(prefs.getString(EMAIL_DATA_KEY, ""));
+            password.setText(prefs.getString(PASSWORD_DATA_KEY, ""));
+            ricordami.setChecked(prefs.getBoolean(CBOX_DATA_KEY, false));
+        }
+    }
+
+
     //Richiamato con click su Registrati
     public void goToSignup(View view){
         Log.i(TAG, "Hai cliccato su Registrati. Verrai reindirizzato alla pagina di registrazione.");
@@ -238,7 +245,6 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("From", "LoginActivity");
         startActivity(intent);
     }
-
 
     //Richiamato con click su Password dimenticata
     public void resetPasswordEmail(View view) {
@@ -260,7 +266,25 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    //Prendere il token del dispositivo alla registrazione o per aggiornarlo
+    public void getToken(){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if(task.isSuccessful()){
+                    token = task.getResult().getToken();
+                    Log.i(TAG, "Token: "+token);
+                }else{
+                    Log.i(TAG, "Problema", task.getException());
+                    return;
+                }
+            }
 
+        });
+
+    }
+
+    //------TASK ASINCRONI------------
     //TASK PER CARICARE NUOVO UTENTE SUL DB
     private class UploadGoogleSignin extends AsyncTask<FirebaseUser, Void, Boolean> {
 
@@ -300,21 +324,79 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    //Prendere il token del dispositivo alla registrazione
-    public void getToken(){
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-            @Override
-            public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                if(task.isSuccessful()){
-                    token = task.getResult().getToken();
-                    Log.i(TAG, "Token: "+token);
-                }else{
-                    Log.i(TAG, "Problema", task.getException());
-                    return;
-                }
-            }
 
-        });
+    private class WalletAmount extends AsyncTask<String, Void, Boolean> {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+
+            String url= strings[0];
+            //Encoding parametri:
+            try {
+                String param = "id_user="+ URLEncoder.encode(user.getUid(), "UTF-8");
+
+                JSONArray ja= ServerTask.askToServer(param, url);
+                Log.i(TAG, "JSONArray da php: "+ja.toString());
+
+                JSONObject jsonObject= ja.getJSONObject(0);
+                Log.i(TAG, "JSON Object da php: "+jsonObject.toString());
+
+                if (jsonObject!= null){
+                    double wallet = Double.valueOf(jsonObject.getString("wallet"));
+                    Log.i(TAG, "Wallet: "+wallet);
+                    if(wallet<=0){
+                        startActivity(new Intent(LoginActivity.this, PaymentActivity.class));
+                    }else{
+                        startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+                    }
+                    return false;
+                }
+
+            }
+            catch (UnsupportedEncodingException | JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            new UpdateDeviceToken().execute("https://smartparkingpolito.altervista.org/UpdateDeviceToken.php");
+        }
+    }
+
+    private class UpdateDeviceToken extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+
+            String url = strings[0];
+            FirebaseUser user = mAuth.getCurrentUser();
+            //Encoding parametri:
+            try {
+                String params = "id_user=" + URLEncoder.encode(user.getUid(), "UTF-8")
+                        + "&device_token=" + URLEncoder.encode(token, "UTF-8");
+
+                JSONArray jsonArray= ServerTask.askToServer(params,url);
+                //gestisci JsonArray
+                JSONObject jsonObjectControl=jsonArray.getJSONObject(0);
+                String control=jsonObjectControl.getString("control");
+                Log.i("cntr0",control);
+                if (control.equals("OK")){   // non esegue l'if
+                    //UTENTE REGISTRATO CORRETTAMENTE
+                    Log.i(TAG, "Device Token aggiornato correttamente");
+                    return true;
+                }
+
+            }
+            catch (UnsupportedEncodingException | JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
 
     }
 }

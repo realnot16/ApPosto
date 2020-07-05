@@ -145,6 +145,8 @@
 
     <string name="panel_filter_toast_no_selected_place">Filtro sul raggio non applicabile, cercare prima una destinazione!</string>
     <string name="panel_filter_toast_no_selected_area">Filtro su area non applicabile, selezionare una stazione preferita!</string>
+    <string name="panel_price">Tariffa</string>
+    <string name="panel_street">Indirizzo</string>
 
 
 </resources>

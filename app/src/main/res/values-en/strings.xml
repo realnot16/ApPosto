@@ -84,4 +84,14 @@
     <string name="progressDialogSignupText">Profile creation in progress...</string>
     <string name="reservation_string1">Booking n°:</string>
     <string name="reservation_string2">"made on date "</string>
+    <string name="panel_filter_switch_area_text">Favorite areas</string>
+    <string name="panel_filter_switch_raggio_text">Radius in km</string>
+    <string name="panel_filter_switch_tariffa_text">Fare</string>
+    <string name="panel_filter_button_text">Apply Filters</string>
+    <string name="panel_filter_toast_no_selected_place">Radius filter not applicable, first choose a destination!</string>
+    <string name="panel_filter_toast_no_selected_area">Area filter not applicable, first select a favorite station!</string>
+    <string name="panel_durata">Booking duration</string>
+    <string name="panel_tariffa">Fare</string>
+    <string name="panel_distance_value">-</string>
+    <string name="panel_tariffa_value">fareValue</string>
 </resources>
