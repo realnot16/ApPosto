@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,6 +40,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -50,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView email;
     private TextView phone;
     private Button walletTopUp;
+    private Button changePwd;
 
     FirebaseAuth mAuth;
     Profilo profilo;
@@ -67,9 +70,15 @@ public class ProfileActivity extends AppCompatActivity {
         email = (TextView) findViewById(R.id.label_mail);
         phone = (TextView) findViewById(R.id.label_phone);
         walletTopUp= (Button) findViewById(R.id.button_ricarica);
+        changePwd = (Button) findViewById(R.id.button_changePwd);
 
         mAuth = FirebaseAuth.getInstance();
 
+        //NASCONDE bottone Cambia Password se accedi con Google!
+        List<? extends UserInfo> prov = mAuth.getCurrentUser().getProviderData();
+        if(prov.get(0).getDisplayName()!=null){
+            changePwd.setVisibility(View.INVISIBLE);
+        }
 
         //Mostra i dati dell'utente prendendoli dal db
         new LoadProfile().execute("https://smartparkingpolito.altervista.org/getProfile.php");
@@ -98,11 +107,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     //onClick su bottone Cambia password - per cambiare la password
     public void changePassword(View view) {
-
-       //if(!GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD.equals(LoginActivity.credential.getSignInMethod())){
-       //if(LoginActivity.credential.getSignInMethod().equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
-        ;
-        //if(!GoogleAuthProvider.getCredential(GoogleSignIn.getLastSignedInAccount(this).getIdToken(), null).getSignInMethod().equals(GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD)){
            String emailAddress = mAuth.getCurrentUser().getEmail();
 
            if (!emailAddress.isEmpty()) {
@@ -118,9 +122,10 @@ public class ProfileActivity extends AppCompatActivity {
                        });
            } else
                Toast.makeText(this, "Si è verificato un problema", Toast.LENGTH_SHORT).show();
-       //}
     }
 
+
+    //--TASK ASINCRONO per caricamento dati profilo---
 
     public class LoadProfile extends AsyncTask<String, Void, Boolean> {
 
