@@ -123,6 +123,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private Station station_selected;
     private Place place_searched;
+    private Marker marker_searched;
 
     // Keys for storing map activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -186,6 +187,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // SETTO LISTA MARKERS
         AllMarkers = new ArrayList<Marker>();
+
 
         // TOOLBAR E NAVIGATION DRAWER
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -388,11 +390,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng newPosition = new LatLng(place.getLatLng().latitude,place.getLatLng().longitude);
                 place_searched=place;
                 MarkerOptions markerSearch = new MarkerOptions().position(newPosition)
-                        .title(String.valueOf(place.getLatLng().latitude)+","+String.valueOf(place.getLatLng().longitude));
-                for (Marker mark: AllMarkers){
-                    if (mark.getTag()==null) mark.remove();
-                }
-                mMap.addMarker(markerSearch);
+                        .title(place.getName());
+                if (marker_searched!=null) marker_searched.remove();
+                marker_searched=mMap.addMarker(markerSearch);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), DEFAULT_ZOOM));
                 refresh();
                 askStations(place.getLatLng().latitude,place.getLatLng().longitude);
