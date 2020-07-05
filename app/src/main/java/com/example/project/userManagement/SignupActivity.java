@@ -125,7 +125,7 @@ public class SignupActivity extends AppCompatActivity {
                 password.setVisibility(View.GONE);
                 accedi.setVisibility(View.INVISIBLE);
                 testoAccedi.setVisibility(View.INVISIBLE);
-                tempWallet = 0;
+                tempWallet = Float.valueOf(getIntent().getStringExtra("GSignin_wallet"));
             }
         }
 
@@ -230,7 +230,9 @@ public class SignupActivity extends AppCompatActivity {
 
         Pattern letteralPattern = Pattern.compile("[A-Z][a-z]{1,13}");
         Matcher firstnameMatcher = letteralPattern.matcher(firstnameUser);
-        Matcher cityMatcher = letteralPattern.matcher(cityUser);
+
+        Pattern cityPattern = Pattern.compile("^[A-Z]+([ '-]?[a-zA-Z]+){1,20}$");
+        Matcher cityMatcher = cityPattern.matcher(cityUser);
 
         Pattern lastnamePattern = Pattern.compile("^[A-Z]+([ '-]?[a-zA-Z]+){1,20}$");
         Matcher lastnameMatcher = lastnamePattern.matcher(lastnameUser);

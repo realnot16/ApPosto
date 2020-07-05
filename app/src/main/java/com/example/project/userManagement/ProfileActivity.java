@@ -35,6 +35,10 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.security.AuthProvider;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -156,7 +160,16 @@ public class ProfileActivity extends AppCompatActivity {
                 if(profilo.getGoogleSignIn()==0) {
                     name.setText(profilo.getFirstname() + " " + profilo.getLastname());
                     city.setText(profilo.getCity());
-                    birthdate.setText(profilo.getBirthdate());
+
+                    try {
+                        DateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+                        Date date = (Date) parser.parse(profilo.getBirthdate());
+                        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                        birthdate.setText(formatter.format(date));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
                     email.setText(profilo.getEmail());
                     phone.setText(profilo.getPhone());
                     wallet.setText(String.valueOf(profilo.getWallet()));
@@ -164,6 +177,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }else{  //Ha fatto l'accesso con Google per la prima volta: prima deve compilare i campi del profilo!
                     Intent i = new Intent(ProfileActivity.this, SignupActivity.class);
                     i.putExtra("isGSignIn", "GSignIn_yes");
+                    i.putExtra("GSignin_wallet", ""+profilo.getWallet());
                     startActivity(i);
                     Toast.makeText(ProfileActivity.this, "Compila i campi per visualizzare il profilo!", Toast.LENGTH_LONG).show();
                 }

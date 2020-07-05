@@ -28,10 +28,10 @@ public class PaymentDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_detail);
 
-        tvId= (TextView)findViewById(R.id.tvId);
-        tvAmount= (TextView)findViewById(R.id.tvAmount);
-        tvStatus= (TextView)findViewById(R.id.tvStatus);
-        tvCurrentWallet= (TextView)findViewById(R.id.tvCurrentWallet);
+        tvId= (TextView)findViewById(R.id.tvIdText);
+        tvAmount= (TextView)findViewById(R.id.tvAmountText);
+        tvStatus= (TextView)findViewById(R.id.tvStatusText);
+        tvCurrentWallet= (TextView)findViewById(R.id.tvCurrentWalletText);
         btGoToMap= (Button)findViewById(R.id.bt_go_to_map);
 
         Intent intent= getIntent();
@@ -44,10 +44,10 @@ public class PaymentDetail extends AppCompatActivity {
              * id-> è l'id del pagamento */
             Log.i(TAG, jsonObject.toString());
             //tvId.setText(jsonObject);
-            tvId.setText("Codice transazione: "+jsonObject.getJSONObject("response").getString("id"));
-            tvStatus.setText("Stato: "+jsonObject.getJSONObject("response").getString("state"));
-            tvAmount.setText("Importo totale: €"+intent.getStringExtra("PaymentAmount"));
-            tvCurrentWallet.setText("Credito residuo sul tuo wallet: €"+intent.getStringExtra("NewWallet"));
+            tvId.setText(jsonObject.getJSONObject("response").getString("id"));
+            tvStatus.setText(jsonObject.getJSONObject("response").getString("state"));
+            tvAmount.setText(intent.getStringExtra("PaymentAmount"));
+            tvCurrentWallet.setText(intent.getStringExtra("NewWallet"));
 
         } catch (JSONException e) {
             e.printStackTrace();
