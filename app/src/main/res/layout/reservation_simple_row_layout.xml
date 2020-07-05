@@ -1,30 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout android:layout_width="fill_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/reservation_row_layout"
-    android:padding="5px" android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/listview_back"
+    android:paddingStart="20dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="20dp"
     android:shrinkColumns="0">
-<TableRow>
-<TextView android:layout_width="wrap_content"
-    android:layout_height="wrap_content" android:id="@+id/bookingLabel"
-    android:text="@string/reservation_string1"></TextView>
-<TextView android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:layout_toRightOf="@+id/firstnameLabel"
-    android:layout_alignParentRight="true" android:paddingLeft="10px"
-    android:text="default_value"
-    android:id="@+id/bookingLabel_text"></TextView>
-</TableRow>
-<TableRow>
-<TextView android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:layout_below="@+id/bookingLabel"
-    android:id="@+id/dataLabel" android:text="@string/reservation_string2"></TextView>
-<TextView android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:layout_toRightOf="@+id/bookingLabel"
-    android:layout_alignParentRight="true" android:paddingLeft="10px"
-    android:text="default_value"
-    android:id="@+id/dataLabel_text"></TextView>
-</TableRow>
-    </TableLayout>
+
+    <TableRow android:layout_marginBottom="10dp">
+
+        <TextView
+            android:id="@+id/bookingLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reservation_string1"></TextView>
+
+        <TextView
+            android:id="@+id/bookingLabel_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/firstnameLabel"
+            android:paddingLeft="10px"
+            android:text="default_value"></TextView>
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/dataLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bookingLabel"
+            android:text="@string/reservation_string2"></TextView>
+
+        <TextView
+            android:id="@+id/dataLabel_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/bookingLabel"
+            android:paddingLeft="10px"
+            android:text="default_value"></TextView>
+    </TableRow>
+</TableLayout>

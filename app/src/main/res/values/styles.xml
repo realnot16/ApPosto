@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/bluMain</item>
-        <item name="colorPrimaryDark">@color/bluMain</item>
+        <item name="colorPrimary">@color/blueBar</item>
+        <item name="colorPrimaryDark">@color/blueBar</item>
         <item name="colorAccent">@color/gialloMain</item>
         <item name="android:windowActionBarOverlay">true</item>
     </style>

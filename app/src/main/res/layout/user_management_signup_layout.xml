@@ -195,7 +195,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
-            android:background="@drawable/confirm_button"
+            android:background="@drawable/button_confirm"
             android:onClick="signup"
             android:padding="15dp"
             android:text="@string/signUp_registrati_button_description_text"

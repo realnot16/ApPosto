@@ -9,12 +9,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.project.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,11 +39,12 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReservationsActivity extends ListActivity {
+public class ReservationsActivity extends AppCompatActivity {
 
     private static final String TAG= "ReservationActivity";
     private static final String URL_DB= "http://smartparkingpolito.altervista.org/GetReservationsByUserId.php";
     private List<Reservation> storico= new ArrayList<Reservation>();
+    ListView list_view;
     FirebaseAuth mAuth;
     FirebaseUser user;
 
@@ -49,11 +54,14 @@ public class ReservationsActivity extends ListActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservations);
+        initUI();
 
         mAuth= FirebaseAuth.getInstance();
         //user= mAuth.getCurrentUser();
 
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        list_view = (ListView) findViewById(android.R.id.list);
+
+        list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int pos, long l) {
                 //onClick sugli elementi della ListView
@@ -70,6 +78,25 @@ public class ReservationsActivity extends ListActivity {
         updateReservationList();
         Toast.makeText(this,"Seleziona una map_icona_panel_prenotazione per visualizzare maggiori dettagli", Toast.LENGTH_LONG);
 
+    }
+
+    private void initUI() {
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.reservation_description);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) // Press Back Icon
+        {
+            Log.i(TAG, "Back, redirect a Maps");
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateReservationList() {
@@ -90,7 +117,7 @@ public class ReservationsActivity extends ListActivity {
 
             CustomAdapter a= new CustomAdapter(ReservationsActivity.this, R.layout.reservation_simple_row_layout, storico);
 
-            getListView().setAdapter(a);
+            list_view.setAdapter(a);
         }
     }
 

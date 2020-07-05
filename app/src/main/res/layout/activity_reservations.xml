@@ -8,8 +8,15 @@
     android:orientation="vertical"
     tools:context=".reservation.ReservationsActivity">
 
+    <include
+        android:id="@+id/reservation_toolbar_layout_id"
+        layout="@layout/main_toolbar"></include>
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="20.0dp" />
 </LinearLayout>

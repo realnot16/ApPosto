@@ -41,6 +41,7 @@
     <string name="reservation_omaggio"> </string>
     <string name="reservation_string1">Prenotazione n°:</string>
     <string name="reservation_string2">effettuata in data </string>
+    <string name="reservation_description">Le tue prenotazioni</string>
 
     <!-- Profile Activity -->
     <string name="profile_birthdate">Data di nascita:</string>

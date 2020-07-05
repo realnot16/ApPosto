@@ -179,7 +179,7 @@
             android:layout_marginStart="76dp"
             android:layout_marginEnd="76dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/confirm_button"
+            android:background="@drawable/button_confirm"
             android:onClick="login"
             android:text="@string/login_accedi_button_description_text"
             android:textColor="@color/bianco"

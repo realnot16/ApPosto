@@ -5,7 +5,9 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="gialloMain">#FFD921</color>
     <color name="bluMain">#35495E</color>
+    <color name="blueBar">#486375</color>
     <color name="loginFields">#D5D5D1</color>
+    <color name="qrButton">#34495e</color>
 
     <!-- da sistemare -->
     <color name="nero">#000000</color>
