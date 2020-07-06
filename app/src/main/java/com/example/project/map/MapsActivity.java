@@ -1534,9 +1534,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Log.i("dialog", "Label inserita: "+inputLabel.getText().toString());
-                newFavParking.setLabel(inputLabel.getText().toString());
-                updateFavouriteFile(newFavParking);
+                String labelNew= inputLabel.getText().toString();
+                //controllo che il campo non sia vuoto
+                if(labelNew.trim().equals("") || labelNew.isEmpty()){
+                    Log.i("update", "Etichetta vuota");
+                    Toast.makeText(getApplicationContext(), R.string.label_empty, Toast.LENGTH_LONG).show();
+                    checkBoxPreferiti.setChecked(false);
+                    return;
+                }else {
+                    Log.i("dialog", "Label inserita: " + labelNew);
+                    newFavParking.setLabel(labelNew);
+                    updateFavouriteFile(newFavParking);
+                }
             }
         });
         builder.setNegativeButton(R.string.dialog_delete, new DialogInterface.OnClickListener() {
