@@ -110,6 +110,13 @@
     <string name="favourite_title">Stazioni preferite</string>
     <string name="favourite_not_found">Non hai salvato nessun preferito!</string>
     <string name="favourite_repeated">E\' già presente un preferito con questa etichetta!</string>
+    <string name="favourites_address">Indirizzo:</string>
+    <string name="favourites_label">Etichetta:</string>
+    <string name="favourites_label_text">La mia etichetta</string>
+    <string name="favourites_address_text">Il mio indirizzo</string>
+    <string name="favourites_button_save">Salva modifiche</string>
+    <string name="favourites_button_delete">Cancella preferito</string>
+    <string name="favourites_button_back">Annulla</string>
 
     <!-- String wallet management -->
     <string name="tv_activity_payment_title">Ricarica conto</string>
@@ -167,7 +174,6 @@
     <!-- Alarm -->
     <string name="alarm_notif_text">Tra 10 minuti scadrà la tua prenotazione. Clicca per prorogare!</string>
     <string name="alarm_notif_title">Prenotazione in scadenza!</string>
-
 
 
 </resources>

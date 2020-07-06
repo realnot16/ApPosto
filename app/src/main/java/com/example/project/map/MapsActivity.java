@@ -186,7 +186,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Station areaValue;
 
     //TIMER
-    private String timerPickerValues[] = {"15","20","25","30","35","40","45","50","55","60"};
+    private String timerPickerValues[] = {"15","20","25","30","35","40","45","50","60"};
 
     //PREFERITI
     private CheckBox checkBoxPreferiti;
@@ -366,7 +366,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String address = (String) notificationIntent.getExtras().get("address");
                 Log.i("address", address);
                 showRdrctPopup(id_park, dist, address);
-            } else showRdrctPopup(null, null, null);
+            } else if(notificationIntent.hasExtra("time")){
+                showTimeExtensionPopup();
+            } else
+                showRdrctPopup(null, null, null);
         }
 
     }
@@ -1619,6 +1622,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
+    //controllo se una stazione è fra i preferiti per selezionare la checkbox
+    private boolean isAFavStation(Station station_selected) {
+        //recupero mappa preferiti
+        Map<String, Favourite> favourite= loadFavouriteFromFile();
+        for(Favourite f: favourite.values()){
+            if(f.getLat()==station_selected.getLatitude()
+                    && f.getLon()== station_selected.getLongitude()){
+                return true;
+            }
+        }
+        return false;
+    }
 
     //Funzione per aggiornare lo spinner
     private void updateSpinner() {
@@ -1644,7 +1659,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //long minInMillis = SystemClock.elapsedRealtime()+(reservMin-10)*60*1000; //Aggiungo al tempo attuale del dispositivo
         long minInMillis = SystemClock.elapsedRealtime()+10*1000; //TEST con 10 secondi
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, minInMillis, alarmIntent);      //ELAPSED_REALTIME_WAKEUP è generato anche se dispositivo spento
-        Log.i(TAG, "Alarm sent");
+        Log.i(TAG, "Alarm sent "+minInMillis);
         salvaInSharedPreferences(Long.toString(minInMillis));
     }
 
@@ -1654,8 +1669,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Salvo il tempo nelle preferenze per poter impostare un Alarm ad ogni avvio del dispositivo
     private void salvaInSharedPreferences(String millis) {
-        SharedPreferences spref = getSharedPreferences("com.example.alarms", MODE_PRIVATE);
-        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+        SharedPreferences spref =  getSharedPreferences("alarms", MODE_PRIVATE);
+        SharedPreferences.Editor editor = spref.edit();
         editor.putString("tempo", millis);
         editor.commit();
 
@@ -1690,11 +1705,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //METODI DEI BOTTONI DEL POPUP DI ESTENSIONE TEMPO
     public void onEndReservationTime(View view){
-        String id_user=mAuth.getUid();
-        Integer id_parking=currentReservation.parking_id;
-        String id_booking=currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
-        CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,0);
-        new CloseReservation().execute(paramsAsync);
+        onCloseResButtonClick(view);
         popup_time.cancel();
         popup_time=null;
 
@@ -1703,8 +1714,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onExtend(View view){
         //Rimuovo vecchio alarm
         alarmManager.cancel(alarmIntent);
+
         //Aggiungo 10 minuti al termine
-        long minInMillis = getSharedPreferences("com.example.alarms", Context.MODE_PRIVATE).getLong("tempo", 0)+10*60*1000;
+        long pref = Long.valueOf(getSharedPreferences("alarms", Context.MODE_PRIVATE).getString("tempo", ""));
+        Log.i(TAG, "Pre-progoga:"+pref);
+        long minInMillis = pref + 10*60*1000;
+        Log.i(TAG, "PROROGA:"+minInMillis);
         //Avvio nuovo alarm
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, minInMillis, alarmIntent);
         //Salvo le nuove preferenze
@@ -1718,21 +1733,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         popup_time.cancel();
         popup_time=null;
     }
-    //controllo se una stazione è fra i preferiti per selezionare la checkbox
-    private boolean isAFavStation(Station station_selected) {
-        //recupero mappa preferiti
-        Map<String, Favourite> favourite= loadFavouriteFromFile();
-        for(Favourite f: favourite.values()){
-            if(f.getLat()==station_selected.getLatitude()
-                    && f.getLon()== station_selected.getLongitude()){
-                return true;
-            }
-        }
-            return false;
-        }
-
-
-
 
 
 }

@@ -66,7 +66,7 @@
     <string name="favourites_button_back">Discard</string>
     <string name="tv_activity_payment">Choose amount to top-up</string>
     <string name="bt_activity_payment_">Go to payment</string>
-    <string name="tv_payment_detail">Operation carried out successfully! Here the payment details:</string>
+    <string name="tv_payment_detail">Here the payment details:</string>
     <string name="bt_go_to_map">Go to map</string>
     <string name="alertNoPermissionGranted">Navigator needs permission!</string>
     <string name="alertNoNavigator">Can\'t start navigation to your destination because you have denied location permission.</string>
@@ -95,4 +95,27 @@
     <string name="panel_tariffa">Fare</string>
     <string name="panel_distance_value">-</string>
     <string name="panel_tariffa_value">fareValue</string>
+    <string name="reservation_description">Your reservations</string>
+    <string name="profile_tilte">Your Profile</string>
+    <string name="panel_time_continue">No, continue</string>
+    <string name="panel_no_ext">Close reservation</string>
+    <string name="panel_ext">Extend reservation for 10 min more</string>
+    <string name="panel_time_text">Your reservation is expiring. Do you want to extend it?</string>
+    <string name="favourite_delete_option">Clear favourite</string>
+    <string name="favourite_update_option">Edit label</string>
+    <string name="favourite_delete_all_option">Clear all</string>
+    <string name="dialog_fav_title">New favourite</string>
+    <string name="dialog_fav_message">Insert a label for the select place:</string>
+    <string name="dialog_modify_fav_title">Insert the new label:</string>
+    <string name="dialog_confirm">Confirm</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="favourite_not_found">You haven\'t saved any favorites yet!</string>
+    <string name="favourite_repeated">There is already a favorite with this label!</string>
+    <string name="tv_activity_payment_title">Top-up wallet</string>
+    <string name="tv_operation">Operation carried out successfully!</string>
+    <string name="alarm_notif_text">Your reservation will expire in 10 minutes. Click to extend!</string>
+    <string name="alarm_notif_title">Reservation is expiring!</string>
+    <string name="favourite_title">Favourite stations</string>
+    <string name="tv_activity_payment_wallet_description">Balance</string>
+    <string name="scanner_problem">Problem with QR code? Click here!</string>
 </resources>

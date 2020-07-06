@@ -20,9 +20,9 @@ import com.example.project.R;
 import com.example.project.map.MapsActivity;
 
 import static com.example.project.notification.App.CHANNEL_1_ID;
+import static com.example.project.notification.NotificationService.ACTION_MESSAGE_BROADCAST;
 
 public class AlarmBroadcastReceiver extends BroadcastReceiver {
-    public static final String ACTION_MESSAGE_BROADCAST=NotificationService.class.getName() + "MessageBroadcast";
     public static final String ACTION_ALARM= "com.example.alarms.ACTION_ALARM";
     private int notificationId = 0;
 
@@ -31,12 +31,11 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
-        SharedPreferences prefs = context.getSharedPreferences("com.example.alarms", Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("alarms", Context.MODE_PRIVATE);
 
         if(ACTION_ALARM.equals(intent.getAction())){
             //Al click su "imposta Alarm" mostra un toast
             Log.i("mylog", "Ecco l'alarm.");
-            //Toast.makeText(context, ACTION_ALARM, Toast.LENGTH_SHORT).show();
             sendNotification();
         }else if(intent.getAction().equals("android.intent.action.BOOT_COMPLETED")){
             //Ho riavviato il dispositivo
@@ -80,9 +79,9 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         resultIntent.putExtra("time", "fromBroadcast");
 
-
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
+
         sendBroadcastMessage();
 
         notificationManager.notify(notificationId, builder.build());
