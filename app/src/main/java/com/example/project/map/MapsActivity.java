@@ -998,7 +998,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     //refresh di all markers
     public void onRefreshClick(View view) {
-        refresh();
+        if (currentReservation.id_booking==null)refresh();
     }
     public void refresh(){
         for (Marker mLocationMarker : AllMarkers) {
