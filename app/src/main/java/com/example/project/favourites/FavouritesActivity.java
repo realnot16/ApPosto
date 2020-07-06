@@ -162,11 +162,8 @@ public class FavouritesActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
 
-        if(!result.isEmpty()){
-            updateListView(result);
-        }else{
-            Toast.makeText(this, "Nessun preferito da mostrare", Toast.LENGTH_LONG);
-        }
+        updateListView(result);
+
 
         return result;
     }

@@ -13,7 +13,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -30,6 +33,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,7 +51,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.project.NotificationService;
+import com.example.project.notification.AlarmBroadcastReceiver;
+import com.example.project.notification.NotificationService;
 import com.example.project.ParametersAsync.CloseReservationParamsAsync;
 import com.example.project.ParametersAsync.LoadStationParamsAsync;
 import com.example.project.ParametersAsync.OpenReservationParamsAsync;
@@ -121,6 +126,8 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.example.project.notification.AlarmBroadcastReceiver.ACTION_ALARM;
+
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -179,7 +186,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Station areaValue;
 
     //TIMER
-    private String timerPickerValues[] = {"15 ","20 ","25 ","30 ","35 ","40 ","45 ","50 ","55 ","60 "};
+    private String timerPickerValues[] = {"15","20","25","30","35","40","45","50","55","60"};
 
     //PREFERITI
     private CheckBox checkBoxPreferiti;
@@ -191,6 +198,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //POPUP
     private String new_parking_rdrct;
     private AlertDialog popup;
+    private AlertDialog popup_time;
     ConstraintLayout layoutReservation;
 
     //NAVIGATORE
@@ -202,6 +210,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //DIALOG PER INSERIRE IL NOME DELLO STALLO PREFERITO
     private Favourite newFavParking;
     private final static String FILE_PATH = "FavouritesMapFile.txt";
+
+    //ALARM
+    private static AlarmManager alarmManager;
+    private static PendingIntent alarmIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,12 +233,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         checkBoxPreferiti = findViewById(R.id.panel_station_favorite_id);
         spinnerFiltroPreferiti = findViewById(R.id.panel_filter_spinner_area_id);
 
-        updateSpinner();
+
 
 
         checkBoxPreferiti.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //controllo per distiguere il click dell'utente dal setChecked()
+                if(!buttonView.isPressed())
+                    return;
+
                 if(isChecked){
                     //FLAVIA, MEMORIZZO LA STAZIONE SELEZIONATA NEL FILE
                     // usa station_seleceted per avere i dettagli sulla stazione
@@ -239,26 +256,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Dall'azione di conferma nella dialog completo newFavParking e aggiorno la mappa
 
 
-                    //FLAVIA, aggiorno lo spinner
-                    updateSpinner();
 
 
-                }
-                else{
+                }else{
+                    Log.i("flavia", "Ho deselezionato il preferito");
                     //FLAVIA, RIMUOVI LA STAZIONE SELEZIONATA DAL FILE
                     // usa station_seleceted per avere i dettagli sulla stazione
-                    Map<String, Favourite> favourites= loadFavouriteFromFile();
+                    deleteFavouriteFromFile(new Favourite("-123", station_selected.getLatitude(), station_selected.getLongitude()));
+                    buttonView.setChecked(false);
+                    /*Map<String, Favourite> favourites= loadFavouriteFromFile();
                     for(Favourite f: favourites.values()){
                         if(f.getLat()== station_selected.getLatitude() && f.getLon()== station_selected.getLongitude()){
                             //lo tolgo dalla mappa
                             favourites.remove(f);
                             //ricarico la mappa sul file
                             saveMapOnFile(favourites);
-
                         }
-                    }
-                    //aggiorno lo spinner
-                    updateSpinner();
+                    }*/
                 }
             }
         });
@@ -309,12 +323,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             String address = intent.getStringExtra("address");
                             showRdrctPopup(id_parking, distance, address);
                             new_parking_rdrct = id_parking;
-                        } else showRdrctPopup(null, null, null);
+                        } else if(intent.hasExtra("time")){
+                            showTimeExtensionPopup();
+                        } else
+                            showRdrctPopup(null, null, null);
 
 
                     }
                 }, new IntentFilter(NotificationService.ACTION_MESSAGE_BROADCAST)
         );
+
 
         // BOTTONE PER QR CODE ACTIIVTY
         qrButton = findViewById(R.id.floatingQrButton);
@@ -513,6 +531,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.action_filter:
                 // User chose the "Settings" item, show the app settings UI...
+                updateSpinner();
                 Log.i(TAG,"Apro Filtri");
                 stationLayout.setVisibility(View.GONE);
                 filterLayout.setVisibility(View.VISIBLE);
@@ -642,6 +661,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 TextView distanceTextId = findViewById(R.id.panel_station_distance_text_id);
 
                 Log.i(TAG, "Imposto panel ed apro");
+
+                //verifico se la stazione è fra i preferiti e in caso positivo coloro la stellina
+                if(isAFavStation(station_selected)){
+                    //spunto la stellina
+                    checkBoxPreferiti.setChecked(true);
+                }else{
+                    checkBoxPreferiti.setChecked(false);
+                }
 
                 stationId.setText(station_selected.getId_parking().toString()+" - "+station_selected.getStreet());
                 tariffaTextId.setText(String.valueOf(station_selected.getCost_minute())+"€/minute");
@@ -1092,6 +1119,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 case "OK":
                     Toast.makeText(MapsActivity.this, getString(R.string.reserv_success), Toast.LENGTH_LONG).show();
                     layoutReservation.setVisibility(View.VISIBLE);
+                    //ALARM per gestione tempo di prenotazione
+                    setAlarm();
                     //Percorso per NAVIGATORE
                     calcolaPercorso(new LatLng(currentReservation.latitude, currentReservation.longitude));
                     break;
@@ -1152,6 +1181,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     currentReservation.reset();
                     Toast.makeText(MapsActivity.this, getString(R.string.ok), Toast.LENGTH_LONG).show();
                     layoutReservation.setVisibility(View.INVISIBLE);
+                    //Chiudi ALARM
+                    if(alarmIntent!=null && alarmManager!=null)
+                        closeAlarm();
                     //Chiudi Navigatore (Cancella percorso)
                     removeRoute();
                     break;
@@ -1353,9 +1385,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //--------NAVIGATORE---------------------------------------
-     /*
-    CALCOLO PERCORSO
-     */
+
+    //CALCOLO PERCORSO
     public void calcolaPercorso(LatLng destinazione){
         if(mLocationPermissionGranted) {
             LatLng posizioneUtente = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
@@ -1530,6 +1561,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     //SCRIVERE MAPPA SU FILE
     private void saveMapOnFile(Map<String, Favourite> preferitiMap) {
+        Log.i("flavia", "Sto caricado su file una mappa");
         try {
             FileOutputStream fos= openFileOutput(FILE_PATH, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -1561,10 +1593,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     //cancellare un preferito da file
     private void deleteFavouriteFromFile(Favourite toDelete) {
+        //carico preferiti
         Map<String,Favourite> preferiti= new HashMap(loadFavouriteFromFile());
-        if(preferiti.isEmpty()){
-            //tvMessage.setText("Nessun luogo salvato fra i preferiti");
-        }else{
+        Log.i("flavia", "Dimensione vecchia mappa" + preferiti.size());
+        //se passo solo le coordinate, cancello il preferito con quelle coordinate
+            if(toDelete.getLabel().equals("-123")) {
+                Log.i("flavia", "Rimozione da stellina");
+                for (Favourite f : preferiti.values()) {
+                    if ((f.getLat()== station_selected.getLatitude()) && (f.getLon() == station_selected.getLongitude())) {
+                        Log.i("flavia", "Ho trovato il preferito su mappa");
+                        //lo tolgo dalla mappa
+                        preferiti.remove(f.getLabel(),f);
+                        Log.i("flavia", "Dimensione nuova mappa" + preferiti.size());
+                        //ricarico la mappa sul file
+                        saveMapOnFile(preferiti);
+                        Log.i("flavia", "File aggiornato, size: "+ loadFavouriteFromFile().size());
+                    }
+                }
+            }
+            //se passo un preferito completo
             if(preferiti.containsKey(toDelete.getLabel())){
                 preferiti.remove(toDelete.getLabel());
                 //salvo il file aggiornato
@@ -1572,7 +1619,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
-    }
+
     //Funzione per aggiornare lo spinner
     private void updateSpinner() {
         //Lista di etichette
@@ -1580,6 +1627,112 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ArrayAdapter <Favourite> a= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fav);
         spinnerFiltroPreferiti.setAdapter(a);
     }
+
+    //----------ALARM PRENOTAZIONE IN CORSO------
+    private void setAlarm() {
+        Intent intentToFire = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
+        intentToFire.setAction(ACTION_ALARM);
+
+        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intentToFire, 0);
+
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        NumberPicker pickerTimer = findViewById(R.id.panel_station_npick_tempo_id);
+        int reservMin = Integer.parseInt(timerPickerValues[pickerTimer.getValue()-1]);
+        Log.i(TAG, "Minuti da picker: "+reservMin);
+        //Alarm 10 min prima della scadenza
+        //long minInMillis = SystemClock.elapsedRealtime()+(reservMin-10)*60*1000; //Aggiungo al tempo attuale del dispositivo
+        long minInMillis = SystemClock.elapsedRealtime()+10*1000; //TEST con 10 secondi
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, minInMillis, alarmIntent);      //ELAPSED_REALTIME_WAKEUP è generato anche se dispositivo spento
+        Log.i(TAG, "Alarm sent");
+        salvaInSharedPreferences(Long.toString(minInMillis));
+    }
+
+    private void closeAlarm(){
+        alarmManager.cancel(alarmIntent);
+    }
+
+    //Salvo il tempo nelle preferenze per poter impostare un Alarm ad ogni avvio del dispositivo
+    private void salvaInSharedPreferences(String millis) {
+        SharedPreferences spref = getSharedPreferences("com.example.alarms", MODE_PRIVATE);
+        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+        editor.putString("tempo", millis);
+        editor.commit();
+
+    }
+
+    public static AlarmManager getAlarmManager() {
+        return alarmManager;
+    }
+
+    public static PendingIntent getAlarmIntent() {
+        return alarmIntent;
+    }
+
+    //-----POP UP PROROGA TEMPO PRENOTAZIONE--------------------------------------------------------------
+
+    // Aggiorna e mostra il pannello di redirect se arriva la notifica
+    private void showTimeExtensionPopup() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        LayoutInflater layoutInflater = getLayoutInflater();
+        View customView = layoutInflater.inflate(R.layout.map_time_popup, null);
+
+        builder.setView(customView);
+        builder.setCancelable(false);
+
+        if(popup_time==null){
+            popup_time=builder.create();
+            popup_time.show();
+        }
+
+    }
+
+    //METODI DEI BOTTONI DEL POPUP DI ESTENSIONE TEMPO
+    public void onEndReservationTime(View view){
+        String id_user=mAuth.getUid();
+        Integer id_parking=currentReservation.parking_id;
+        String id_booking=currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
+        CloseReservationParamsAsync paramsAsync= new CloseReservationParamsAsync(id_user,id_parking,id_booking,0);
+        new CloseReservation().execute(paramsAsync);
+        popup_time.cancel();
+        popup_time=null;
+
+    }
+
+    public void onExtend(View view){
+        //Rimuovo vecchio alarm
+        alarmManager.cancel(alarmIntent);
+        //Aggiungo 10 minuti al termine
+        long minInMillis = getSharedPreferences("com.example.alarms", Context.MODE_PRIVATE).getLong("tempo", 0)+10*60*1000;
+        //Avvio nuovo alarm
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, minInMillis, alarmIntent);
+        //Salvo le nuove preferenze
+        salvaInSharedPreferences(Long.toString(minInMillis));
+        popup_time.cancel();
+        popup_time=null;
+
+    }
+
+    public void onContinueReservation(View view){
+        popup_time.cancel();
+        popup_time=null;
+    }
+    //controllo se una stazione è fra i preferiti per selezionare la checkbox
+    private boolean isAFavStation(Station station_selected) {
+        //recupero mappa preferiti
+        Map<String, Favourite> favourite= loadFavouriteFromFile();
+        for(Favourite f: favourite.values()){
+            if(f.getLat()==station_selected.getLatitude()
+                    && f.getLon()== station_selected.getLongitude()){
+                return true;
+            }
+        }
+            return false;
+        }
+
+
+
 
 
 }

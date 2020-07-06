@@ -1,4 +1,4 @@
-package com.example.project;
+package com.example.project.notification;
 
 import android.app.Application;
 import android.app.NotificationChannel;
