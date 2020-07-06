@@ -817,7 +817,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (mLocationPermissionGranted)
                             askForGPS();
                         else
-                            Toast.makeText(MapsActivity.this, "Permessi disattivati", Toast.LENGTH_SHORT);
+                            Toast.makeText(MapsActivity.this, "Permessi disattivati", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 });
@@ -1039,8 +1039,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         protected ArrayList<Station> doInBackground(LoadStationParamsAsync... parametersAsyncs) {
 
             String url = "https://smartparkingpolito.altervista.org/AvailableParking.php";
-            String params = null;
-            ArrayList<Station> station = new ArrayList<Station>();
+            String params;
+            ArrayList<Station> station = new ArrayList();
 
             //Encoding parametri:
             String lat_dest_string = String.valueOf(parametersAsyncs[0].latitude); //converto in stringhe i valori per inserirli nella richiesta
@@ -1440,6 +1440,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //Task asincrono di Download coordinate
+    @SuppressLint("StaticFieldLeak")
     private class DownloadTask extends AsyncTask<String, Void, String>{
 
         ProgressDialog progressDialog = null;
@@ -1456,7 +1457,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         protected String doInBackground(String... strings) {
-            String result = "";
+            StringBuilder result = new StringBuilder();
             URL url;
             HttpsURLConnection urlConnection;
 
@@ -1470,15 +1471,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int data = reader.read();
                 while(data != -1){
                     char cur = (char) data;
-                    result += cur;
+                    result.append(cur);
                     data = reader.read();
                 }
 
-                Log.i("mylog", result);
+                Log.i("mylog", result.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return result;
+            return result.toString();
         }
 
         @Override
