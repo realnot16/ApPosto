@@ -55,7 +55,6 @@ import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
 import com.example.project.favourites.Favourite;
 import com.example.project.favourites.FavouritesActivity;
-import com.example.project.favourites.FileIO;
 import com.example.project.reservation.ReservationsActivity;
 import com.example.project.userManagement.LoginActivity;
 import com.example.project.userManagement.ProfileActivity;
@@ -222,6 +221,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         checkBoxPreferiti = findViewById(R.id.panel_station_favorite_id);
         spinnerFiltroPreferiti = findViewById(R.id.panel_filter_spinner_area_id);
 
+        updateSpinner();
+
 
         checkBoxPreferiti.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -239,7 +240,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
                     //FLAVIA, aggiorno lo spinner
-                    //updateSpinnerAdapter();
+                    updateSpinner();
 
 
                 }
@@ -257,7 +258,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }
                     //aggiorno lo spinner
-                    //updateSpinnerAdapter();
+                    updateSpinner();
                 }
             }
         });
@@ -326,6 +327,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -1569,6 +1572,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
+    }
+    //Funzione per aggiornare lo spinner
+    private void updateSpinner() {
+        //Lista di etichette
+        List<Favourite> fav= new ArrayList(loadFavouriteFromFile().values());
+        ArrayAdapter <Favourite> a= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fav);
+        spinnerFiltroPreferiti.setAdapter(a);
     }
 
 
