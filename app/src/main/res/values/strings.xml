@@ -170,11 +170,13 @@
     <string name="panel_filter_toast_no_selected_area">Filtro su area non applicabile, selezionare una stazione preferita!</string>
     <string name="panel_price">Tariffa</string>
     <string name="panel_street">Indirizzo</string>
-
+    <string name="panel_filter_spinner">Scegli area</string>
+    <string name="panel_filter_no_favorite">Non ci sono preferiti.</string>
     <!-- Alarm -->
     <string name="alarm_notif_text">Tra 10 minuti scadrà la tua prenotazione. Clicca per prorogare!</string>
     <string name="alarm_notif_title">Prenotazione in scadenza!</string>
     <string name="label_empty">Errore: hai inserito un\'etichetta vuota!</string>
+
 
 
 </resources>

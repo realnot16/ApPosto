@@ -180,12 +180,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //FILTRI
     private final static float RAGGIO_AREA= 1500;
-    private String raggioPickerValues[] = { "0.5 ", "1 ","1.5 ", "2 "};
-    private String tariffaPickerValues[] = { "0.02 ", "0.03 ","0.05 "};
+    private String raggioPickerValues[] = { " 0.5 ", " 1 "," 1.5 ", " 2 "};
+    private String tariffaPickerValues[] = { " 0.02 ", " 0.03 "," 0.05 "};
 
     private float raggioValue;
     private double tariffaValue;
-    private Station areaValue;
+    private Favourite areaValue;
 
     //TIMER
     private String timerPickerValues[] = {"15","20","25","30","35","40","45","50","60"};
@@ -567,62 +567,88 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         nubmerPicker.setMinValue(1);
         nubmerPicker.setMaxValue(numbers.length);
         nubmerPicker.setDisplayedValues(numbers);
-        nubmerPicker.setValue(numbers.length/2);
+        nubmerPicker.setValue(numbers.length/2+1);
     }
 
     //GESTIONE APPLICAZIONE FILTRI
     public void onApplyFilter(View view){
         NumberPicker raggioPicker = findViewById(R.id.panel_filter_npick_raggio_id);
         raggioValue = Float.parseFloat(raggioPickerValues[raggioPicker.getValue()-1]);
-        areaValue = (Station) spinnerFiltroPreferiti.getSelectedItem();
+
+        Map<String,Favourite> favo = loadFavouriteFromFile();
+        if(spinnerFiltroPreferiti.getSelectedItem()!=null) {
+            areaValue = favo.get(spinnerFiltroPreferiti.getSelectedItem().toString());
+        }
+        else areaValue=null;
 
         NumberPicker tariffaPicker = findViewById(R.id.panel_filter_npick_tariffa_id);
         tariffaValue = Double.parseDouble(tariffaPickerValues[tariffaPicker.getValue()-1]);
 
 
-        Log.i(TAG,"Filtro-1: ValoreArea-> "+areaValue);
+        Log.i(TAG,"Filtro-1: ValoreArea-> "+areaValue+ "- spinn: -"+spinnerFiltroPreferiti.getSelectedItem()+"- -"+favo.size());
         Log.i(TAG,"Filtro-2: ValoreRaggio-> "+raggioValue);
         Log.i(TAG,"Filtro-3: ValoreTariffa-> "+tariffaValue);
-        for (Marker marker: AllMarkers) {
-            checkFilterMarker(marker);
+        Log.i(TAG,"VALORI MAPPA");
+        for (String string: favo.keySet()) {
+            Log.i(TAG,"val:  -"+string+"-");
         }
-    }
 
-    //CHECKFILTERS
-    private void checkFilterMarker(Marker marker){
+
+        listenFilter();
+
+    }
+    private void listenFilter(){
+        boolean checkRay=false;
+        boolean checkArea=false;
+        boolean checkTariffa=false;
         Switch areaSwitch = findViewById(R.id.panel_filter_switch_area_id);
         Switch raggioSwitch = findViewById(R.id.panel_filter_switch_raggio_id);
         Switch tariffaSwitch = findViewById(R.id.panel_filter_switch_tariffa_id);
-        Station station = (Station) marker.getTag();
-        boolean check=true;
-        //FILTRO AREA
-        if(areaSwitch.isChecked()&&check){
 
+        if(areaSwitch.isChecked()){
             if(areaValue==null){
                 Toast.makeText(MapsActivity.this,R.string.panel_filter_toast_no_selected_area,Toast.LENGTH_SHORT).show();
             }
-            else{
-                float[] results = new float[1];
-                Location.distanceBetween(areaValue.getLatitude(), areaValue.getLongitude(), station.getLatitude(), station.getLongitude(), results);
-                float distanceInMeters = results[0];
-                check = distanceInMeters < RAGGIO_AREA;
+            else
+                checkArea=true;
+        }
+        if(raggioSwitch.isChecked()) {
+            if (place_searched == null) {
+                Toast.makeText(MapsActivity.this, R.string.panel_filter_toast_no_selected_place, Toast.LENGTH_SHORT).show();
             }
+            else checkRay=true;
+        }
+        if(tariffaSwitch.isChecked()){
+            checkTariffa=true;
+        }
+
+            for (Marker marker: AllMarkers) {
+                marker.setVisible(true);
+                checkFilterMarker(marker,checkArea,checkRay,checkTariffa);
+            }
+    }
+
+    //CHECKFILTERS
+    private void checkFilterMarker(Marker marker,boolean checkArea, boolean checkRay, boolean checkTariffa){
+
+        Station station = (Station) marker.getTag();
+        boolean check=true;
+        //FILTRO AREA
+        if(checkArea&&check&&areaValue!=null){
+            float[] results = new float[1];
+            Location.distanceBetween(areaValue.getLat(), areaValue.getLon(), station.getLatitude(), station.getLongitude(), results);
+            float distanceInMeters = results[0];
+            check = distanceInMeters < RAGGIO_AREA;
         }
         //FILTRO RAGGIO
-        if(raggioSwitch.isChecked()&&check){
-            if(place_searched==null){
-                Toast.makeText(MapsActivity.this,R.string.panel_filter_toast_no_selected_place,Toast.LENGTH_SHORT).show();
-            }
-            else{
-                float[] results = new float[1];
-                Location.distanceBetween(place_searched.getLatLng().latitude, place_searched.getLatLng().longitude, station.getLatitude(), station.getLongitude(), results);
-                float distanceInMeters = results[0];
-                check = distanceInMeters < raggioValue*1000;
-            }
-
+        if(checkRay&&check&&place_searched!=null){
+            float[] results = new float[1];
+            Location.distanceBetween(place_searched.getLatLng().latitude, place_searched.getLatLng().longitude, station.getLatitude(), station.getLongitude(), results);
+            float distanceInMeters = results[0];
+            check = distanceInMeters < raggioValue*1000;
         }
         //FILTRO TARIFFA
-        if(tariffaSwitch.isChecked()&&check){
+        if(checkTariffa&&check){
             check =  tariffaValue == station.getCost_minute();
         }
 
@@ -711,7 +737,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //IMPOSTAZIONI MAPPA
     private void setMap() {
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
         //Riposiziono il bottone di geolocalizzazione
@@ -982,9 +1007,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         AllMarkers.clear();
         askStations();
         //controllo sui filtri
-        for (Marker marker: AllMarkers) {
-            checkFilterMarker(marker);
-        }
+
+        listenFilter();
     }
 
     public void onCloseResButtonClick(View view) {
@@ -1648,6 +1672,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void updateSpinner() {
         //Lista di etichette
         List<Favourite> fav= new ArrayList(loadFavouriteFromFile().values());
+        if(fav.isEmpty()){
+            spinnerFiltroPreferiti.setVisibility(View.GONE);
+            findViewById(R.id.panel_filter_spinner_text_id).setVisibility(View.VISIBLE);
+        }
+        else{
+            spinnerFiltroPreferiti.setVisibility(View.VISIBLE);
+            findViewById(R.id.panel_filter_spinner_text_id).setVisibility(View.GONE);
+        }
         ArrayAdapter <Favourite> a= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fav);
         spinnerFiltroPreferiti.setAdapter(a);
     }

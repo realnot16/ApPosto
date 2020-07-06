@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/map_panel_prenotazione_background"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="0dp">
 
@@ -62,9 +62,24 @@
 
         <Spinner
             android:id="@+id/panel_filter_spinner_area_id"
+            style="@style/spinner_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:entries="@array/first"
+            app:layout_constraintBottom_toBottomOf="@+id/panel_filter_switch_area_id"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/panel_filter_switch_area_id"
+            app:layout_constraintTop_toTopOf="@+id/panel_filter_switch_area_id" />
+
+        <TextView
+            android:id="@+id/panel_filter_spinner_text_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:text="@string/panel_filter_no_favorite"
+            android:textColor="@color/nero"
             app:layout_constraintBottom_toBottomOf="@+id/panel_filter_switch_area_id"
             app:layout_constraintStart_toEndOf="@+id/panel_filter_switch_area_id"
             app:layout_constraintTop_toTopOf="@+id/panel_filter_switch_area_id" />
@@ -74,8 +89,9 @@
             style="@style/MyNumberPickerTheme"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/panel_filter_switch_raggio_id"
-            app:layout_constraintStart_toStartOf="@+id/panel_filter_spinner_area_id"
+            app:layout_constraintStart_toEndOf="@+id/panel_filter_switch_raggio_id"
             app:layout_constraintTop_toTopOf="@+id/panel_filter_switch_raggio_id"
             app:np_dividerColor="@color/bluMain"
             app:np_dividerDistance="76dp"
@@ -90,7 +106,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/panel_filter_switch_tariffa_id"
             app:layout_constraintStart_toStartOf="@+id/panel_filter_npick_raggio_id"
             app:layout_constraintTop_toTopOf="@+id/panel_filter_switch_tariffa_id"
-            app:np_dividerDistance="54dp"
+            app:np_dividerDistance="58dp"
             app:np_height="48dp"
             app:np_orientation="horizontal"
             tools:layout_editor_absoluteX="191dp" />
@@ -101,7 +117,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/map_panel_prenotazione_background"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <CheckBox
             android:id="@+id/panel_station_favorite_id"
