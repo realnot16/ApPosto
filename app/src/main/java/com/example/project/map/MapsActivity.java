@@ -35,8 +35,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -51,6 +53,9 @@ import com.example.project.ParametersAsync.LoadStationParamsAsync;
 import com.example.project.ParametersAsync.OpenReservationParamsAsync;
 import com.example.project.ParametersAsync.ServerTask;
 import com.example.project.R;
+import com.example.project.favourites.Favourite;
+import com.example.project.favourites.FavouritesActivity;
+import com.example.project.favourites.FileIO;
 import com.example.project.reservation.ReservationsActivity;
 import com.example.project.userManagement.LoginActivity;
 import com.example.project.userManagement.ProfileActivity;
@@ -92,16 +97,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -188,6 +200,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    //DIALOG PER INSERIRE IL NOME DELLO STALLO PREFERITO
+    private Favourite newFavParking;
+    private final static String FILE_PATH = "FavouritesMapFile.txt";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -205,19 +221,43 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //STAZIONI PREFERITE
         checkBoxPreferiti = findViewById(R.id.panel_station_favorite_id);
         spinnerFiltroPreferiti = findViewById(R.id.panel_filter_spinner_area_id);
+
+
         checkBoxPreferiti.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     //FLAVIA, MEMORIZZO LA STAZIONE SELEZIONATA NEL FILE
                     // usa station_seleceted per avere i dettagli sulla stazione
+                    //dialog con edit text per inserire la label
+                    AlertDialog dialog = createEd().create();
+                    dialog.show();
+                    newFavParking= new Favourite("noncaricata",
+                            station_selected.getLatitude(),
+                            station_selected.getLongitude());
+                    //Dall'azione di conferma nella dialog completo newFavParking e aggiorno la mappa
 
-                    //FLAVIA, aggiungo adapter allo spinner
+
+                    //FLAVIA, aggiorno lo spinner
+                    //updateSpinnerAdapter();
+
 
                 }
                 else{
                     //FLAVIA, RIMUOVI LA STAZIONE SELEZIONATA DAL FILE
                     // usa station_seleceted per avere i dettagli sulla stazione
+                    Map<String, Favourite> favourites= loadFavouriteFromFile();
+                    for(Favourite f: favourites.values()){
+                        if(f.getLat()== station_selected.getLatitude() && f.getLon()== station_selected.getLongitude()){
+                            //lo tolgo dalla mappa
+                            favourites.remove(f);
+                            //ricarico la mappa sul file
+                            saveMapOnFile(favourites);
+
+                        }
+                    }
+                    //aggiorno lo spinner
+                    //updateSpinnerAdapter();
                 }
             }
         });
@@ -373,6 +413,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         return true;
                     case R.id.show_reservations:
                         startActivity(new Intent(MapsActivity.this, ReservationsActivity.class));
+                        return true;
+                    case R.id.favourite_management_id:
+                        startActivity(new Intent(MapsActivity.this, FavouritesActivity.class));
                         return true;
                     default:
                         return true;
@@ -1439,5 +1482,94 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             polylinesPoints.clear();
         }
     }
+    //-----------GESTIONE PREFERITI FLAVIA-------------
+    //Alert dialog con edit text per inserire label della stazione preferita
+    private AlertDialog.Builder createEd() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialog_fav_title);
+        builder.setMessage(R.string.dialog_fav_message);
+
+        final EditText inputLabel = new EditText(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
+        inputLabel.setLayoutParams(lp);
+        builder.setView(inputLabel);
+
+        builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Log.i("dialog", "Label inserita: "+inputLabel.getText().toString());
+                newFavParking.setLabel(inputLabel.getText().toString());
+                updateFavouriteFile(newFavParking);
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        return builder;
+    }
+
+    //AGGIUNGE LA NUOVA PREFERENZA AL FILE
+    private void updateFavouriteFile(Favourite temp) {
+
+        Map<String,Favourite> preferitiMap= new HashMap(loadFavouriteFromFile());
+
+        if(!preferitiMap.containsKey(temp.getLabel())){//se non è salvato nessun indirizzo per quell'etichetta, la salvo
+            preferitiMap.put(temp.getLabel(),temp);
+            saveMapOnFile(preferitiMap);
+        }else{//altrimenti, mostro un messaggio
+            Toast.makeText(this, R.string.favourite_repeated, Toast.LENGTH_LONG);
+        }
+    }
+    //SCRIVERE MAPPA SU FILE
+    private void saveMapOnFile(Map<String, Favourite> preferitiMap) {
+        try {
+            FileOutputStream fos= openFileOutput(FILE_PATH, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(preferitiMap);
+            oos.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            //tvMessage.setText("Errore caricamento su file");
+        }
+    }
+    //LEGGERE MAPPA DA FILE
+    private Map<String,Favourite> loadFavouriteFromFile() {
+        Map<String,Favourite> result= new HashMap<String, Favourite>();
+        try {
+            FileInputStream fis = openFileInput(FILE_PATH);
+            ObjectInputStream objectInput= new ObjectInputStream(fis);
+            result = new HashMap<>((HashMap<String, Favourite>) objectInput.readObject());
+            objectInput.close();
+
+        } catch (EOFException eof) {
+            System.out.println("Reached end of file");
+        } catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return result;
+    }
+    //cancellare un preferito da file
+    private void deleteFavouriteFromFile(Favourite toDelete) {
+        Map<String,Favourite> preferiti= new HashMap(loadFavouriteFromFile());
+        if(preferiti.isEmpty()){
+            //tvMessage.setText("Nessun luogo salvato fra i preferiti");
+        }else{
+            if(preferiti.containsKey(toDelete.getLabel())){
+                preferiti.remove(toDelete.getLabel());
+                //salvo il file aggiornato
+                saveMapOnFile(preferiti);
+            }
+        }
+
+    }
+
 
 }

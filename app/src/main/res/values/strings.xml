@@ -92,22 +92,28 @@
 
 
     <!-- String edit_favourites -->
-    <string name="favourites_address">Indirizzo: </string>
-    <string name="favourites_label">Etichetta: </string>
-    <string name="favourites_label_text">La mia etichetta </string>
-    <string name="favourites_address_text">Il mio indirizzo </string>
-    <string name="favourites_button_save">Salva \nmodifiche</string>
-    <string name="favourites_button_delete">Elimina \npreferito</string>
-    <string name="favourites_button_back">Annulla</string>
+    <!-- Menu contestuale -->
+    <string name="favourite_delete_option">Elimina preferito</string>
+    <string name="favourite_update_option">Modifica etichetta</string>
+    <string name="favourite_delete_all_option">Elimina tutto</string>
+    <!--Dialog per inserire/modificare etichetta-->
+    <string name="dialog_fav_title">Nuovo preferito</string>
+    <string name="dialog_fav_message">Inserisci un\'etichetta per il luogo selezionato:</string>
+    <string name="dialog_modify_fav_title">Inserisci la nuova etichetta:</string>
+    <string name="dialog_confirm">Invia</string>
+    <string name="dialog_delete">Cancella</string>
+    <!--Gestione preferiti-->
+    <string name="favourite_not_found">Non hai salvato nessun preferito!</string>
+    <string name="favourite_repeated">E\' già presente un preferito con questa etichetta!</string>
 
     <!-- String wallet management -->
     <string name="tv_activity_payment_title">Ricarica conto</string>
     <string name="tv_activity_payment">Scegli l\'importo da ricaricare: </string>
-    <string name="rb_activity_payment_5" translatable="false">5</string>
-    <string name="rb_activity_payment_10" translatable="false">10</string>
-    <string name="rb_activity_payment_15" translatable="false">15</string>
-    <string name="rb_activity_payment_20" translatable="false">20</string>
-    <string name="rb_activity_payment_50" translatable="false">50</string>
+    <string name="rb_activity_payment_5" translatable="false">5€</string>
+    <string name="rb_activity_payment_10" translatable="false">10€</string>
+    <string name="rb_activity_payment_15" translatable="false">15€</string>
+    <string name="rb_activity_payment_20" translatable="false">20€</string>
+    <string name="rb_activity_payment_50" translatable="false">50€</string>
     <string name="bt_activity_payment_">Paga</string>
     <string name="tv_operation">Operazione effettuata con successo!</string>
     <string name="tv_payment_detail">Ecco i dettagli del pagamento:</string>

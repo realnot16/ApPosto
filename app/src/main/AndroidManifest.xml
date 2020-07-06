@@ -24,9 +24,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-
-
-
         <service
             android:name=".NotificationService"
             android:enabled="true"
@@ -35,8 +32,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -66,15 +61,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".userManagement.SignupActivity"></activity>
+        <activity android:name=".userManagement.SignupActivity" />
         <activity android:name=".userManagement.MainActivity" />
         <activity android:name=".reservation.ReservationsActivity" />
         <activity android:name=".reservation.DetailedReservationActivity" />
         <activity android:name=".userManagement.ProfileActivity" />
         <activity android:name=".walletManagement.PaymentActivity"/>
-        <activity android:name=".walletManagement.PaymentDetail"></activity>
         <activity android:name=".map.ScannerActivity" />
+        <activity android:name=".favourites.FavouritesActivity"/>
+        <activity android:name=".walletManagement.PaymentDetail" />
     </application>
 
 </manifest>
