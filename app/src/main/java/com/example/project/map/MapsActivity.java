@@ -948,20 +948,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void askStations() {
         LatLng currentPosition = mMap.getCameraPosition().target;
-        String city = "Torino";//fittizia
-        LoadStationParamsAsync parametersAsync = new LoadStationParamsAsync(currentPosition.latitude, currentPosition.longitude, city);
+        LoadStationParamsAsync parametersAsync = new LoadStationParamsAsync(currentPosition.latitude, currentPosition.longitude);
         new LoadStations().execute(parametersAsync);
     }
     private void askStations(Double latitude, Double longitude) {
         String city = "Torino";//fittizia
-        LoadStationParamsAsync parametersAsync = new LoadStationParamsAsync(latitude, longitude, city);
+        LoadStationParamsAsync parametersAsync = new LoadStationParamsAsync(latitude, longitude);
         new LoadStations().execute(parametersAsync);
     }
 
     //Apre la reservation e nasconde panel
     public void onBookStation(View view) {
         if (currentReservation.getId_booking() == null) {
-            OpenReservationParamsAsync paramsAsync = new OpenReservationParamsAsync(mAuth.getUid(), station_selected.getId_parking(), "//FIttizia", 0);
+            OpenReservationParamsAsync paramsAsync = new OpenReservationParamsAsync(mAuth.getUid(), station_selected.getId_parking(),  0);
             new OpenReservation().execute(paramsAsync);
             panel.setPanelState(PanelState.HIDDEN);
 
@@ -1028,8 +1027,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             try {
                 params = "lat_destination=" + URLEncoder.encode(lat_dest_string, "UTF-8")
-                        + "&long_destination=" + URLEncoder.encode(long_dest_string, "UTF-8")
-                        + "&city=" + URLEncoder.encode(parametersAsyncs[0].city, "UTF-8");
+                        + "&long_destination=" + URLEncoder.encode(long_dest_string, "UTF-8");
 
                 JSONArray jArray = ServerTask.askToServer(params, url);
                 for (int i = 0; i < jArray.length(); i++) {         //Ciclo di estrazione oggetti
@@ -1083,12 +1081,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String bonus_string = String.valueOf(parametersAsyncs[0].bonus);
             String id_parking_string = String.valueOf(parametersAsyncs[0].id_parking);
             String id_user_string = parametersAsyncs[0].id_user;
-            String address_string = parametersAsyncs[0].address_start;
-            Log.i(TAG, "dettagli map_icona_panel_prenotazione: " + bonus_string + " " + id_parking_string + " " + id_user_string + " " + address_string);
+            Log.i(TAG, "dettagli map_icona_panel_prenotazione: " + bonus_string + " " + id_parking_string + " " + id_user_string);
             try {
                 params = "id_user=" + URLEncoder.encode(id_user_string, "UTF-8")
                         + "&bonus=" + URLEncoder.encode(bonus_string, "UTF-8")
-                        + "&address_start=" + URLEncoder.encode(address_string, "UTF-8")
                         + "&id_parking=" + URLEncoder.encode(id_parking_string, "UTF-8");
 
                 JSONArray jsonArray = ServerTask.askToServer(params, url);
@@ -1217,7 +1213,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if (json_result.getString("result").equals("ok")) {
                         JSONObject json_body = jArray.getJSONObject(0);
                         currentReservation.setId_booking(json_body.getString("id_booking"));
-                        currentReservation.setAddress_start(json_body.getString("address_start"));
                         currentReservation.setParking_id(Integer.parseInt(json_body.getString("parking_id")));
                         currentReservation.setBonus(Integer.parseInt(json_body.getString("bonus")));
                         currentReservation.setSuccessful(Integer.parseInt(json_body.getString("successful")));
@@ -1379,7 +1374,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (new_parking_rdrct!=null){
         Integer id_new_parking=Integer.valueOf(new_parking_rdrct);
-        OpenReservationParamsAsync paramsAsyncOpen=new OpenReservationParamsAsync(mAuth.getUid(),id_new_parking,"//FIttizia",1);
+        OpenReservationParamsAsync paramsAsyncOpen=new OpenReservationParamsAsync(mAuth.getUid(),id_new_parking,1);
         new OpenReservation().execute(paramsAsyncOpen);
         }
         popup.cancel();

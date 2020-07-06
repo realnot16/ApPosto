@@ -177,8 +177,7 @@ public class ReservationsActivity extends AppCompatActivity {
                 temp.setId_booking(json_data.getString(Reservation.ReservationMetaData.ID));
                 temp.setTime_start(json_data.getString(Reservation.ReservationMetaData.TIME_START));
                 temp.setTime_end(json_data.getString(Reservation.ReservationMetaData.TIME_END));
-                temp.setAddress_start(json_data.getString(Reservation.ReservationMetaData.START_ADDRESS));
-                temp.setAddress_start(json_data.getString(Reservation.ReservationMetaData.END_ADDRESS));
+                temp.setAddress_end(json_data.getString(Reservation.ReservationMetaData.END_ADDRESS));
                 temp.setBonus(json_data.getInt(Reservation.ReservationMetaData.BONUS));
                 temp.setParking_id(json_data.getInt(Reservation.ReservationMetaData.ID_PARKING));
                 temp.setAmount(json_data.getString(Reservation.ReservationMetaData.AMOUNT));

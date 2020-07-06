@@ -75,7 +75,7 @@ public class DetailedReservationActivity extends AppCompatActivity {
             tvIdReservation.setText(reservation.getId_booking());
             tvDateStartReservation.setText(reservation.getTime_start());
             tvDateFinishReservation.setText(reservation.getTime_end());
-            tvStartAddressReservation.setText(reservation.getAddress_start());
+            tvStartAddressReservation.setText(reservation.getAddress_end());
             tvAmountReservation.setText(""+reservation.getAmount()+"€");
             if(reservation.getBonus()==1){
                 tvBonusReservation.setVisibility(View.VISIBLE);

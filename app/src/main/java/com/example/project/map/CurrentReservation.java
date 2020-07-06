@@ -10,7 +10,6 @@ public class CurrentReservation {
     public String id_booking;
     public Integer parking_id;
     public Integer successful;
-    public String address_start;
     public Integer  bonus;
     public Float  latitude;
     public Float longitude;
@@ -18,11 +17,10 @@ public class CurrentReservation {
 
     public CurrentReservation(){}
 
-    public CurrentReservation(String id_booking, Integer parking_id, Integer successful, String address_start, Integer bonus, Float latitude, Float longitude) {
+    public CurrentReservation(String id_booking, Integer parking_id, Integer successful, Integer bonus, Float latitude, Float longitude) {
         this.id_booking = id_booking;
         this.parking_id = parking_id;
         this.successful = successful;
-        this.address_start = address_start;
         this.bonus = bonus;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -68,14 +66,6 @@ public class CurrentReservation {
         this.successful = successful;
     }
 
-    public String getAddress_start() {
-        return address_start;
-    }
-
-    public void setAddress_start(String address_start) {
-        this.address_start = address_start;
-    }
-
     public Integer getBonus() {
         return bonus;
     }
@@ -89,7 +79,6 @@ public class CurrentReservation {
         this.id_booking = null;
         this.parking_id = null;
         this.successful = null;
-        this.address_start = null;
         this.bonus = null;
         this.latitude = null;
         this.longitude = null;

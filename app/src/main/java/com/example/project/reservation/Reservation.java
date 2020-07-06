@@ -18,7 +18,6 @@ public class Reservation implements Parcelable {
         public static String ID = "id_booking";
         public static String TIME_START = "time_start";
         public static String TIME_END = "time_end";
-        public static String START_ADDRESS = "address_start";
         public static String END_ADDRESS = "street";
         public static String BONUS = "bonus";
         public static String ID_PARKING = "parking_id";
@@ -41,7 +40,6 @@ public class Reservation implements Parcelable {
     private String id_booking;
     private String time_start;
     private String time_end;
-    private String address_start;
     private String address_end;
     private int bonus;
     private int parking_id;
@@ -52,7 +50,6 @@ public class Reservation implements Parcelable {
         id_booking = in.readString();
         time_start = in.readString();
         time_end = in.readString();
-        address_start = in.readString();
         address_end=in.readString();
         bonus = in.readInt();
         parking_id = in.readInt();
@@ -80,7 +77,6 @@ public class Reservation implements Parcelable {
         parcel.writeString(id_booking);
         parcel.writeString(time_start);
         parcel.writeString(time_end);
-        parcel.writeString(address_start);
         parcel.writeString(address_end);
         parcel.writeInt(bonus);
         parcel.writeInt(parking_id);
@@ -96,10 +92,6 @@ public class Reservation implements Parcelable {
 
     public void setTime_end(String time_end) {
         this.time_end = time_end;
-    }
-
-    public void setAddress_start(String address_start) {
-        this.address_start = address_start;
     }
 
     public void setBonus(int bonus) {
@@ -144,9 +136,6 @@ public class Reservation implements Parcelable {
         return result;
     }
 
-    public String getAddress_start() {
-        return address_start;
-    }
 
     public int getBonus() {
         return bonus;
