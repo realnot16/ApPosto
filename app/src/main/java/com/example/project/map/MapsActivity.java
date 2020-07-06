@@ -179,7 +179,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Station areaValue;
 
     //TIMER
-    private String timerPickerValues[] = {"05 ", "10 ", "15 ","20 ","25 ","30 ","35 ","40 ","45 ","50 ","55 ","60 "};
+    private String timerPickerValues[] = {"15 ","20 ","25 ","30 ","35 ","40 ","45 ","50 ","55 ","60 "};
 
     //PREFERITI
     private CheckBox checkBoxPreferiti;
