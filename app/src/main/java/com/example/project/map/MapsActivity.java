@@ -1665,8 +1665,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int reservMin = Integer.parseInt(timerPickerValues[pickerTimer.getValue()-1]);
         Log.i(TAG, "Minuti da picker: "+reservMin);
         //Alarm 10 min prima della scadenza
-        //long minInMillis = SystemClock.elapsedRealtime()+(reservMin-10)*60*1000; //Aggiungo al tempo attuale del dispositivo
-        long minInMillis = SystemClock.elapsedRealtime()+10*1000; //TEST con 10 secondi
+        long minInMillis = SystemClock.elapsedRealtime()+(reservMin-10)*60*1000; //Aggiungo al tempo attuale del dispositivo
+        //long minInMillis = SystemClock.elapsedRealtime()+30*1000; //TEST con 30 secondi
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, minInMillis, alarmIntent);      //ELAPSED_REALTIME_WAKEUP è generato anche se dispositivo spento
         Log.i(TAG, "Alarm sent "+minInMillis);
         salvaInSharedPreferences(Long.toString(minInMillis));

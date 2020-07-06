@@ -49,7 +49,7 @@
     <string name="channel_description" translatable="false">Channel for apposto</string>
     <string name="redirectMessage">Sorry! Someone is trying to occupy your place. What do you prefer?</string>
     <string name="panel_no_rdrct">END RESERVATION for FREE</string>
-    <string name="panel_rdrc_text">You will be redirect to the nearest parking from your last destination!</string>
+    <string name="panel_rdrc_text">You will be redirect to this nearest parking from your last destination:</string>
     <string name="panel_label_park">Parking n.</string>
     <string name="panel_label_dist">Distance:</string>
     <string name="panel_label_address">Address:</string>
@@ -97,7 +97,7 @@
     <string name="panel_tariffa_value">fareValue</string>
     <string name="reservation_description">Your reservations</string>
     <string name="profile_tilte">Your Profile</string>
-    <string name="panel_time_continue">No, continue</string>
+    <string name="panel_time_continue">Ignore</string>
     <string name="panel_no_ext">Close reservation</string>
     <string name="panel_ext">Extend reservation for 10 min more</string>
     <string name="panel_time_text">Your reservation is expiring. Do you want to extend it?</string>
@@ -118,6 +118,7 @@
     <string name="favourite_title">Favourite stations</string>
     <string name="tv_activity_payment_wallet_description">Balance</string>
     <string name="scanner_problem">Problem with QR code? Click here!</string>
+    <string name="reservation_omaggio">This is a bonus reservation!</string>
     <string name="label_empty">Error: label inserted is empty!</string>
     <string name="reservation_omaggio">This is a free booking! </string>
 </resources>

@@ -83,7 +83,7 @@
     <string name="panel_image">Immagine Parcheggio</string>
     <string name="panel_distance_value">-</string>
     <string name="panel_tariffa_value">tariffaValue</string>
-    <string name="panel_time_continue">No, continua</string>
+    <string name="panel_time_continue">Ignora</string>
     <string name="panel_no_ext">Chiudi prenotazione</string>
     <string name="panel_ext">Estendi prenotazione per ulteriori 10 min</string>
     <string name="panel_time_text">La tua prenotazione è in scadenza.\nVuoi prorogarla?</string>
@@ -151,7 +151,7 @@
     <string name="channel_description">Channel per APPosto</string>
     <string name="redirectMessage">Attenzione! Qualcuno sta occupando il parcheggio che hai prenotato. Cosa preferisci fare?</string>
     <string name="panel_no_rdrct">CHIUDI PRENOTAZIONE GRATIS</string>
-    <string name="panel_rdrc_text">Verrai reindirizzato al parcheggio più vicino alla tua destinazione!</string>
+    <string name="panel_rdrc_text">Verrai reindirizzato al seguente parcheggio più vicino alla tua destinazione:</string>
     <string name="panel_label_park">Parcheggio n.</string>
     <string name="panel_label_dist">Distanza:</string>
     <string name="panel_label_address">Indirizzo:</string>
