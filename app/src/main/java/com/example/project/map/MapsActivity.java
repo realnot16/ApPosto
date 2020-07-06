@@ -233,12 +233,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         checkBoxPreferiti = findViewById(R.id.panel_station_favorite_id);
         spinnerFiltroPreferiti = findViewById(R.id.panel_filter_spinner_area_id);
 
-        updateSpinner();
+
 
 
         checkBoxPreferiti.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //controllo per distiguere il click dell'utente dal setChecked()
+                if(!buttonView.isPressed())
+                    return;
+
                 if(isChecked){
                     //FLAVIA, MEMORIZZO LA STAZIONE SELEZIONATA NEL FILE
                     // usa station_seleceted per avere i dettagli sulla stazione
@@ -251,26 +256,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Dall'azione di conferma nella dialog completo newFavParking e aggiorno la mappa
 
 
-                    //FLAVIA, aggiorno lo spinner
-                    updateSpinner();
 
 
-                }
-                else{
+                }else{
+                    Log.i("flavia", "Ho deselezionato il preferito");
                     //FLAVIA, RIMUOVI LA STAZIONE SELEZIONATA DAL FILE
                     // usa station_seleceted per avere i dettagli sulla stazione
-                    Map<String, Favourite> favourites= loadFavouriteFromFile();
+                    deleteFavouriteFromFile(new Favourite("-123", station_selected.getLatitude(), station_selected.getLongitude()));
+                    buttonView.setChecked(false);
+                    /*Map<String, Favourite> favourites= loadFavouriteFromFile();
                     for(Favourite f: favourites.values()){
                         if(f.getLat()== station_selected.getLatitude() && f.getLon()== station_selected.getLongitude()){
                             //lo tolgo dalla mappa
                             favourites.remove(f);
                             //ricarico la mappa sul file
                             saveMapOnFile(favourites);
-
                         }
-                    }
-                    //aggiorno lo spinner
-                    updateSpinner();
+                    }*/
                 }
             }
         });
@@ -529,6 +531,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.action_filter:
                 // User chose the "Settings" item, show the app settings UI...
+                updateSpinner();
                 Log.i(TAG,"Apro Filtri");
                 stationLayout.setVisibility(View.GONE);
                 filterLayout.setVisibility(View.VISIBLE);
@@ -658,6 +661,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 TextView distanceTextId = findViewById(R.id.panel_station_distance_text_id);
 
                 Log.i(TAG, "Imposto panel ed apro");
+
+                //verifico se la stazione è fra i preferiti e in caso positivo coloro la stellina
+                if(isAFavStation(station_selected)){
+                    //spunto la stellina
+                    checkBoxPreferiti.setChecked(true);
+                }else{
+                    checkBoxPreferiti.setChecked(false);
+                }
 
                 stationId.setText(station_selected.getId_parking().toString()+" - "+station_selected.getStreet());
                 tariffaTextId.setText(String.valueOf(station_selected.getCost_minute())+"€/minute");
@@ -1550,6 +1561,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     //SCRIVERE MAPPA SU FILE
     private void saveMapOnFile(Map<String, Favourite> preferitiMap) {
+        Log.i("flavia", "Sto caricado su file una mappa");
         try {
             FileOutputStream fos= openFileOutput(FILE_PATH, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -1581,10 +1593,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     //cancellare un preferito da file
     private void deleteFavouriteFromFile(Favourite toDelete) {
+        //carico preferiti
         Map<String,Favourite> preferiti= new HashMap(loadFavouriteFromFile());
-        if(preferiti.isEmpty()){
-            //tvMessage.setText("Nessun luogo salvato fra i preferiti");
-        }else{
+        Log.i("flavia", "Dimensione vecchia mappa" + preferiti.size());
+        //se passo solo le coordinate, cancello il preferito con quelle coordinate
+            if(toDelete.getLabel().equals("-123")) {
+                Log.i("flavia", "Rimozione da stellina");
+                for (Favourite f : preferiti.values()) {
+                    if ((f.getLat()== station_selected.getLatitude()) && (f.getLon() == station_selected.getLongitude())) {
+                        Log.i("flavia", "Ho trovato il preferito su mappa");
+                        //lo tolgo dalla mappa
+                        preferiti.remove(f.getLabel(),f);
+                        Log.i("flavia", "Dimensione nuova mappa" + preferiti.size());
+                        //ricarico la mappa sul file
+                        saveMapOnFile(preferiti);
+                        Log.i("flavia", "File aggiornato, size: "+ loadFavouriteFromFile().size());
+                    }
+                }
+            }
+            //se passo un preferito completo
             if(preferiti.containsKey(toDelete.getLabel())){
                 preferiti.remove(toDelete.getLabel());
                 //salvo il file aggiornato
@@ -1592,7 +1619,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
-    }
+
     //Funzione per aggiornare lo spinner
     private void updateSpinner() {
         //Lista di etichette
@@ -1691,5 +1718,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         popup_time.cancel();
         popup_time=null;
     }
+    //controllo se una stazione è fra i preferiti per selezionare la checkbox
+    private boolean isAFavStation(Station station_selected) {
+        //recupero mappa preferiti
+        Map<String, Favourite> favourite= loadFavouriteFromFile();
+        for(Favourite f: favourite.values()){
+            if(f.getLat()==station_selected.getLatitude()
+                    && f.getLon()== station_selected.getLongitude()){
+                return true;
+            }
+        }
+            return false;
+        }
+
+
+
+
 
 }

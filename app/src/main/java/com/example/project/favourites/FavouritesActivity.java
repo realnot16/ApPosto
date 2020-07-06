@@ -136,11 +136,8 @@ public class FavouritesActivity extends ListActivity {
             ex.printStackTrace();
         }
 
-        if(!result.isEmpty()){
-            updateListView(result);
-        }else{
-            Toast.makeText(this, "Nessun preferito da mostrare", Toast.LENGTH_LONG);
-        }
+        updateListView(result);
+
 
         return result;
     }
