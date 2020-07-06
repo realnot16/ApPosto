@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -24,11 +25,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -38,7 +36,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -101,6 +98,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.shawnlin.numberpicker.NumberPicker;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -140,7 +138,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //LAYOUT
 
     private GoogleMap mMap;
-    private CameraPosition mCameraPosition;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private List<Marker> AllMarkers;
     private SlidingUpPanelLayout panel;
@@ -182,15 +179,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //FILTRI
     private final static float RAGGIO_AREA= 1500;
-    private String raggioPickerValues[] = { " 0.5 ", " 1 "," 1.5 ", " 2 "};
-    private String tariffaPickerValues[] = { " 0.02 ", " 0.03 "," 0.05 "};
+    private String[] raggioPickerValues = { " 0.5 ", " 1 "," 1.5 ", " 2 "};
+    private String[] tariffaPickerValues = { " 0.02 ", " 0.03 "," 0.05 "};
 
     private float raggioValue;
     private double tariffaValue;
     private Favourite areaValue;
 
     //TIMER
-    private String timerPickerValues[] = {"15","20","25","30","35","40","45","50","60"};
+    private String[] timerPickerValues = {"15","20","25","30","35","40","45","50","60"};
 
     //PREFERITI
     private CheckBox checkBoxPreferiti;
@@ -227,7 +224,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //SLIDER STAZIONI
 
-        panel = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        panel = findViewById(R.id.sliding_layout);
         panel.setPanelState(PanelState.HIDDEN);
 
         filterLayout = findViewById(R.id.panel_filter_layout_id);
@@ -286,7 +283,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mAuth = FirebaseAuth.getInstance();
 
         // SETTO LISTA MARKERS
-        AllMarkers = new ArrayList<Marker>();
+        AllMarkers = new ArrayList<>();
 
 
         // TOOLBAR E NAVIGATION DRAWER
@@ -296,7 +293,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // MAPPA : Obtain the SupportMapFragment and get notified when the map is ready to be used.
         if (savedInstanceState != null) {  //Recupero informazioni sull'ultima posizione rilevata
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
+            CameraPosition mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
         createMap();
 
@@ -336,7 +333,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         qrButton = findViewById(R.id.floatingQrButton);
         setQrButton(qrButton);
         //EVIDENZIA STATO PRENOTAZIONE IN CORSO
-        layoutReservation = (ConstraintLayout) findViewById(R.id.linLayoutCurrRes);
+        layoutReservation = findViewById(R.id.linLayoutCurrRes);
         if (currentReservation.id_booking != null) {
             layoutReservation.setVisibility(View.VISIBLE);
         }
@@ -385,7 +382,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //ACTIVITY IN PAUSA
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         //salvo lo stato della mappa quando l'activity è in pausa
         if (mMap != null) {
             outState.putParcelable(KEY_CAMERA_POSITION, mMap.getCameraPosition());
@@ -468,7 +465,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         String apiKey = getString(R.string.place_autocomplete_key);
 
-        /**
+        /*
          * Initialize Places. For simplicity, the API key is hard-coded. In a production
          * environment we recommend using a secure mechanism to manage API keys.
          */
@@ -489,7 +486,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
-            public void onPlaceSelected(Place place) {
+            public void onPlaceSelected(@NotNull Place place) {
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + " - " + place.getLatLng());
                 LatLng newPosition = new LatLng(place.getLatLng().latitude,place.getLatLng().longitude);
                 place_searched=place;
@@ -697,8 +694,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     checkBoxPreferiti.setChecked(false);
                 }
 
-                stationId.setText(station_selected.getId_parking().toString()+" - "+station_selected.getStreet());
-                tariffaTextId.setText(String.valueOf(station_selected.getCost_minute())+"€/minute");
+                String idPark = station_selected.getId_parking().toString()+" - "+station_selected.getStreet();
+                stationId.setText(idPark);
+                String tariff=station_selected.getCost_minute() +"€/minute";
+                tariffaTextId.setText(tariff);
 
 
                 if(mLocationPermissionGranted&&mLastKnownLocation!=null&&mLocationFound){
@@ -724,8 +723,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        Log.i(TAG, "Stazioni caricate");
-        Toast.makeText(this, "estrazione finita", Toast.LENGTH_SHORT);
+        Log.i(TAG, "Stations charged");
 
 
     }
@@ -835,7 +833,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             }
         } catch (SecurityException e) {
-            Log.e("Exception: %s", e.getMessage());
+            Log.e("Exception: %s", Objects.requireNonNull(e.getMessage()));
         }
     }
 
@@ -888,7 +886,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
                 try {
-                    LocationSettingsResponse response = task.getResult(ApiException.class);
+                    task.getResult(ApiException.class);
                     Log.i(TAG, "GEOLOCALIZZAZIONE-6a: GPS attivo, si procede all'attivazione");
                     // All location settings are satisfied. The client can initialize location
                     // requests here.
@@ -957,7 +955,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
                 } else {
                     Intent intent = new Intent(MapsActivity.this, ScannerActivity.class);
-                    Boolean canCloseReservation = false;
+                    boolean canCloseReservation = false;
                     if (currentReservation.getId_booking() != null) {
                         canCloseReservation = true;
                     }
@@ -1035,6 +1033,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //TASK ASYNC:---------------------------------------------------------------------------------
 
     //1- LOAD STATION, permette di acquisire tutte le stazioni nell'area visualizzata durante il primo accesso alla mappa
+    @SuppressLint("StaticFieldLeak")
     private class LoadStations extends AsyncTask<LoadStationParamsAsync, Void, ArrayList<Station>> {
         @Override
         protected ArrayList<Station> doInBackground(LoadStationParamsAsync... parametersAsyncs) {
@@ -1081,7 +1080,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng position = new LatLng(stat.getLatitude(), stat.getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions().position(position)
                         .title("Stazione N " + stat.getId_parking().toString())
-                        .icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.map_ic_pin));
+                        .icon(bitmapDescriptorFromVector(getApplicationContext()));
                 Marker marker = mMap.addMarker(markerOptions);//BitmapDescriptorFactory.fromResource(R.drawable.map_pin)
                 AllMarkers.add(marker);
                 marker.setTag(stat);
@@ -1092,11 +1091,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //2- OPEN RESERVATION, permette di aprire una map_icona_panel_prenotazione
+    @SuppressLint("StaticFieldLeak")
     private class OpenReservation extends AsyncTask<OpenReservationParamsAsync, Void, String> {
         @Override
         protected String doInBackground(OpenReservationParamsAsync... parametersAsyncs) {
             String url = "https://smartparkingpolito.altervista.org/OpenReservation.php";
-            String params = null;
+            String params;
             String control = null;
 
             //Encoding parametri:
@@ -1161,13 +1161,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //3- CLOSE RESERVATION, permette di chiudere una map_icona_panel_prenotazione
+    @SuppressLint("StaticFieldLeak")
     private class CloseReservation extends AsyncTask<CloseReservationParamsAsync, Void, String> {
         @Override
         protected String doInBackground(CloseReservationParamsAsync... parametersAsyncs) {
 
             String url = "https://smartparkingpolito.altervista.org/CloseReservation.php";
             String params = null;
-            String result = null;
+            String result;
 
             //Encoding parametri:
             String id_booking_string = parametersAsyncs[0].booking_id;
@@ -1183,7 +1184,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 e.printStackTrace();
             }
             JSONArray jsonArray = ServerTask.askToServer(params, url);
-            if (jsonArray == null) ;
             try {
                 result = jsonArray.getJSONObject(0).getString("result");
             } catch (JSONException e) {
@@ -1223,6 +1223,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //4-CHECK CURRENT RESERVATION, controlla se sul server è settata una map_icona_panel_prenotazione per l'user corrente, evita di perdere
     // la map_icona_panel_prenotazione se l'app viene chiusa
+    @SuppressLint("StaticFieldLeak")
     private class CheckCurrentReservation extends AsyncTask<String, Void, Boolean> {
 
         @Override
@@ -1247,14 +1248,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } catch (Exception e) {
                 Log.e("log_tag", "Error " + e.toString());
             }
-            if (currentReservation.id_booking != null) return true;
-            return false;
+            return currentReservation.id_booking != null;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
             Log.i("icona", result.toString());
-            if (result == true) layoutReservation.setVisibility(View.VISIBLE);
+            if (result) layoutReservation.setVisibility(View.VISIBLE);
 
         }
 
@@ -1270,8 +1270,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (requestCode) {
             case SCANNER_REQUEST_CODE:  //GESTIONE EVENTI SCANNER
                 if (resultCode == Activity.RESULT_OK) {
-                    Integer result = Integer.parseInt(data.getStringExtra("parking_code"));
-                    Toast.makeText(MapsActivity.this, result.toString(), Toast.LENGTH_SHORT).show();
+                    int result = Integer.parseInt(Objects.requireNonNull(data.getStringExtra("parking_code")));
+                    Toast.makeText(MapsActivity.this, Integer.toString(result), Toast.LENGTH_SHORT).show();
                     String id_user = mAuth.getUid();
                     Integer id_parking = result;
                     String id_booking = currentReservation.id_booking;// currentReservation.getId(); recupera id_booking da istanza currentReservation
@@ -1340,8 +1340,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //Converte svg in bitmap (per icone mappa)-----------------------------------------------------
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.map_ic_pin);
+        assert vectorDrawable != null;
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -1351,19 +1352,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //-----POP UP REDIRECT----------------------------------------------------------------------
 
     // Aggiorna e mostra il pannello di redirect se arriva la notifica
-    private void    showRdrctPopup(@Nullable String id_parking,@Nullable String distance,@Nullable String address) {
+    @SuppressLint("InflateParams")
+    private void    showRdrctPopup(@Nullable String id_parking, @Nullable String distance, @Nullable String address) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this,R.style.CustomAlertDialog);
         LayoutInflater layoutInflater = getLayoutInflater();
         View customView;
 
         if (id_parking!=null){
+            String text="";
             customView = layoutInflater.inflate(R.layout.map_redir_popup, null);
-            TextView tv_panel_park= (TextView) customView.findViewById(R.id.tv_park_id);
+            TextView tv_panel_park= customView.findViewById(R.id.tv_park_id);
             tv_panel_park.setText(id_parking);
-            TextView tv_panel_dist= (TextView) customView.findViewById(R.id.tv_dist_id);
-            tv_panel_dist.setText(distance+"m");
-            TextView tv_panel_address= (TextView) customView.findViewById(R.id.tv_address_id);
+            TextView tv_panel_dist= customView.findViewById(R.id.tv_dist_id);
+            text=distance+"m";
+            tv_panel_dist.setText(text);
+            TextView tv_panel_address= customView.findViewById(R.id.tv_address_id);
             tv_panel_address.setText(address);
         }
         else customView = layoutInflater.inflate(R.layout.map_no_redir_popup, null);
