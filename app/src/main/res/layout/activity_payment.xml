@@ -7,6 +7,42 @@
     android:background="@drawable/main_background_not_coloured"
     tools:context=".walletManagement.PaymentActivity">
 
+    <RelativeLayout
+        android:id="@+id/tv_payment_wallet_layout_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/button_rounded_border"
+        android:backgroundTint="@color/bianco"
+        android:paddingStart="24dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reservation_toolbar_layout_id">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/tv_activity_payment_wallet_description"
+            android:textColor="@color/bluMain"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_wallet_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView2"
+            android:layout_centerHorizontal="true"
+            android:text="..."
+            android:textColor="@color/gialloMain"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
     <include
         android:id="@+id/reservation_toolbar_layout_id"
         layout="@layout/main_toolbar"
@@ -16,83 +52,86 @@
         android:id="@+id/tv_payment_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/button_rounded_border"
+        android:backgroundTint="@color/bluMain"
         android:gravity="center_horizontal"
+        android:paddingStart="5dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="2dp"
         android:text="@string/tv_activity_payment"
+        android:textColor="@color/bianco"
         android:textSize="20sp"
         android:textStyle="bold"
         app:autoSizeTextType="none"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.223" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_payment_wallet_layout_id" />
 
     <RadioGroup
         android:id="@+id/rg_payment"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_payment_activity"
-        app:layout_constraintVertical_bias="0.06">
+        app:layout_constraintTop_toBottomOf="@+id/tv_payment_activity">
 
         <RadioButton
             android:id="@+id/rb_5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/rb_activity_payment_5" />
+            android:layout_weight="1"
+            android:button="@drawable/radio_button_background_5" />
 
         <RadioButton
             android:id="@+id/rb_10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/rb_activity_payment_10" />
+            android:layout_weight="1"
+            android:button="@drawable/radio_button_background_10" />
 
         <RadioButton
             android:id="@+id/rb_15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/rb_activity_payment_15" />
+            android:layout_weight="1"
+            android:button="@drawable/radio_button_background_15" />
 
         <RadioButton
             android:id="@+id/rb_20"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/rb_activity_payment_20" />
+            android:layout_weight="1"
+            android:button="@drawable/radio_button_background_20" />
 
         <RadioButton
             android:id="@+id/rb_50"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/rb_activity_payment_50" />
+            android:layout_weight="1"
+            android:button="@drawable/radio_button_background_50" />
     </RadioGroup>
 
     <Button
         android:id="@+id/bt_paynow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/button_rounded_border"
+        android:backgroundTint="@color/gialloMain"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:text="@string/bt_activity_payment_"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.747" />
-
-    <TextView
-        android:id="@+id/tv_wallet_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="..."
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_payment_activity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.863"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.418" />
+        app:layout_constraintTop_toBottomOf="@+id/rg_payment" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

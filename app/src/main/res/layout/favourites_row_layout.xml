@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/favourite_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:alpha="0.85"
+    android:background="@drawable/button_rounded_border"
+    android:backgroundTint="@color/bianco"
+    android:paddingStart="20dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="20dp">
 
     <TextView
         android:id="@+id/tv_favourite_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="TextView" />
-</LinearLayout>
+        android:layout_centerHorizontal="true"
+        android:text="TextView"
+        android:textColor="@color/nero" />
+</RelativeLayout>

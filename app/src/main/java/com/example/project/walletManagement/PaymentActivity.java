@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -85,6 +87,7 @@ public class PaymentActivity extends AppCompatActivity {
 
     }
 
+    //INIZIALIZZO ACTIIVTY
     private void initUI() {
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -104,6 +107,8 @@ public class PaymentActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     private void processPayment() {
         /*Il costruttore di PayPalPayment si aspetta quattro parametri:
@@ -227,7 +232,7 @@ public class PaymentActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             //Al termine, viene settata l'interfaccia
-            amountFromDb.setText(String.valueOf(wallet));
+            amountFromDb.setText(String.valueOf(wallet)+" €");
             setUpUI();
         }
     }

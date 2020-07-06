@@ -103,12 +103,14 @@
     <string name="dialog_confirm">Invia</string>
     <string name="dialog_delete">Cancella</string>
     <!--Gestione preferiti-->
+    <string name="favourite_title">Stazioni preferite</string>
     <string name="favourite_not_found">Non hai salvato nessun preferito!</string>
     <string name="favourite_repeated">E\' già presente un preferito con questa etichetta!</string>
 
     <!-- String wallet management -->
     <string name="tv_activity_payment_title">Ricarica conto</string>
-    <string name="tv_activity_payment">Scegli l\'importo da ricaricare: </string>
+    <string name="tv_activity_payment_wallet_description">Credito residuo</string>
+    <string name="tv_activity_payment">Scegli l\'importo da ricaricare </string>
     <string name="rb_activity_payment_5" translatable="false">5€</string>
     <string name="rb_activity_payment_10" translatable="false">10€</string>
     <string name="rb_activity_payment_15" translatable="false">15€</string>

@@ -64,7 +64,7 @@
     <string name="favourites_button_save">Save changes</string>
     <string name="favourites_button_delete">Delete favorite</string>
     <string name="favourites_button_back">Discard</string>
-    <string name="tv_activity_payment">Choose amount to top-up:</string>
+    <string name="tv_activity_payment">Choose amount to top-up</string>
     <string name="bt_activity_payment_">Go to payment</string>
     <string name="tv_payment_detail">Operation carried out successfully! Here the payment details:</string>
     <string name="bt_go_to_map">Go to map</string>

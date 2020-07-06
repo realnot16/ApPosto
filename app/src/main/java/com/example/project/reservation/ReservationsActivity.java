@@ -44,7 +44,7 @@ public class ReservationsActivity extends AppCompatActivity {
     private static final String TAG= "ReservationActivity";
     private static final String URL_DB= "http://smartparkingpolito.altervista.org/GetReservationsByUserId.php";
     private List<Reservation> storico= new ArrayList<Reservation>();
-    ListView list_view;
+    private ListView list_view;
     FirebaseAuth mAuth;
     FirebaseUser user;
 

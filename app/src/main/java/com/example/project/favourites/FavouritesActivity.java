@@ -13,9 +13,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.project.R;
 
@@ -32,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 //VISUALIZZA LE PREFERENZE, PERMETTE DI ELIMINARNE UNA O DI MODIFICARE L'ETICHETTA
-public class FavouritesActivity extends ListActivity {
+public class FavouritesActivity extends AppCompatActivity {
 
     private final static String FILE_PATH = "FavouritesMapFile.txt";
     private static final String TAG = "FavouritesActivity" ;
@@ -40,20 +43,43 @@ public class FavouritesActivity extends ListActivity {
     private final static int UPDATE_MENU_OPTION = 2;
     private static final int DELETE_ALL_MENU_OPTION = 3 ;
     private Favourite modifiedFavourite;
+    private ListView list_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
+        initUI();
+        list_view = (ListView) findViewById(android.R.id.list);
 
         //menu contestuale
-        registerForContextMenu(getListView());
+        registerForContextMenu(list_view);
 
         //loadTestMapOnFile();
         //estraggo la mappa da file
         Map<String,Favourite> favMap= loadFavourite();
         Log.i(TAG, "Ho scaricato la mappa da file. Elementi contenuti:"+ favMap.size());
 
+    }
+
+    private void initUI() {
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.favourite_title);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) // Press Back Icon
+        {
+            Log.i(TAG, "Back, redirect a Maps");
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void loadTestMapOnFile() {
@@ -80,7 +106,7 @@ public class FavouritesActivity extends ListActivity {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Log.i(TAG, "Posizione selezionata:"+ info.position);
-        Favourite selectedItem= (Favourite) getListView().getItemAtPosition(info.position);
+        Favourite selectedItem= (Favourite) list_view.getItemAtPosition(info.position);
         Log.i(TAG, "Preferito elezionato:"+ selectedItem.toString());
 
         switch (item.getItemId()) {
@@ -150,11 +176,11 @@ public class FavouritesActivity extends ListActivity {
         //aggiorno List View
         if(!favList.isEmpty()){
             ArrayAdapter a= new ArrayAdapter(this, R.layout.favourites_row_layout, R.id.tv_favourite_label,favList);
-            getListView().setAdapter(a);
+            list_view.setAdapter(a);
         }else{
             Log.i(TAG, "Lista da caricare su ListView Vuota");
             ArrayAdapter a= new ArrayAdapter(this, R.layout.favourites_row_layout, R.id.tv_favourite_label,favList);
-            getListView().setAdapter(a);
+            list_view.setAdapter(a);
             Toast.makeText(this, R.string.favourite_not_found, Toast.LENGTH_LONG);
         }
     }
