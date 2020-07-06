@@ -4,45 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/map_drawer_header_background">
+    android:alpha="0.95"
+    android:background="@drawable/popup_bckground"
+    android:backgroundTint="@color/bianco">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textView"
+        style="@android:style/Widget.Material.Light.TextView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/panel_no_rdrc_text"
+        android:textAlignment="viewStart"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-
-        <TextView
-            android:id="@+id/textView"
-            style="@android:style/Widget.Material.Light.TextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:text="@string/panel_no_rdrc_text"
-            android:textAlignment="viewStart"
-            android:textColor="#000000"
-            android:textSize="18sp"
-            app:autoSizeTextType="uniform" />
-
-
-        <Button
-            android:id="@+id/panel_cancel_no_rdrct"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="2dp"
-            android:layout_weight="0.5"
-            android:background="#F30657"
-            android:onClick="onEndReservationForFree"
-            android:text="@string/panel_no_rdrct"
-            android:textColor="@color/bianco" />
-
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/panel_cancel_no_rdrct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="0.5"
+        android:background="@drawable/button_rounded_border"
+        android:backgroundTint="@color/bluMain"
+        android:onClick="onEndReservationForFree"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/panel_no_rdrct"
+        android:textColor="@color/bianco"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

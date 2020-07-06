@@ -12,5 +12,6 @@
     <!-- da sistemare -->
     <color name="nero">#000000</color>
     <color name="bianco">#FFFFFF</color>
+    <color name="grigio">#e5e5e3</color>
 
 </resources>

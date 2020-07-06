@@ -4,120 +4,118 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/map_drawer_header_background">
+    android:alpha="0.95"
+    android:background="@drawable/popup_bckground"
+    android:backgroundTint="@color/bianco">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textView"
+        style="@android:style/Widget.Material.Light.TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/panel_rdrc_text"
+        android:textAlignment="textStart"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView"
-            style="@android:style/Widget.Material.Light.TextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:text="@string/panel_rdrc_text"
-            android:textAlignment="textStart"
-            android:textColor="#000000"
-            android:textSize="18sp" />
+    <TextView
+        android:id="@+id/label_tv_park_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/panel_label_park"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp">
+    <TextView
+        android:id="@+id/tv_park_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/label_tv_park_id"
+        app:layout_constraintTop_toTopOf="@+id/label_tv_park_id" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/label_tv_dist_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/panel_label_dist"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/label_tv_park_id" />
 
-                <TextView
-                    android:id="@+id/label_tv_park_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/panel_label_park"
-                    android:textStyle="bold" />
+    <TextView
+        android:id="@+id/tv_dist_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/label_tv_dist_id"
+        app:layout_constraintTop_toTopOf="@+id/label_tv_dist_id" />
 
-                <TextView
-                    android:id="@+id/tv_park_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
+    <TextView
+        android:id="@+id/label_tv_address_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/panel_label_address"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/label_tv_dist_id" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tv_address_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/label_tv_address_id"
+        app:layout_constraintTop_toTopOf="@+id/label_tv_address_id" />
 
-                <TextView
-                    android:id="@+id/label_tv_dist_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/panel_label_dist"
-                    android:textStyle="bold" />
+    <Button
+        android:id="@+id/panel_cancel_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="0.5"
+        android:background="@drawable/button_rounded_border"
+        android:backgroundTint="@color/bluMain"
+        android:onClick="onEndReservationForFree"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/panel_no_rdrct"
+        android:textColor="@color/bianco"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/panel_continue_time"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_tv_address_id" />
 
-                <TextView
-                    android:id="@+id/tv_dist_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/panel_continue_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:background="@drawable/button_rounded_border"
+        android:backgroundTint="@color/gialloMain"
+        android:onClick="onRedirect"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="@string/panel_rdrct"
+        android:textColor="@color/bianco"
+        app:layout_constraintBottom_toBottomOf="@+id/panel_cancel_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/panel_cancel_time"
+        app:layout_constraintTop_toTopOf="@+id/panel_cancel_time" />
 
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/label_tv_address_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/panel_label_address"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_address_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-
-        </TableLayout>
-
-        <LinearLayout
-            style="?android:attr/buttonBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/panel_cancel_time"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_weight="0.5"
-                android:background="#F30657"
-                android:onClick="onEndReservationForFree"
-                android:text="@string/panel_no_rdrct"
-                android:textColor="@color/bianco" />
-
-            <Button
-                android:id="@+id/panel_continue_time"
-                style='"?android:attr/buttonBarButtonStyle"'
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_weight="0.5"
-                android:background="#FFC107"
-                android:onClick="onRedirect"
-                android:text="@string/panel_rdrct"
-                android:textColor="@color/bianco" />
-
-        </LinearLayout>
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -32,8 +32,9 @@
         app:backgroundTint="@color/qrButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:maxImageSize="48dp"
         app:rippleColor="#FFFFFF"
-        app:srcCompat="?attr/actionModeSelectAllDrawable" />
+        app:srcCompat="@drawable/ic_qr_code" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/refreshButton"

@@ -26,6 +26,8 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -1331,7 +1333,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Aggiorna e mostra il pannello di redirect se arriva la notifica
     private void    showRdrctPopup(@Nullable String id_parking,@Nullable String distance,@Nullable String address) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this,R.style.CustomAlertDialog);
         LayoutInflater layoutInflater = getLayoutInflater();
         View customView;
 
@@ -1347,6 +1349,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         else customView = layoutInflater.inflate(R.layout.map_no_redir_popup, null);
         builder.setView(customView);
         builder.setCancelable(false);
+
         if(popup==null){
         popup=builder.create();
         popup.show();
@@ -1686,9 +1689,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Aggiorna e mostra il pannello di redirect se arriva la notifica
     private void showTimeExtensionPopup() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this,R.style.CustomAlertDialog);
         LayoutInflater layoutInflater = getLayoutInflater();
         View customView = layoutInflater.inflate(R.layout.map_time_popup, null);
+
 
         builder.setView(customView);
         builder.setCancelable(false);
