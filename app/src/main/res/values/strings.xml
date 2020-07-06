@@ -175,6 +175,7 @@
     <!-- Alarm -->
     <string name="alarm_notif_text">Tra 10 minuti scadrà la tua prenotazione. Clicca per prorogare!</string>
     <string name="alarm_notif_title">Prenotazione in scadenza!</string>
+    <string name="label_empty">Errore: hai inserito un\'etichetta vuota!</string>
 
 
 

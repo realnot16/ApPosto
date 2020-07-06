@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//VISUALIZZA LE PREFERENZE, PERMETTE DI ELIMINARNE UNA O DI MODIFICARE L'ETICHETTA
+//VISUALIZZA LE PREFERENZE, PERMETTE DI ELIMINARNE UNA, DI ELIMINARLE TUTTE O DI MODIFICARE L'ETICHETTA
 public class FavouritesActivity extends AppCompatActivity {
 
     private final static String FILE_PATH = "FavouritesMapFile.txt";
@@ -55,7 +55,6 @@ public class FavouritesActivity extends AppCompatActivity {
         //menu contestuale
         registerForContextMenu(list_view);
 
-        //loadTestMapOnFile();
         //estraggo la mappa da file
         Map<String,Favourite> favMap= loadFavourite();
         Log.i(TAG, "Ho scaricato la mappa da file. Elementi contenuti:"+ favMap.size());
@@ -103,7 +102,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case DELETE_MENU_OPTION:
-                //cancello e aggiorno map su file
+                //cancello item e aggiorno map su file
                 deleteFavourite(selectedItem);
                 //aggiorno listview
                 loadFavourite();//automaticamente aggiorna la listview, contiene uploadListView()
@@ -210,13 +209,12 @@ public class FavouritesActivity extends AppCompatActivity {
         //per eliminare, ottengo la mappa, la aggiorno e la ricarico su file
         Map<String,Favourite> preferiti= new HashMap(loadFavourite());
         if(preferiti.isEmpty()){
-            //tvMessage.setText("Nessun luogo salvato fra i preferiti");
+            Log.i(TAG,"Nessun luogo salvato fra i preferiti");
         }else{
             if(preferiti.containsKey(toDelete.getLabel())){
                 preferiti.remove(toDelete.getLabel());
                 //salvo il file
                 saveMapOnFile(preferiti);
-                //tvMessage.setText("Hai rimosso la preferenza "+etichetta);
             }
         }
 
@@ -252,9 +250,15 @@ public class FavouritesActivity extends AppCompatActivity {
                 Log.i("update", "Ho cliccato INVIA");
                 //salvo la nuova etichetta
                 String labelNew= inputLabel.getText().toString();
-                Log.i("update", "La nuova etichetta è: "+labelNew);
-                //chiamo la funzione per aggiornare la mappa sul file
-                changeLabel(labelNew, favToUpdate);
+                if(labelNew.trim().equals("") || labelNew.isEmpty()){
+                    Log.i("update", "Etichetta vuota");
+                    Toast.makeText(getApplicationContext(), R.string.label_empty, Toast.LENGTH_LONG).show();
+                    return;
+                }else {
+                    Log.i("update", "La nuova etichetta è: " + labelNew);
+                    //chiamo la funzione per aggiornare la mappa sul file
+                    changeLabel(labelNew, favToUpdate);
+                }
 
             }
         });
