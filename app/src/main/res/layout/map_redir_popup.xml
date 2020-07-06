@@ -92,7 +92,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/panel_cancel_rdrct"
+                android:id="@+id/panel_cancel_time"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -105,7 +105,7 @@
                 android:textColor="@color/bianco" />
 
             <Button
-                android:id="@+id/panel_button_rdrct"
+                android:id="@+id/panel_continue_time"
                 style='"?android:attr/buttonBarButtonStyle"'
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
