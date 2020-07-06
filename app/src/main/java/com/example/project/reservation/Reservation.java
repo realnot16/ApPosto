@@ -122,17 +122,6 @@ public class Reservation implements Parcelable {
     public Reservation() {
     }
 
-    //il risultato di toString viene mostrato nell'array
-    @Override
-    public String toString() {
-        try {
-            return ""+ R.string.reservation_string1 + id_booking + "\n"+
-            R.string.reservation_string2 +""+ getDataFormattata(time_start)+ "\n";
-        } catch (ParseException e) {
-            return e.toString();
-        }
-    }
-
     private String getDataFormattata(String time_start) throws ParseException {
         Date temp=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time_start);
         String result=new SimpleDateFormat("dd/MM/yyyy").format(temp);

@@ -162,6 +162,35 @@ public class PaymentActivity extends AppCompatActivity {
 
     }
 
+    //Attivazione listener sui bottoni
+    private void setUpUI(){
+        btPaynow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int checkedId= rgPayment.getCheckedRadioButtonId();
+                if(checkedId == -1){
+                    Toast.makeText(getApplicationContext(), "Per effettuare una ricarica devi selezionare un importo!", Toast.LENGTH_LONG);
+                }else if(checkedId == R.id.rb_5 ){
+                    amount="5";
+                }else if(checkedId == R.id.rb_15 ){
+                    amount="15";
+                }else if(checkedId == R.id.rb_10 ){
+                    amount="10";
+                }else if(checkedId == R.id.rb_20 ){
+                    amount="20";
+                }else if(checkedId == R.id.rb_50 ){
+                    amount="50";
+                }
+
+                Log.i(TAG, "Importo selezionato: €"+amount );
+
+                // a questo punto ho estratto l'importo, proseguo con la ricarica
+                processPayment();
+
+            }
+        });
+    }
+
     //------TASK ASINCRONI------
     //Lettura valore Wallet dal db per mostrarlo sul layout
     private class WalletAmount extends AsyncTask<String, Void, Boolean> {
@@ -197,33 +226,9 @@ public class PaymentActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
+            //Al termine, viene settata l'interfaccia
             amountFromDb.setText(String.valueOf(wallet));
-
-            btPaynow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int checkedId= rgPayment.getCheckedRadioButtonId();
-                    if(checkedId == -1){
-                        Toast.makeText(getApplicationContext(), "Per effettuare una ricarica devi selezionare un importo!", Toast.LENGTH_LONG);
-                    }else if(checkedId == R.id.rb_5 ){
-                        amount="5";
-                    }else if(checkedId == R.id.rb_15 ){
-                        amount="15";
-                    }else if(checkedId == R.id.rb_10 ){
-                        amount="10";
-                    }else if(checkedId == R.id.rb_20 ){
-                        amount="20";
-                    }else if(checkedId == R.id.rb_50 ){
-                        amount="50";
-                    }
-
-                    Log.i(TAG, "Importo selezionato: €"+amount );
-
-                    // a questo punto ho estratto l'importo, proseguo con la ricarica
-                    processPayment();
-
-                }
-            });
+            setUpUI();
         }
     }
 
