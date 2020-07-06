@@ -37,13 +37,15 @@
     <string name="reservation_date_finish_text">Fine prenotazione: </string>
     <string name="reservation_address_text">Indirizzo del posteggio: </string>
     <string name="reservation_amount_text">Costo totale: </string>
-    <string name="detailed_reservation_tv"> Dettagli della prenotazione selezionata  </string>
+    <string name="detailed_reservation_title"> Prenotazione </string>
+    <string name="detailed_reservation_tv"> Dettagli della prenotazione</string>
     <string name="reservation_omaggio"> </string>
     <string name="reservation_string1">Prenotazione n°:</string>
     <string name="reservation_string2">effettuata in data </string>
     <string name="reservation_description">Le tue prenotazioni</string>
 
     <!-- Profile Activity -->
+    <string name="profile_tilte">Il tuo profilo</string>
     <string name="profile_birthdate">Data di nascita:</string>
     <string name="profile_city">Città:</string>
     <string name="profile_changepwd">Cambia password</string>
@@ -99,6 +101,7 @@
     <string name="favourites_button_back">Annulla</string>
 
     <!-- String wallet management -->
+    <string name="tv_activity_payment_title">Ricarica conto</string>
     <string name="tv_activity_payment">Scegli l\'importo da ricaricare: </string>
     <string name="rb_activity_payment_5" translatable="false">5</string>
     <string name="rb_activity_payment_10" translatable="false">10</string>
@@ -106,7 +109,8 @@
     <string name="rb_activity_payment_20" translatable="false">20</string>
     <string name="rb_activity_payment_50" translatable="false">50</string>
     <string name="bt_activity_payment_">Paga</string>
-    <string name="tv_payment_detail">Operazione effettuata con successo!\nEcco i dettagli del pagamento:</string>
+    <string name="tv_operation">Operazione effettuata con successo!</string>
+    <string name="tv_payment_detail">Ecco i dettagli del pagamento:</string>
     <string name="bt_go_to_map">Vai alla mappa</string>
     <string name="payment_detail_id">Codice transazione:</string>
     <string name="payment_detail_status">Stato:</string>

@@ -27,6 +27,7 @@ public class PaymentDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_detail);
+        getWindow().setBackgroundDrawableResource(R.drawable.main_background_not_coloured);
 
         tvId= (TextView)findViewById(R.id.tvIdText);
         tvAmount= (TextView)findViewById(R.id.tvAmountText);
@@ -46,8 +47,8 @@ public class PaymentDetail extends AppCompatActivity {
             //tvId.setText(jsonObject);
             tvId.setText(jsonObject.getJSONObject("response").getString("id"));
             tvStatus.setText(jsonObject.getJSONObject("response").getString("state"));
-            tvAmount.setText(intent.getStringExtra("PaymentAmount"));
-            tvCurrentWallet.setText(intent.getStringExtra("NewWallet"));
+            tvAmount.setText(intent.getStringExtra("PaymentAmount")+"€");
+            tvCurrentWallet.setText(intent.getStringExtra("NewWallet")+"€");
 
         } catch (JSONException e) {
             e.printStackTrace();

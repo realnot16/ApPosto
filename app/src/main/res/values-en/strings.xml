@@ -24,7 +24,8 @@
     <string name="reservation_date_finish_text">End reservation:</string>
     <string name="reservation_address_text">Parking address:</string>
     <string name="reservation_amount_text">Final cost:</string>
-    <string name="detailed_reservation_tv">Selected reservation details:</string>
+    <string name="detailed_reservation_title"> Reservation </string>
+    <string name="detailed_reservation_tv">Reservation details:</string>
     <string name="barText">CHOOSE YOUR PARK!!</string>
     <string name="toast_no_parking">Sorry, no free park in this area!</string>
     <string name="permcameradenied">Error: You cannot use scanner!</string>

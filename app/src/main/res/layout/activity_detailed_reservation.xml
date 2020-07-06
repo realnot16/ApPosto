@@ -1,187 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/main_background_not_coloured"
-    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_detailed_reservation"
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center_horizontal"
-        android:text="@string/detailed_reservation_tv"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <include
+            android:id="@+id/reservation_toolbar_layout_id"
+            layout="@layout/main_toolbar"></include>
 
-        <TextView
-            android:id="@+id/reservation_text_label"
+    <ScrollView
+        android:id="@+id/paymentdetails_scrollView_id"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true">
+
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="5dp"
-            android:text="@string/reservation_id_text"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/reservation_id_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="5dp"
-            android:layout_toEndOf="@+id/reservation_text_label"
-            android:text="TextView" />
+            <RelativeLayout
+                android:id="@+id/relative_details_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="20dp"
+                android:alpha="0.85"
+                android:background="@drawable/button_rounded_border"
+                android:backgroundTint="@color/bianco"
+                android:paddingStart="20dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="20dp">
 
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_detailed_reservation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/detailed_reservation_tv"
+                    android:textColor="@color/bluMain"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/reservation_text_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_detailed_reservation"
+                    android:layout_alignParentStart="false"
+                    android:layout_alignParentTop="false"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/reservation_id_text"
+                    android:textColor="@color/nero"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/date_text_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:text="@string/reservation_date_text"
-            android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/reservation_id_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/reservation_text_label"
+                    android:layout_alignStart="@id/reservation_text_label"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentEnd="false"
+                    android:layout_marginTop="12dp"
+                    android:text="TextView"
+                    android:textColor="@color/nero" />
 
-        <TextView
-            android:id="@+id/date_id_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_toEndOf="@+id/date_text_label"
-            android:text="TextView" />
+                <TextView
+                    android:id="@+id/date_text_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/reservation_id_label"
+                    android:layout_alignStart="@id/reservation_text_label"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/reservation_date_text"
+                    android:textColor="@color/nero"
+                    android:textStyle="bold" />
 
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/date_id_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date_text_label"
+                    android:layout_alignStart="@id/reservation_text_label"
+                    android:layout_marginTop="12dp"
+                    android:text="TextView"
+                    android:textColor="@color/nero" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/date_text_label2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date_id_label"
+                    android:layout_alignStart="@id/reservation_text_label"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/reservation_date_finish_text"
+                    android:textColor="@color/nero"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/date_text_label2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:text="@string/reservation_date_finish_text"
-            android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/date_id_label2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date_text_label2"
+                    android:layout_alignStart="@id/reservation_text_label"
+                    android:layout_marginTop="12dp"
+                    android:text="TextView"
+                    android:textColor="@color/nero" />
 
-        <TextView
-            android:id="@+id/date_id_label2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_toEndOf="@+id/date_text_label2"
-            android:text="TextView" />
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/address_text_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date_id_label2"
+                    android:layout_alignStart="@id/reservation_text_label"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/reservation_address_text"
+                    android:textColor="@color/nero"
+                    android:textStyle="bold" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/address_id_label"
+                    android:layout_width="149dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/address_text_label"
+                    android:layout_alignStart="@id/reservation_text_label"
+                    android:layout_marginTop="12dp"
+                    android:text="TextView"
+                    android:textColor="@color/nero" />
 
-        <TextView
-            android:id="@+id/address_text_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:text="@string/reservation_address_text"
-            android:textStyle="bold" />
+            </RelativeLayout>
 
-        <TextView
-            android:id="@+id/address_id_label"
-            android:layout_width="149dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_toEndOf="@+id/address_text_label"
-            android:text="TextView" />
+            <RelativeLayout
+                android:id="@+id/relative_money_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_details_id"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="48dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="48dp"
+                android:layout_marginBottom="32dp"
+                android:background="@drawable/button_rounded_border"
+                android:backgroundTint="@color/gialloMain"
+                android:paddingStart="20dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="20dp">
 
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/amount_text_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/reservation_amount_text"
+                    android:textColor="@color/bianco"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/amount_id_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@+id/amount_text_label"
+                    android:text="TextView"
+                    android:textColor="@color/bianco"
+                    android:textSize="18sp" />
 
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/common_google_signin_btn_text_light_focused" />
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_reservation_omaggio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/amount_text_label"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/reservation_omaggio"
+                    android:textColor="@color/bianco"
+                    android:textStyle="bold|italic"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/amount_text_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="10dp"
-            android:text="@string/reservation_amount_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/amount_id_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="1dp"
-            android:layout_toEndOf="@+id/amount_text_label"
-            android:text="TextView" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp">
-
-        <TextView
-            android:id="@+id/tv_reservation_omaggio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="10dp"
-            android:text="@string/reservation_omaggio"
-            android:textStyle="bold|italic" />
-    </RelativeLayout>
+    </ScrollView>
 
 </LinearLayout>
+

@@ -5,7 +5,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
-    android:background="@drawable/listview_back"
+    android:background="@drawable/button_rounded_border"
+    android:backgroundTint="@android:color/white"
+    android:alpha="0.85"
     android:paddingStart="20dp"
     android:paddingTop="20dp"
     android:paddingEnd="20dp"
@@ -18,7 +20,8 @@
             android:id="@+id/bookingLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/reservation_string1"></TextView>
+            android:text="@string/reservation_string1"
+            android:textColor="@color/nero"></TextView>
 
         <TextView
             android:id="@+id/bookingLabel_text"
@@ -27,7 +30,8 @@
             android:layout_alignParentRight="true"
             android:layout_toRightOf="@+id/firstnameLabel"
             android:paddingLeft="10px"
-            android:text="default_value"></TextView>
+            android:text="default_value"
+            android:textColor="@color/nero"></TextView>
     </TableRow>
 
     <TableRow>
@@ -37,7 +41,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/bookingLabel"
-            android:text="@string/reservation_string2"></TextView>
+            android:text="@string/reservation_string2"
+            android:textColor="@color/nero"></TextView>
 
         <TextView
             android:id="@+id/dataLabel_text"
@@ -46,6 +51,7 @@
             android:layout_alignParentRight="true"
             android:layout_toRightOf="@+id/bookingLabel"
             android:paddingLeft="10px"
-            android:text="default_value"></TextView>
+            android:text="default_value"
+            android:textColor="@color/nero"></TextView>
     </TableRow>
 </TableLayout>

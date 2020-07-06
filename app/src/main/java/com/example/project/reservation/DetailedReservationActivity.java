@@ -1,9 +1,12 @@
 package com.example.project.reservation;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.project.R;
@@ -25,12 +28,34 @@ public class DetailedReservationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detailed_reservation);
+        getWindow().setBackgroundDrawableResource(R.drawable.main_background_not_coloured);
+
+        initUI();
 
         try {
             init();
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    private void initUI() {
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.detailed_reservation_tv);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) // Press Back Icon
+        {
+            Log.i(TAG, "Back, redirect a prenotazioni");
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void init() throws ParseException {
@@ -53,6 +78,7 @@ public class DetailedReservationActivity extends AppCompatActivity {
             tvStartAddressReservation.setText(reservation.getAddress_start());
             tvAmountReservation.setText(""+reservation.getAmount()+"€");
             if(reservation.getBonus()==1){
+                tvBonusReservation.setVisibility(View.VISIBLE);
                 tvBonusReservation.setText("Questa è una map_icona_panel_prenotazione bonus!");//mostra questo messaggio solo se bonus==1
             }
 

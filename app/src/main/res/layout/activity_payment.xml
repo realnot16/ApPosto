@@ -7,6 +7,11 @@
     android:background="@drawable/main_background_not_coloured"
     tools:context=".walletManagement.PaymentActivity">
 
+    <include
+        android:id="@+id/reservation_toolbar_layout_id"
+        layout="@layout/main_toolbar"
+        app:layout_constraintTop_toTopOf="parent"></include>
+
     <TextView
         android:id="@+id/tv_payment_activity"
         android:layout_width="wrap_content"

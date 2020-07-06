@@ -2,11 +2,14 @@ package com.example.project.userManagement;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -61,6 +64,8 @@ public class ProfileActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_management_profile);
+
+        initUI();
         getWindow().setBackgroundDrawableResource(R.drawable.main_background_light);
 
         name = (TextView) findViewById(R.id.label_name_id);
@@ -92,6 +97,25 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initUI() {
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.profile_tilte);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) // Press Back Icon
+        {
+            Log.i(TAG, "Back, redirect a Maps");
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
