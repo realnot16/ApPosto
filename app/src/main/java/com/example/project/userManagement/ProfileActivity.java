@@ -201,7 +201,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                     email.setText(profilo.getEmail());
                     phone.setText(profilo.getPhone());
-                    wallet.setText(String.valueOf(profilo.getWallet()));
+                    wallet.setText(String.valueOf(profilo.getWallet())+" €");
 
                 }else{  //Ha fatto l'accesso con Google per la prima volta: prima deve compilare i campi del profilo!
                     Intent i = new Intent(ProfileActivity.this, SignupActivity.class);

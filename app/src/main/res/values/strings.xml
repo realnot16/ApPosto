@@ -51,7 +51,7 @@
     <string name="profile_changepwd">Cambia password</string>
     <string name="profile_name">Nome Cognome</string>
     <string name="profile_topup">Ricarica</string>
-    <string name="profile_wallet" translatable="false">My Wallet</string>
+    <string name="profile_wallet" translatable="false">My Wallet:</string>
 
 
     <!--   String MapLayout -->

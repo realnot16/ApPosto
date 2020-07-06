@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -37,6 +38,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -278,12 +280,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
-
-        //FLAVIA, spinnerFiltroPreferiti.setAdapter();
-        //Da capire gestione dell'adapter--> l'obiettivo è che ogni volta che si aggiunge o si toglie
-            //un preferito venga aggiornato anche lo spinner.
-            //puoi pensare di mettere spinnerFiltroPreferiti.setAdapter(); all'interno del listener della stellina
-            //ed effettuare lettura da file o boh, vedi se ti riesci easy
 
 
         //AUTENTICAZIONE
@@ -1545,6 +1541,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Alert dialog con edit text per inserire label della stazione preferita
     private AlertDialog.Builder createEd() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
         builder.setTitle(R.string.dialog_fav_title);
         builder.setMessage(R.string.dialog_fav_message);
 
@@ -1574,7 +1571,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         builder.setNegativeButton(R.string.dialog_delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                checkBoxPreferiti.setChecked(false);
                 dialog.cancel();
+
             }
         });
 

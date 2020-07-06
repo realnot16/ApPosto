@@ -1,8 +1,8 @@
 package com.example.project.favourites;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -68,18 +68,37 @@ public class FavouritesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
         getSupportActionBar().setHomeButtonEnabled(true);
+        Drawable filterIcon = getDrawable(R.drawable.ic_more_vert_white_24dp);
+        toolbar.setOverflowIcon(filterIcon);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.favourite_menu, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) // Press Back Icon
-        {
-            Log.i(TAG, "Back, redirect a Maps");
-            finish();
-        }
+        switch (item.getItemId()) {
 
-        return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                Log.i(TAG, "Back, redirect a Maps");
+                finish();
+            case R.id.action_menu:
+                deleteFile();
+                saveMapOnFile(new HashMap<String, Favourite>());
+                loadFavourite(); //automaticamente aggiorna la listview, contiene uploadListView()
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -88,7 +107,6 @@ public class FavouritesActivity extends AppCompatActivity {
         //aggiungo le voci, associandole alle costanti che tengono traccia della scelta effettuata
         menu.add(group, UPDATE_MENU_OPTION, Menu.FIRST , R.string.favourite_update_option);
         menu.add(group, DELETE_MENU_OPTION, Menu.FIRST+ 1, R.string.favourite_delete_option);
-        menu.add(group, DELETE_ALL_MENU_OPTION, Menu.FIRST+ 2, R.string.favourite_delete_all_option);
 
     }
 
@@ -117,13 +135,6 @@ public class FavouritesActivity extends AppCompatActivity {
                 AlertDialog dialog= createEd().create();
                 dialog.show();
                 break;
-
-            case DELETE_ALL_MENU_OPTION:
-                deleteFile();
-                saveMapOnFile(new HashMap<String, Favourite>());
-                loadFavourite(); //automaticamente aggiorna la listview, contiene uploadListView()
-                break;
-
             default:
 
                 return super.onContextItemSelected(item);

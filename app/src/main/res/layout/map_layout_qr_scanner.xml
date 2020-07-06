@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/map_layout_qrScanner_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -47,24 +46,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scanner_pointer_id" />
-
-    <Button
-        android:id="@+id/scanner_problem_id"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
-        android:background="@drawable/button_confirm"
-        android:backgroundTint="#FFFFFF"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:text="@string/scanner_problem"
-        android:textColor="@color/bluMain"
-        app:layout_constraintBottom_toBottomOf="@+id/scanner_camera_id"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scanner_info_id" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
