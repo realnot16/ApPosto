@@ -42,8 +42,8 @@ public class FavouritesActivity extends AppCompatActivity {
     private final static int DELETE_MENU_OPTION = 1;
     private final static int UPDATE_MENU_OPTION = 2;
     private static final int DELETE_ALL_MENU_OPTION = 3 ;
-    private Favourite modifiedFavourite;
     private ListView list_view;
+    private Favourite favToUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,14 +82,6 @@ public class FavouritesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadTestMapOnFile() {
-        Map<String,Favourite> fasulla= new HashMap<>();
-        fasulla.put("casa", new Favourite("casa", 12345, 12345));
-        fasulla.put("lavoro", new Favourite("lavoro", 12346, 12346));
-
-        saveMapOnFile(fasulla);
-    }
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -118,11 +110,10 @@ public class FavouritesActivity extends AppCompatActivity {
                 break;
 
             case UPDATE_MENU_OPTION:
-                Log.i(TAG, "Update");
-                //salvo coordinate
-                modifiedFavourite= new Favourite("noninserita", selectedItem.getLat(), selectedItem.getLon());
-                //elimino il vecchio
-                deleteFavourite(selectedItem);
+                Log.i("update", "Ho cliccato modifica etichetta");
+                //salvo Favourite da aggiornare
+                favToUpdate= selectedItem;
+                Log.i("update", "Ho salvato il preferito da aggiornare "+favToUpdate.toString());
                 //dialog per inserire nuova etichetta
                 AlertDialog dialog= createEd().create();
                 dialog.show();
@@ -178,7 +169,7 @@ public class FavouritesActivity extends AppCompatActivity {
             Log.i(TAG, "Lista da caricare su ListView Vuota");
             ArrayAdapter a= new ArrayAdapter(this, R.layout.favourites_row_layout, R.id.tv_favourite_label,favList);
             list_view.setAdapter(a);
-            Toast.makeText(this, R.string.favourite_not_found, Toast.LENGTH_LONG);
+            Toast.makeText(this, R.string.favourite_not_found, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -193,7 +184,7 @@ public class FavouritesActivity extends AppCompatActivity {
             preferitiMap.put(favourite.getLabel(),favourite);
             saveMapOnFile(preferitiMap);
         }else{//altrimenti
-            Toast.makeText(this, R.string.favourite_repeated, Toast.LENGTH_LONG);
+            Toast.makeText(this, R.string.favourite_repeated, Toast.LENGTH_LONG).show();
         }
 
     }
@@ -243,7 +234,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
         Log.i(TAG, "Ho eliminato il file");
     }
-//dialog peer modifica etichetta
+//dialog per modifica etichetta
     private AlertDialog.Builder createEd() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_modify_fav_title);
@@ -258,10 +249,13 @@ public class FavouritesActivity extends AppCompatActivity {
 
         builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Log.i("dialog", "Label inserita: "+inputLabel.getText().toString());
-                modifiedFavourite.setLabel(inputLabel.getText().toString());
-                saveFavourite(modifiedFavourite);
-                loadFavourite();
+                Log.i("update", "Ho cliccato INVIA");
+                //salvo la nuova etichetta
+                String labelNew= inputLabel.getText().toString();
+                Log.i("update", "La nuova etichetta è: "+labelNew);
+                //chiamo la funzione per aggiornare la mappa sul file
+                changeLabel(labelNew, favToUpdate);
+
             }
         });
         builder.setNegativeButton(R.string.dialog_delete, new DialogInterface.OnClickListener() {
@@ -271,5 +265,30 @@ public class FavouritesActivity extends AppCompatActivity {
         });
 
         return builder;
+    }
+    //per aggiornare un'etichetta di un preferito già salvato,
+    //passo la nuova etichetta e il vecchio oggetto
+    private void changeLabel(String labelNew, Favourite toUpdate){
+        Map<String, Favourite> map= loadFavourite();
+        Favourite nuovo= new Favourite(labelNew, toUpdate.getLat(), toUpdate.getLon());
+        if(map.containsKey(labelNew)){
+            Log.i("update", "Ho inserito un'etichetta già presente");
+            Toast.makeText(this, R.string.favourite_repeated, Toast.LENGTH_LONG).show();
+            return;
+        }else{
+            Log.i("update", "Ho inserito un'etichetta corretta");
+            Log.i("update", "Mappa non aggiornata: size "+map.size());
+            //elimino vecchio da mappa
+            map.remove(toUpdate.getLabel());
+            Log.i("update", "Mappa meno vecchio elemento: size "+map.size());
+            //aggiungo nuovo a mappa
+            map.put(nuovo.getLabel(), nuovo);
+            Log.i("update", "Mappa con nuovo elemento: size "+map.size());
+            //carico mappa
+            saveMapOnFile(map);
+        }
+
+        updateListView(loadFavourite());
+
     }
 }

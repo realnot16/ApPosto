@@ -1558,8 +1558,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(!preferitiMap.containsKey(temp.getLabel())){//se non è salvato nessun indirizzo per quell'etichetta, la salvo
             preferitiMap.put(temp.getLabel(),temp);
             saveMapOnFile(preferitiMap);
-        }else{//altrimenti, mostro un messaggio
-            Toast.makeText(this, R.string.favourite_repeated, Toast.LENGTH_LONG);
+        }else{//altrimenti, mostro un messaggio, e deseleziono la checkbox
+            Toast.makeText(this, R.string.favourite_repeated, Toast.LENGTH_LONG).show();
+            checkBoxPreferiti.setChecked(false);
         }
     }
     //SCRIVERE MAPPA SU FILE
@@ -1611,6 +1612,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         //ricarico la mappa sul file
                         saveMapOnFile(preferiti);
                         Log.i("flavia", "File aggiornato, size: "+ loadFavouriteFromFile().size());
+                        return;
                     }
                 }
             }

@@ -39,7 +39,7 @@
     <string name="reservation_amount_text">Costo totale: </string>
     <string name="detailed_reservation_title"> Prenotazione </string>
     <string name="detailed_reservation_tv"> Dettagli della prenotazione</string>
-    <string name="reservation_omaggio"> </string>
+    <string name="reservation_omaggio">Questa è una prenotazione omaggio! </string>
     <string name="reservation_string1">Prenotazione n°:</string>
     <string name="reservation_string2">effettuata in data </string>
     <string name="reservation_description">Le tue prenotazioni</string>
@@ -109,7 +109,6 @@
     <!--Gestione preferiti-->
     <string name="favourite_title">Stazioni preferite</string>
     <string name="favourite_not_found">Non hai salvato nessun preferito!</string>
-    <string name="favourite_repeated">E\' già presente un preferito con questa etichetta!</string>
     <string name="favourites_address">Indirizzo:</string>
     <string name="favourites_label">Etichetta:</string>
     <string name="favourites_label_text">La mia etichetta</string>
@@ -117,6 +116,7 @@
     <string name="favourites_button_save">Salva modifiche</string>
     <string name="favourites_button_delete">Cancella preferito</string>
     <string name="favourites_button_back">Annulla</string>
+    <string name="favourite_repeated">E\' già presente un preferito con questa etichetta, prova con un altro nome!</string>
 
     <!-- String wallet management -->
     <string name="tv_activity_payment_title">Ricarica conto</string>

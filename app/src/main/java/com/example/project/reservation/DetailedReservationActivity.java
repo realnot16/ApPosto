@@ -79,7 +79,7 @@ public class DetailedReservationActivity extends AppCompatActivity {
             tvAmountReservation.setText(""+reservation.getAmount()+"€");
             if(reservation.getBonus()==1){
                 tvBonusReservation.setVisibility(View.VISIBLE);
-                tvBonusReservation.setText("Questa è una map_icona_panel_prenotazione bonus!");//mostra questo messaggio solo se bonus==1
+                tvBonusReservation.setText(R.string.reservation_omaggio);//mostra questo messaggio solo se bonus==1
             }
 
         } else { //altrimenti
