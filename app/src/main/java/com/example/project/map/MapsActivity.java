@@ -738,6 +738,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void setMap() {
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(false);
 
         //Riposiziono il bottone di geolocalizzazione
         View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
