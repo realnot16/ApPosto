@@ -117,8 +117,9 @@
     <string name="alarm_notif_title">Reservation is expiring!</string>
     <string name="favourite_title">Favourite stations</string>
     <string name="tv_activity_payment_wallet_description">Balance</string>
-    <string name="scanner_problem">Problem with QR code? Click here!</string>
     <string name="reservation_omaggio">This is a bonus reservation!</string>
     <string name="label_empty">Error: label inserted is empty!</string>
+    <string name="panel_filter_spinner">Choose area</string>
+    <string name="panel_filter_no_favorite">No favourite.</string>
     <!--<string name="reservation_omaggio">This is a free booking! </string> -->
 </resources>
