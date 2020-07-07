@@ -86,6 +86,7 @@ public class FavouritesActivity extends AppCompatActivity {
             case android.R.id.home:
                 Log.i(TAG, "Back, redirect a Maps");
                 finish();
+                return true;
             case R.id.action_menu:
                 deleteFile();
                 saveMapOnFile(new HashMap<String, Favourite>());
