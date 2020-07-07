@@ -354,7 +354,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         super.onResume();
         Intent notificationIntent = getIntent();
-        if (notificationIntent.getIntExtra("requestCode", 0) == NOTIFICATION_REQUESTCODE) {
+        if (notificationIntent.getIntExtra("requestCode", 0) == NOTIFICATION_REQUESTCODE && currentReservation.id_booking!=null) {
             if (notificationIntent.hasExtra("id_parking")) {
                 String id_park = (String) notificationIntent.getExtras().get("id_parking");
                 String dist = (String) notificationIntent.getExtras().get("distance");
