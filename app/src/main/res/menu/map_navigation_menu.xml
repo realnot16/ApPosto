@@ -6,21 +6,21 @@
         <item
             android:id="@+id/show_profile_id"
             android:checked="false"
-            android:title="Profilo"
+            android:title="@string/profile_menu"
             android:textColorHighlight="@color/bluMain"/>
 
         <item
             android:id="@+id/show_reservations"
             android:checked="false"
-            android:title="Storico prenotazioni" />
+            android:title="@string/storico_menu" />
         <item
             android:id="@+id/favourite_management_id"
             android:checked="false"
-            android:title="Preferiti" />
+            android:title="@string/favourite_menu" />
         <item
             android:id="@+id/logout_profile_id"
             android:checked="false"
-            android:title="Logout" />
+            android:title="@string/logout_menu" />
 
 
     </group>

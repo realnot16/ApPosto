@@ -121,5 +121,8 @@
     <string name="label_empty">Error: label inserted is empty!</string>
     <string name="panel_filter_spinner">Choose area</string>
     <string name="panel_filter_no_favorite">No favourite.</string>
+    <string name="profile_menu">Profile</string>
+    <string name="favourite_menu">Favourite areas</string>
+    <string name="storico_menu">Booking history</string>
     <!--<string name="reservation_omaggio">This is a free booking! </string> -->
 </resources>

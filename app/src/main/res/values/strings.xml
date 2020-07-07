@@ -116,6 +116,7 @@
     <string name="favourites_button_delete">Cancella preferito</string>
     <string name="favourites_button_back">Annulla</string>
     <string name="favourite_repeated">E\' già presente un preferito con questa etichetta, prova con un altro nome!</string>
+    <string name="label_empty">Errore: hai inserito un\'etichetta vuota!</string>
 
     <!-- String wallet management -->
     <string name="tv_activity_payment_title">Ricarica conto</string>
@@ -171,11 +172,15 @@
     <string name="panel_street">Indirizzo</string>
     <string name="panel_filter_spinner">Scegli area</string>
     <string name="panel_filter_no_favorite">Non ci sono preferiti.</string>
+
     <!-- Alarm -->
     <string name="alarm_notif_text">Tra 10 minuti scadrà la tua prenotazione. Clicca per prorogare!</string>
     <string name="alarm_notif_title">Prenotazione in scadenza!</string>
-    <string name="label_empty">Errore: hai inserito un\'etichetta vuota!</string>
 
-
+    <!-- Menu -->
+    <string name="profile_menu">Profilo</string>
+    <string name="storico_menu">Storico prenotazioni</string>
+    <string name="favourite_menu">Preferiti</string>
+    <string name="logout_menu" translatable="false">Logout</string>
 
 </resources>
