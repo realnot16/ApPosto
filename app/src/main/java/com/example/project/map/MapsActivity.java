@@ -589,6 +589,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         listenFilter();
 
+        panel.setPanelState(PanelState.HIDDEN);
+
     }
     private void listenFilter(){
         boolean checkRay=false;
@@ -602,8 +604,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(areaValue==null){
                 Toast.makeText(MapsActivity.this,R.string.panel_filter_toast_no_selected_area,Toast.LENGTH_SHORT).show();
             }
-            else
+            else{
                 checkArea=true;
+                LatLng posPref = new LatLng(areaValue.getLat(), areaValue.getLon());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(posPref, DEFAULT_ZOOM));
+            }
+
         }
         if(raggioSwitch.isChecked()) {
             if (place_searched == null) {
