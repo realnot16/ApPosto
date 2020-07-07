@@ -70,6 +70,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.main_ic_logo_onlyimage)
                 .setContentTitle(context.getResources().getString(R.string.alarm_notif_title))
                 .setContentText(context.getResources().getString(R.string.alarm_notif_text))
+                .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
