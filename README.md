@@ -16,6 +16,8 @@ Il sistema si basa su un'architettura IoT che comprende:
 3. **App mobile**: Interfaccia utente per la visualizzazione, prenotazione e gestione dei pagamenti.
 
 ### Sensori e hardware
+![Sensori e hardware](Images/sensori.png)
+
 I sensori rilevano:
 - Presenza di veicoli negli stalli.
 - Stato corrente del parcheggio.
@@ -23,11 +25,13 @@ Questi dati vengono inviati al backend per aggiornare in tempo reale la disponib
 
 ## Funzionalità principali dell'app
 ### Login e registrazione
+![Login](Images/login.png)
 - Accesso tramite Firebase Authentication.
 - Possibilità di utilizzare credenziali Google o registrarsi manualmente.
 - Funzioni aggiuntive come "Ricordami" e recupero password.
 
 ### Prenotazione
+![Iter di prenotazione](Images/Iter.png)
 1. **Ricerca dei posti**: Utilizzo di filtri per tariffa, distanza e aree preferite.
 2. **Scansione QR Code**: Verifica dell'occupazione e chiusura della prenotazione.
 3. **Gestione scadenze**: Notifiche push 10 minuti prima della scadenza con opzioni per prolungare, terminare o ignorare.
@@ -46,6 +50,8 @@ Questi dati vengono inviati al backend per aggiornare in tempo reale la disponib
 - Gestione delle aree preferite con opzioni per modificare o eliminare.
 
 ## Architettura del sistema
+![Architettura del sistema](Images/architettura.png)
+
 ### Frontend
 - Applicazione Android con interfaccia intuitiva per una gestione completa delle funzionalità.
 
